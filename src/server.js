@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
     res.json({ message: 'Server is running' });
 });
 app.use('/scoreboard', express.static('./src/frontend/scoreboard'));
+app.use('/admin', express.static('./src/frontend/admin'));
 
 // WebSocket connection handling
 wss.on('connection', (ws) => {
