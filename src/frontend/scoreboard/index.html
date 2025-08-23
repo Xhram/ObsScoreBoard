@@ -1,12 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="./style/main.css" />
-    </head>
-    <body>
-        <div id="debug">Socket Debugging</div>
-    </body>
-    <script src="./js/main.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        /* 1920x1080 */
+        body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-optical-sizing: auto; font-style: normal; width: 100%; aspect-ratio: 16 / 9; }
+        * { box-sizing: border-box; }
+        #scoreboard {
+            position: relative;
+            width: 100vw; /* debugging */
+            height: 200px; /* debugging */
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            grid-template-rows: auto minmax(95px, 1fr) .6fr;
+            gap: 0;
+            background-color: gray; /* debugging */
+        }
+        .container {
+            padding: 5px;
+            width: 100%;
+            height: 100%;
+            grid-column: 1 / span 3;
+        }
+        .meta-data-container {
+            background-color: red; /* debugging */
+        }
+        .teams-container {
+            display: flex;
+            flex-direction: row;
+            background-color: green; /* debugging */
+
+            .team {
+                display: flex;
+                flex: 1;
+                min-width: 0; /* prevents overflow */
+
+                &.left {
+                    flex-direction: row;
+                    .border {
+                        flex-direction: row;
+                        margin-right: 4px;
+                    }
+                    .name {
+                        text-align: left;
+                    }
+                    .possession-indicator {
+                        margin-left: auto
+                    }
+                }
+                &.right {
+                    flex-direction: row-reverse;
+                    .border {
+                        flex-direction: row-reverse;
+                        margin-left: 4px;
+                    }
+                    .name {
+                        text-align: right;
+                    }
+                    .possession-indicator {
+                        margin-right: auto
+                    }
+                }
+
+                .timeouts {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    margin: 0 5px;
+
+                    .timeout {
+                        width: 10px;
+                        min-height: 10px;
+                        flex: 1;
+                        margin: 2px 0;
+                        background-color: #fbf2ca;
+                        /* box-shadow: 0 0 2px black; */
+
+                        &.used {
+                            background-color: #ada074;
+                        }
+                    }
+                }
+
+                .border {
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
+                    width: 100%;
+                    padding: 4px;
+                    overflow: hidden;
+                    outline: 6px solid black;
+                    outline-offset: -4px;
+
+                    .logo {
+                        position: relative;
+                        height: 100%;
+                        aspect-ratio: 1 / 1;
+                        background-color: white; /* debugging */
+                        margin: 0 0;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        img {
+                            position: relative;
+                            width: 100%;
+                            height: 100%;
+                            object-fit: contain;
+                        }
+                    }
+
+                    .name {
+                        position: relative;
+                        flex: 1;
+                        padding: 0 5px;
+                        font-size: 1.5em;
+                        width: 100%;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        font-weight: bold;
+                        color: #f3eadf;
+                        text-shadow: 2px 0px 2px black;
+                    }
+
+                    .possession-indicator {
+                        position: relative;
+                        width: 8px;
+                        height: 8px;
+                        background-color: #f3eadf;
+                        border-radius: 50%;
+                        visibility: hidden;
+                    }
+                    .possession-indicator.in-possession {
+                        visibility: visible;
+                    }
+
+                    .score {
+                        font-size: 2.5em;
+                        font-weight: bold;
+                        color: #f3eadf;
+                        text-shadow: 2px 0px 2px black;
+                        margin: 0 3px;
+                    }
+                }
+            }
+        }
+        .game-data-container {
+            background-color: blue; /* debugging */
+            display: grid;
+            grid-template-columns: repeat(2, 1fr) auto repeat(2, 1fr);
+            font-size: 1.5rem;
+            font-weight: bolder;
+
+            .quarter {
+                grid-column: 1;
+                color: #9ca7a5;
+            }
+            .clock {
+                grid-column: 2;
+                color: #d7e2df;
+            }
+            .play-clock {
+                grid-column: 3;
+                color: #e0d088;
+            }
+
+            .down-distance {
+                grid-column: 4 / span 2;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                color: #9ca7a5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="scoreboard">
+        <div class="container meta-data-container"></div>
+        <div class="container teams-container">
+            <div class="team left">
+                <div class="timeouts">
+                    <div class="timeout used"></div> <!--debugging 'used'-->
+                    <div class="timeout"></div>
+                    <div class="timeout"></div>
+                </div>
+                <div class="border">
+                    <div class="logo">
+                        <img src="https://th.bing.com/th/id/OIP.tTs8PVe3FjsHIF4aGRlIcAAAAA?w=180&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" alt="">
+                    </div>
+                    <div class="name">Palatine</div>
+                    <div class="possession-indicator"></div>
+                    <div class="score">21</div>
+                </div>
+            </div>
+            <div class="team right">
+                <div class="timeouts">
+                    <div class="timeout used"></div> <!--debugging 'used'-->
+                    <div class="timeout used"></div>
+                    <div class="timeout"></div>
+                </div>
+                <div class="border">
+                    <div class="logo">
+                        <img src="https://th.bing.com/th/id/OIP.tTs8PVe3FjsHIF4aGRlIcAAAAA?w=180&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" alt="">
+                    </div>
+                    <div class="name">Palatine</div>
+                    <div class="possession-indicator in-possession"></div>
+                    <div class="score">21</div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="container game-data-container">
+            <div class="quarter">1st</div>
+            <div class="clock">00:00</div>
+            <div class="play-clock">:00</div>
+            <div class="down-distance">
+                <div class="down">1</div>
+                &
+                <div class="distance">10</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+</script>
 </html>
