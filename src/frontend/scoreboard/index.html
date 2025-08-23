@@ -8,17 +8,47 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <style>
         /* 1920x1080 */
+        @keyframes scroll {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
+        }
+
         body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-optical-sizing: auto; font-style: normal; width: 100%; aspect-ratio: 16 / 9; }
         * { box-sizing: border-box; }
         #scoreboard {
-            position: relative;
-            width: 100vw; /* debugging */
-            height: 200px; /* debugging */
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            /* width: 150px; debugging */
+            height: 135px; /* debugging */
+            aspect-ratio: 5;
             display: grid;
             grid-template-columns: 1fr 3fr 1fr;
-            grid-template-rows: auto minmax(95px, 1fr) .6fr;
+            grid-template-rows: 30px 75px 40px;
             gap: 0;
-            background-color: gray; /* debugging */
+            /* background-color: transparent; debugging */
+
+            --team-left-color: red;
+            --team-right-color: purple;
+
+            --color-game-data-background: #0f1c13;
+            --color-game-data-background-highlight: #051004;
+            --color-game-data-text: #d7e2df;
+            --color-game-data-text-neutral: #91a09a;
+            --color-game-data-highlight: #e0d088;
+
+            --color-meta-data-background: #0f1c13;
+            --color-meta-data-text: #d7e2df;
+            --color-meta-data-text-neutral: #91a09a;
+
+            --color-flag-background: yellow;
+            --color-flag-text: black;
+
+            --time-carousel-duration: 10s;
+            --time-carousel-popup-delay: 2s;
+            --time-meta-data-popup-time: 0.3s;
+            --time-flag-popup-time: 0.15s;
         }
         .container {
             padding: 5px;
@@ -27,19 +57,199 @@
             grid-column: 1 / span 3;
         }
         .meta-data-container {
-            background-color: red; /* debugging */
+            background-color: var(--color-meta-data-background);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            overflow: hidden;
+            transition: transform var(--time-meta-data-popup-time) ease;
+            transform: translateY(100%);
+            z-index: -1;
+
+            &.visible {
+                transform: translateY(0%);
+
+                .carousel {
+                    animation-play-state: running;
+                    animation: scroll calc(var(--time-carousel-popup-delay) + var(--time-carousel-duration)) linear var(--time-carousel-popup-delay) infinite forwards;
+                }
+            }
+
+            .carousel {
+                position: relative;
+                display: flex;
+                align-items: center;
+                width: fit-content;
+                animation-play-state: paused;
+                
+            }
+            .data, .player-badge {
+                margin-right: 16px;
+            }
+
+            .data {
+                font-size: 1.2rem;
+                font-weight: bold;
+                color: var(--color-meta-data-text);
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+
+            .player-badge {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-end;
+                gap: 4px;
+
+                .hashtag {
+                    font-size: .8rem;
+                    font-weight: bold;
+                    color: var(--color-meta-data-text-neutral);
+                    text-align: center;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    margin-right: -1px;
+                }
+
+                .number {
+                    font-size: 1.4rem;
+                    font-weight: bold;
+                    color: var(--color-meta-data-text);
+                    text-align: center;
+                    white-space: nowrap;
+                    overflow: hidden;
+                }
+
+                .name {
+                    font-size: 1rem;
+                    font-weight: bold;
+                    color: var(--color-meta-data-text);
+                    text-align: center;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    flex: 1;
+                    margin-bottom: 1px
+                }
+            }
         }
         .teams-container {
             display: flex;
             flex-direction: row;
-            background-color: green; /* debugging */
+            background-color: var(--color-game-data-background);
+            padding: 0;
+
+            .flag-container {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 180px;
+                height: 40px;
+                z-index: 9;
+                top: 30px;
+                background-color: var(--color-flag-background);
+                transition: 
+                    top var(--time-flag-popup-time) ease,
+                    transform var(--time-flag-popup-time) ease, 
+                    left var(--time-flag-popup-time) ease, 
+                    right var(--time-flag-popup-time) ease, 
+                    width var(--time-flag-popup-time) ease, 
+                    height var(--time-flag-popup-time) ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                padding: 0 8px;
+
+                &.emitted {
+                    /* top: calc(30px + 75px); on bottom */ 
+                    top: -10px;
+                }
+
+                &.blame-left, &.blame-left-width-name {
+                    transform: translateX(0%);
+                    left: 0;
+                    width: 50%;
+                }
+                &.blame-right, &.blame-right-width-name {
+                    transform: translateX(0%);
+                    right: 0;
+                    width: 50%;
+                }
+                .blame {
+                    display: none;
+                }
+
+                .player-badge {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: flex-end;
+                    gap: 4px;
+
+                    .hashtag {
+                        font-size: .8rem;
+                        font-weight: bold;
+                        color: var(--color-flag-text);
+                        text-align: center;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        margin-right: -1px;
+                    }
+
+                    .number {
+                        font-size: 1.4rem;
+                        font-weight: bold;
+                        color: var(--color-flag-text);
+                        text-align: center;
+                        white-space: nowrap;
+                        overflow: hidden;
+                    }
+
+                    .name {
+                        font-size: 1rem;
+                        font-weight: bold;
+                        color: var(--color-flag-text);
+                        text-align: center;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        flex: 1;
+                        margin-bottom: 3px
+                    }
+                }
+
+
+                &.blame-left-width-name {
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    .blame {
+                        display: flex;
+                        margin-left: auto;
+                    }
+                }
+                &.blame-right-width-name {
+                    flex-direction: row-reverse;
+                    justify-content: flex-end;
+                    .blame {
+                        display: flex;
+                        margin-right: auto;
+                    }
+                }
+            }
 
             .team {
+                --team-color: #000000;
                 display: flex;
                 flex: 1;
                 min-width: 0; /* prevents overflow */
+                background-color: var(--team-color);
+                padding: 6px 0;
+                z-index: 10;
 
                 &.left {
+                    --team-color: var(--team-left-color);
+                    --gradient-position: left;
                     flex-direction: row;
                     .border {
                         flex-direction: row;
@@ -53,6 +263,8 @@
                     }
                 }
                 &.right {
+                    --team-color: var(--team-right-color);
+                    --gradient-position: right;
                     flex-direction: row-reverse;
                     .border {
                         flex-direction: row-reverse;
@@ -67,40 +279,77 @@
                 }
 
                 .timeouts {
+                    --color-timeoput: #ffffff;
+                    --color-timeoiut-used: #555555;
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
-                    margin: 0 5px;
+                    margin: 0 3px;
 
                     .timeout {
-                        width: 10px;
+                        position: relative;
+                        width: 6px;
                         min-height: 10px;
                         flex: 1;
                         margin: 2px 0;
-                        background-color: #fbf2ca;
-                        /* box-shadow: 0 0 2px black; */
+                        background-color: var(--color-timeoput);
 
                         &.used {
-                            background-color: #ada074;
+                            background-color: var(--color-timeoiut-used);
                         }
+                    }
+
+                    .timeout.used::after {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        z-index: 1;
+                        background: var(--team-color);
+                        opacity: 0.6;
+                        filter: saturate(0%) brightness(00%) contrast(50%) ;
                     }
                 }
 
+                .border::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 1;
+                    filter: saturate(65%) brightness(65%) hue-rotate(-8deg);
+                    outline: 6px solid var(--team-color); 
+                    outline-offset: -4px;
+                    
+                }
+
                 .border {
+                    position: relative;
                     display: flex;
                     align-items: center;
                     height: 100%;
                     width: 100%;
                     padding: 4px;
                     overflow: hidden;
-                    outline: 6px solid black;
-                    outline-offset: -4px;
+                    /* outline: 6px solid black; */
+                    /* outline-offset: -4px; */
 
                     .logo {
                         position: relative;
                         height: 100%;
                         aspect-ratio: 1 / 1;
-                        background-color: white; /* debugging */
+                        /* background-color: purple; */
+                        /* -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+                        -webkit-mask-repeat: no-repeat;
+                        -webkit-mask-size: cover; */
+                        /* mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%); */
+                        mask-image: radial-gradient(circle at var(--gradient-position), rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 90%);
+                        mask-repeat: no-repeat;
+                        mask-size: cover;
                         margin: 0 0;
                         display: flex;
                         align-items: center;
@@ -110,7 +359,7 @@
                             position: relative;
                             width: 100%;
                             height: 100%;
-                            object-fit: contain;
+                            object-fit: cover;
                         }
                     }
 
@@ -136,6 +385,7 @@
                         border-radius: 50%;
                         visibility: hidden;
                     }
+
                     .possession-indicator.in-possession {
                         visibility: visible;
                     }
@@ -145,45 +395,149 @@
                         font-weight: bold;
                         color: #f3eadf;
                         text-shadow: 2px 0px 2px black;
-                        margin: 0 3px;
+                        margin: 0 8px;
                     }
                 }
             }
         }
         .game-data-container {
-            background-color: blue; /* debugging */
+            position: relative;
+            background-color: var(--color-game-data-background);
             display: grid;
             grid-template-columns: repeat(2, 1fr) auto repeat(2, 1fr);
             font-size: 1.5rem;
             font-weight: bolder;
+            padding: 0 6px;
+            overflow: hidden;
 
-            .quarter {
-                grid-column: 1;
-                color: #9ca7a5;
+            .badge {
+                position: absolute;
+                right: 0;
+                height: 100%;
+                aspect-ratio: 1 / 1;
+                scale: .8;
+                object-fit: contain;
             }
-            .clock {
-                grid-column: 2;
-                color: #d7e2df;
+
+            .game-duration {
+                align-self: center;
+                grid-column: 1 / span 2;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-evenly;
+                .quarter {
+                    color: var(--color-game-data-text-neutral);
+                    margin-right: auto;
+                    flex: 1;
+                }
+                .clock {
+                    color: var(--color-game-data-text);
+                    flex: 2;
+                    margin-right: auto;
+                }
             }
             .play-clock {
+                align-self: center;
                 grid-column: 3;
-                color: #e0d088;
+                color: var(--color-game-data-highlight);
+                background-color: var(--color-game-data-background-highlight);
+                padding: 0 4px;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                transition: width 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
+                box-shadow: 0 0 4px 4px var(--color-game-data-background-highlight);
+
+                &.hidden {
+                    width: 0;
+                    padding: 0;
+                    box-shadow: none;
+                }
             }
 
             .down-distance {
+                align-self: center;
                 grid-column: 4 / span 2;
                 display: flex;
                 flex-direction: row;
                 justify-content: center;
-                color: #9ca7a5;
+                gap: 6px;
+
+                span {
+                    color: var(--color-game-data-text);
+                }
+                
+                .filler {
+                    margin-bottom: 1px;
+                    align-self: flex-end;
+                    color: var(--color-game-data-text-neutral);
+                    font-size: 80%;
+                }
             }
         }
     </style>
 </head>
 <body>
     <div id="scoreboard">
-        <div class="container meta-data-container"></div>
+        <div class="container meta-data-container">
+            <div class="data">PHS Homecoming game</div>
+            <div class="carousel">
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>76</div>
+                    <div class="name">Cameron Bickel</div>
+                </div>
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>9</div>
+                    <div class="name">Norbert Zych</div>
+                </div>
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>20</div>
+                    <div class="name">isaac Ruiz</div>
+                </div>
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>99</div>
+                    <div class="name">Remy Jeremy</div>
+                </div>
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>34</div>
+                    <div class="name">Noah Berkley</div>
+                </div>
+            </div>
+            <div class="carousel">
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>76</div>
+                    <div class="name">Cameron Bickel</div>
+                </div>
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>9</div>
+                    <div class="name">Norbert Zych</div>
+                </div>
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>20</div>
+                    <div class="name">isaac Ruiz</div>
+                </div>
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>99</div>
+                    <div class="name">Remy Jeremy</div>
+                </div>
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>34</div>
+                    <div class="name">Noah Berkley</div>
+                </div>
+            </div>
+        </div>
         <div class="container teams-container">
+            <div class="flag-container emitted blame-left-width-name">
+                <div class="flag">Flag</div>
+                <div class="blame">
+                    <div class="player-badge">
+                        <div class="number"><span class="hashtag">#</span>34</div>
+                        <div class="name">Noah Berkley</div>
+                    </div>
+                </div>
+            </div>
             <div class="team left">
                 <div class="timeouts">
                     <div class="timeout used"></div> <!--debugging 'used'-->
@@ -217,13 +571,16 @@
             
         </div>
         <div class="container game-data-container">
-            <div class="quarter">1st</div>
-            <div class="clock">00:00</div>
-            <div class="play-clock">:00</div>
+            <img class="badge" src="assets/phs_ptv_64.png">
+            <div class="game-duration">
+                <div class="quarter">1st</div>
+                <div class="clock">00:00</div>
+            </div>
+            <div class="play-clock"><span>:00</span></div>
             <div class="down-distance">
-                <div class="down">1</div>
-                &
-                <div class="distance">10</div>
+                <div class="down"><span>1st</span></div>
+                <span class="filler">&</span>
+                <div class="distance"><span>10</span></div>
             </div>
         </div>
     </div>
