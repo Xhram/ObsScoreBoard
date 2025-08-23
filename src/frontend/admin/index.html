@@ -1,14 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Admin Dashboard</title>
-        <link rel="stylesheet" href="styles.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="./style/main.css" />
     </head>
     <body>
-        <h1>Welcome to the Admin Dashboard</h1>
-        <div id="auth">
-            <input id="password" placeholder="Enter password">
+        <h1>Scoreboard Admin</h1>
+        <section id="auth">
+            <input id="password" placeholder="Admin password" type="password" />
             <button id="login">Login</button>
-        </div>
+            <span id="status"></span>
+        </section>
+
+    <section id="controls">
+            <div>
+                <h3>Teams</h3>
+                <div>
+                    <label>Home Name <input id="homeName" /></label>
+                    <label>Home Logo <input id="homeLogo" /></label>
+                    <label>Home Score <input id="homeScore" type="number" /></label>
+                    <label>Home TOs <input id="homeTO" type="number" min="0" max="3" /></label>
+                    <label><input id="homePoss" type="checkbox" /> Home Possession</label>
+                </div>
+                <div>
+                    <label>Away Name <input id="awayName" /></label>
+                    <label>Away Logo <input id="awayLogo" /></label>
+                    <label>Away Score <input id="awayScore" type="number" /></label>
+                    <label>Away TOs <input id="awayTO" type="number" min="0" max="3" /></label>
+                    <label><input id="awayPoss" type="checkbox" /> Away Possession</label>
+                </div>
+            </div>
+            <div>
+                <h3>Game</h3>
+                <label>Period <input id="period" type="number" min="1" /></label>
+                <label>Clock (MM:SS) <input id="clock" placeholder="12:00" /></label>
+                <label>Play Clock <input id="playClock" type="number" min="0" max="99" /></label>
+                <label>Down <input id="down" type="number" min="1" max="4" /></label>
+                <label>Distance <input id="distance" type="number" min="1" max="99" /></label>
+            </div>
+            <div class="button-row">
+                <button id="send">Send Update</button>
+                <button id="reset">Reset</button>
+            </div>
+        </section>
+
+        <script type="module" src="./scripts/main.js"></script>
     </body>
 </html>
