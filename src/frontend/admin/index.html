@@ -1,14 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Admin Dashboard</title>
-        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="./style/main.css" />
     </head>
     <body>
-        <h1>Welcome to the Admin Dashboard</h1>
-        <div id="auth">
-            <input id="password" placeholder="Enter password">
+        <div id="auth" style="display: none">
+            <h1>Admin Login</h1>
+            <input id="password" placeholder="Enter password" />
             <button id="login">Login</button>
+        </div>
+        <div id="controls">
+            <h1>Scoreboard Controls</h1>
+            <iframe src="../scoreboard/" width="100%" height="100%"></iframe>
+            <div class="setting-group">
+                <div class="tab-bar">
+                    <span class="name">Quick Controls</span>
+                    <!-- <button class="expand-button">Expand</button> -->
+                </div>
+                <div class="control-panel">
+                    <div class="element-card">
+                        <div class="title">
+                            <span class="name">Element Name</span>
+                        </div>
+                        <div class="content">
+                        </div>
+                    </div>
+                    <div class="element-card" id="team-1-score">
+                        <div class="title">
+                            <span class="name">Team 1 - Score</span>
+                        </div>
+                        <div class="content">
+                            <input class="score" value="21" placeholder="Type Score"/>
+                            <div class="button-set">
+                                <button class="incerment-button">+1</button>
+                                <button class="incerment-button">+2</button>
+                                <button class="incerment-button">+3</button>
+                                <button class="incerment-button">+6</button>
+
+                            </div>
+                            <div class="button-set">
+                                <button class="incerment-button">-1</button>
+                                <button class="incerment-button">-2</button>
+                                <button class="incerment-button">-3</button>
+                                <button class="incerment-button">-6</button>
+                            </div>
+
+                            <button class="reset-button">Reset</button>
+
+                        </div>
+                    </div>
+                    <div class="element-card">
+                        <div class="title">
+                            <span class="name">Game Timer</span>
+                        </div>
+                        <div class="content">
+                            <div class="timer-display">00:00</div>
+                            <div class="button-set">
+                                <button class="incerment-time-button">+1m</button>
+                                <button class="incerment-time-button">+30s</button>
+                                <button class="incerment-time-button">+10s</button>
+                                <button class="incerment-time-button">+1s</button>
+                            </div>
+                            <div class="button-set">
+                                <button class="incerment-time-button">-1m</button>
+                                <button class="incerment-time-button">-30s</button>
+                                <button class="incerment-time-button">-10s</button>
+                                <button class="incerment-time-button">-1s</button>
+                            </div>
+                            <button class="start-stop-button paused" onclick="this.classList.toggle('running');this.classList.toggle('paused');">Start</button>
+                            <button class="reset-button">Reset to <span class="default-game-time">15m</span></button>
+                        </div>
+
+                    </div>
+                    <div class="element-card">
+                        <div class="title">
+                            <span class="name">Shot Clock</span>
+                        </div>
+                        <div class="content">
+                            <div class="timer-display">00</div>
+                            <button class="start-stop-button paused" onclick="this.classList.toggle('running');this.classList.toggle('paused');">(on) Waiting...</button>
+                            <button class="reset-button">Reset to <span class="default-shotclock-time">45s</span></button>
+                            <button class="reset-button">Reset to <span class="default-shotclock-additional-time">25s</span></button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+                        <div class="setting-group">
+                <div class="tab-bar">
+                    <span class="name">Style Settings</span>
+                    <!-- <button class="expand-button">Expand</button> -->
+                </div>
+                <div class="control-panel">
+                    <div class="element-card">
+                        <div class="title">
+                            <span class="name">Element Name</span>
+                        </div>
+                        <div class="content">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>
