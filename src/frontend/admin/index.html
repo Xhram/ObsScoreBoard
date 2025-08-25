@@ -57,7 +57,7 @@
                             <span class="name">Game Timer</span>
                         </div>
                         <div class="content">
-                            <div class="timer-display">00:00</div>
+                            <input class="timer-display" value="15:00" placeholder="Game Time"/>
                             <div class="button-set">
                                 <button class="incerment-time-button">+1m</button>
                                 <button class="incerment-time-button">+30s</button>
@@ -80,7 +80,7 @@
                             <span class="name">Shot Clock</span>
                         </div>
                         <div class="content">
-                            <div class="timer-display">00</div>
+                            <input class="timer-display shotclock" value="45.33" placeholder="Shot Clock"/>
                             <button class="start-stop-button paused" onclick="this.classList.toggle('running');this.classList.toggle('paused');">(on) Waiting...</button>
                             <button class="reset-button">Reset to <span class="default-shotclock-time">45s</span></button>
                             <button class="reset-button">Reset to <span class="default-shotclock-additional-time">25s</span></button>
