@@ -25,13 +25,28 @@
 //
 //
 
-
+//fact check #22 in json
+// Last, First
 let team_home_roster = {
-    '-1': 'Player 1'
+    '-1': 'Player Home Team'
 }
 let team_away_roster = {
-    '-1': 'Player 2'
+    '-1': 'Player Other Team'
 }
+
+async function load_rosters() {
+    try {
+        const response = await fetch('assets/roster.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        team_home_roster = data;
+    } catch (error) {
+        console.error('Error loading roster:', error);
+    }
+}
+load_rosters();
 
 const scoreboard_element = document.getElementById('scoreboard');
 const meta_data_container_element = scoreboard_element.querySelector('.meta-data-container');
@@ -183,11 +198,11 @@ function set_team_possession(team = 'home') {
 
 function get_athlete_name_from_roster(team = 'home', player_key = '') {
     if(team === 'home') {
-        return team_home_roster[player_key] || 'Unknown';
+        return team_home_roster[player_key] || ['Doe', 'John'];
     } else if(team === 'away') {
-        return team_away_roster[player_key] || 'Unknown';
+        return team_away_roster[player_key] || ['Doe', 'John'];
     }
-    return 'Unknown';
+    return ['Doe', 'John'];
 }
 
 function clear_flag(animation = true) {
@@ -211,12 +226,20 @@ function emit_flag(status = 'flag', team = "none", player_key = '') {
     
     if(team !== "none") {
         let athlete = get_athlete_name_from_roster(team, player_key);
-        if(athlete !== "Unknown") {
+        let athlete_full_name = `${athlete[1]} ${athlete[0]}`;
+        if(athlete_full_name !== "John Doe") {
             // sets blame to athlete name
             flag_container_element.classList.add(`blame-${team === 'home' ? 'left' : 'right'}-with-name`);
+            flag_blame_element.innerHTML = `
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>${player_key}</div>
+                    <div class="name">${athlete_full_name}</div>
+                </div>
+            `;
         } else {
             // sets blame just to team side
             flag_container_element.classList.add(`blame-${team === 'home' ? 'left' : 'right'}`);
+            flag_blame_element.innerHTML = '';
         }
     }
 }
@@ -406,4 +429,50 @@ function start_carousel(duration_per_item = 3, start_up_delay = 1) {
 
 function stop_carousel() {
     meta_data_container_element.classList.remove('visible');
+}
+
+function set_carasuel_data_to_home_team_roster() {
+    for(let carousel of carousel_elements) {
+        carousel.innerHTML = '';
+        for (const key in team_home_roster) {
+            let athlete = get_athlete_name_from_roster('home', key);
+            let athlete_full_name = `${athlete[1]} ${athlete[0]}`;
+            const player_badge = document.createElement('div');
+            player_badge.className = 'player-badge';
+            player_badge.innerHTML = `
+                <div class="number"><span class="hashtag">#</span>${key}</div>
+                <div class="name">${athlete_full_name}</div>
+            `;
+            carousel.appendChild(player_badge);
+        }
+    }
+}
+
+function append_to_carasuel_data(text) {
+    for(let carousel of carousel_elements) {
+        const data_div = document.createElement('div');
+        data_div.className = 'data';
+        data_div.textContent = text;
+        carousel.appendChild(data_div);
+    }
+    const elements_in_carousel = carousel_elements[0].children.length;
+    scoreboard_element.style.setProperty('--time-carousel-duration', `${elements_in_carousel * duration_per_item}s`);
+    scoreboard_element.style.setProperty('--time-carousel-popup-delay', `${start_up_delay}s`);
+}
+
+function clear_carasuel_data() {
+    for(let carousel of carousel_elements) {
+        carousel.innerHTML = '';
+    }
+}
+
+function pop_to_carasuel_data() {
+    for(let carousel of carousel_elements) {
+        if(carousel.children.length > 0) {
+            carousel.removeChild(carousel.children[0]);
+        }
+    }
+    const elements_in_carousel = carousel_elements[0].children.length;
+    scoreboard_element.style.setProperty('--time-carousel-duration', `${elements_in_carousel * duration_per_item}s`);
+    scoreboard_element.style.setProperty('--time-carousel-popup-delay', `${start_up_delay}s`);
 }
