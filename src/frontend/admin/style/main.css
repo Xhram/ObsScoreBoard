@@ -52,8 +52,9 @@ iframe {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
+    gap: 8px;
+    align-items: stretch;
+    justify-content: flex-start;
     background-color: rgb(19, 19, 24);
     border: 1px solid rgb(19, 19, 24);
     border-radius: 0px;
@@ -207,5 +208,48 @@ iframe {
             border: 1px solid rgb(88, 101, 242);   
         }
 
+    }
+}
+
+/* Improved responsive layout */
+@media (max-width: 1200px) {
+    .control-panel {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    iframe {
+        height: 150px;
+        width: calc(100% - 20px);
+    }
+    
+    .setting-group {
+        margin: 5px;
+        width: calc(100% - 10px);
+    }
+    
+    .control-panel {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+        margin: 10px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .control {
+        min-height: auto;
+    }
+    
+    .control .label h2 {
+        font-size: 18px;
+    }
+    
+    .control-group h3 {
+        font-size: 16px;
     }
 }

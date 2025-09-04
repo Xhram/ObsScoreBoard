@@ -448,7 +448,7 @@ function set_carasuel_data_to_home_team_roster() {
     }
 }
 
-function append_to_carasuel_data(text) {
+function append_to_carasuel_data(text, duration_per_item = 3, start_up_delay = 1) {
     for(let carousel of carousel_elements) {
         const data_div = document.createElement('div');
         data_div.className = 'data';
@@ -466,7 +466,7 @@ function clear_carasuel_data() {
     }
 }
 
-function pop_to_carasuel_data() {
+function pop_to_carasuel_data(duration_per_item = 3, start_up_delay = 1) {
     for(let carousel of carousel_elements) {
         if(carousel.children.length > 0) {
             carousel.removeChild(carousel.children[0]);

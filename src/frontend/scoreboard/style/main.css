@@ -31,7 +31,7 @@ body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-op
 * { box-sizing: border-box; }
 #scoreboard {
     position: absolute;
-    bottom: 40px;
+    bottom: 0px;
     left: 50%;
     transform: translateX(-50%);
     /* width: 150px; debugging */
@@ -99,6 +99,7 @@ body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-op
         align-items: center;
         width: fit-content;
         animation-play-state: paused;
+        /* min-width: 200%; */
         
     }
     .data, .player-badge {
@@ -393,10 +394,12 @@ body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-op
         background-color: var(--team-color);
         padding: 6px 0;
         z-index: 10;
+        position: relative;
 
         &.left {
             --team-color: var(--team-left-color);
             --gradient-position: left;
+            --direction: to right;
             flex-direction: row;
             .border {
                 flex-direction: row;
@@ -408,10 +411,14 @@ body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-op
             .possession-indicator {
                 margin-left: auto
             }
+            .timeouts {
+                margin: 2px 0 2px 3px;
+            }
         }
         &.right {
             --team-color: var(--team-right-color);
             --gradient-position: right;
+            --direction: to left;
             flex-direction: row-reverse;
             .border {
                 flex-direction: row-reverse;
@@ -423,6 +430,22 @@ body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-op
             .possession-indicator {
                 margin-right: auto
             }
+            .timeouts {
+                margin: 2px 3px 2px 0;
+            }
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: saturate(65%) brightness(65%) hue-rotate(-8deg);
+            background: linear-gradient(var(--direction, to right), var(--team-color), transparent 70%);
+            opacity: 1;
         }
 
         .timeouts {
@@ -431,7 +454,7 @@ body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-op
             display: flex;
             flex-direction: column-reverse;
             justify-content: center;
-            margin: 0 3px;
+            margin: 2px 4px;
 
             .timeout {
                 position: relative;
@@ -465,13 +488,18 @@ body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-op
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: calc(100% - 8px);
+            height: calc(100% - 8px);
             z-index: 1;
             filter: saturate(65%) brightness(65%) hue-rotate(-8deg);
-            outline: 6px solid var(--team-color); 
-            outline-offset: -4px;
-            
+            border: 4px solid; 
+            border-image: linear-gradient(var(--direction, to right), var(--team-color), transparent 70%) 1;
+            border-width: 4px;
+            /* border-radius: 8px; */
+            /* outline-offset: -4px; */
+            /* border-radius: 12px; */
+            /* background: linear-gradient(var(--direction, to right), var(--team-color), transparent 70%);
+            opacity: 0.6; */
         }
 
         .border {
