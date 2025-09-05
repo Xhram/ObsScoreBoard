@@ -40,7 +40,7 @@ function imageToDataURL(imagePath) {
     return `data:${mimeType};base64,${base64}`;
 }
 function load_scoreboard_state() {
-    return undefined
+    // return undefined
     try {
         const data = fs.readFileSync(process.env.SCOREBOARD_STATE_FILE || "./scoreboard_state.json", "utf-8");
         return JSON.parse(data);
