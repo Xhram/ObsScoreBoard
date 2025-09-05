@@ -327,7 +327,7 @@ wss.on("connection", (ws) => {
                 });
             }
             if (action.type == "set_distance") {
-                scoreboard_state.distance = action.payload.distance;
+                scoreboard_state.distance = Math.max(action.payload.distance, -1);
                 broadcast({
                     type: "sync:down",
                     payload: {

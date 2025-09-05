@@ -137,7 +137,7 @@ function sync_color_state(color_state) {
 
 function sync_down_state(down_state) {
     set_game_down(down_state.down);
-    set_game_to_go(down_state.distance);
+    set_game_to_go(down_state.distance == -1 ? "Goal" : down_state.distance, down_state.distance == -1 ? "" : "YDS");
 }
 
 function sync_quarter_state(quarter_state) {
