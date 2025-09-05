@@ -349,7 +349,7 @@ wss.on("connection", (ws) => {
             }
             if (action.type == "add_distance") {
                 scoreboard_state.distance += action.payload.amount;
-                //scoreboard_state.distance = clamp(scoreboard_state.distance, 0, 100); // I low key don't want to clamp this to got to ask norbs
+                scoreboard_state.distance = Math.max(scoreboard_state.distance, -1);
                 broadcast({
                     type: "sync:down",
                     payload: {
