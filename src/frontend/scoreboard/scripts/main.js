@@ -338,7 +338,7 @@ function add_seconds_to_game_clock(seconds = 0) {
 function update_game_clock_display() {
     let minutes = Math.floor(game_clock_seconds / 60);
     let seconds = game_clock_seconds % 60;
-    game_clock_element.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    game_clock_element.textContent = `${String(minutes).padStart(2, '0')}:${String(Math.floor(seconds)).padStart(2, '0')}`;
 }
 
 let play_clock_seconds = 40; // default to 40 seconds
@@ -380,7 +380,7 @@ function add_seconds_to_play_clock(seconds = 0) {
 
 function update_play_clock_display() {
     let seconds = play_clock_seconds % 60;
-    game_play_clock_element.textContent = `:${String(seconds).padStart(2, '0')}`;
+    game_play_clock_element.textContent = `:${String(Math.floor(seconds)).padStart(2, '0')}`;
 }
 
 const down_index = {
