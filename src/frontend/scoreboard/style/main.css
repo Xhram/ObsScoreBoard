@@ -30,6 +30,10 @@
 body, html { margin:0; padding:0; font-family: "Montserrat", sans-serif; font-optical-sizing: auto; font-style: normal; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
 * { box-sizing: border-box; }
 
+.hide {
+    display: none !important;
+}
+
 #connection-status {
     position: absolute;
     top: 0;
