@@ -39,13 +39,29 @@ function imageToDataURL(imagePath) {
     const base64 = imageBuffer.toString("base64");
     return `data:${mimeType};base64,${base64}`;
 }
+function load_scoreboard_state() {
+    try {
+        const data = fs.readFileSync("./scoreboard_state.json", "utf-8");
+        return JSON.parse(data);
+    } catch (error) {
+        console.error("Error loading scoreboard state:", error);
+        return undefined;
+    }
+}
+function save_scoreboard_state(state) {
+    try {
+        fs.writeFileSync("./scoreboard_state.json", JSON.stringify(state, null, 4));
+    } catch (error) {
+        console.error("Error saving scoreboard state:", error);
+    }
+}
 
-let scoreboard_state = {
+let scoreboard_state = load_scoreboard_state() || {
     team_home: {
         name: "Palatine",
         initals: "PHS",
         image: imageToDataURL("./src/assets/phs_ptv_64.png"),
-        score: 67,
+        score: 0,
         color: "#35ffa1",
         timeouts_remaining: 3,
         roster: {
@@ -56,7 +72,7 @@ let scoreboard_state = {
         name: "Away Team",
         initals: "AT",
         image: imageToDataURL("./src/assets/phs_ptv_64.png"),
-        score: 41,
+        score: 0,
         color: "#ff6c32",
         timeouts_remaining: 3,
         roster: {
@@ -64,8 +80,8 @@ let scoreboard_state = {
         },
     },
     possession: "none", // can be home or away or none
-    quarter: 4,
-    distance: 67,
+    quarter: 1,
+    distance: 0,
     down: 1,
     time: {
         //time in ms
@@ -81,7 +97,7 @@ let scoreboard_state = {
     //     // flag_color
     // }
 };
-
+save_scoreboard_state(scoreboard_state);
 function update_clock(delta) {
     if (scoreboard_state.time.is_game_clock_running) {
         scoreboard_state.time.game_clock_current_time -= delta;
@@ -429,6 +445,7 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
+            save_scoreboard_state(scoreboard_state);
         } catch (error) {
             console.log("Error On Message:");
             console.log(error);
