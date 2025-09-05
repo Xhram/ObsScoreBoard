@@ -101,8 +101,8 @@ function sync_state(state){
     set_timeouts("home", state.team_home.timeouts_remaining)
     set_timeouts("away", state.team_away.timeouts_remaining)
     set_game_quarter(state.quarter)
-    set_game_down(state.down)
-    set_game_to_go(state.distance)// idk what to do with the sufix thing ask norbs
+
+    sync_down_state({ down: state.down, distance: state.distance });
     sync_time_state(state.time)
 }
 function sync_time_state(time_state){
@@ -137,7 +137,7 @@ function sync_color_state(color_state) {
 
 function sync_down_state(down_state) {
     set_game_down(down_state.down);
-    set_game_to_go(down_state.distance == -1 ? "Goal" : down_state.distance, down_state.distance == -1 ? "" : "YDS");
+    set_game_to_go(down_state.distance == -1 ? "Goal" : down_state.distance, down_state.distance == -1 ? "" : down_state.distance == 0 ? "INCHES" : "YDS");
 }
 
 function sync_quarter_state(quarter_state) {
