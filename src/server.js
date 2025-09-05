@@ -3,7 +3,6 @@ import { createServer } from "http";
 import { WebSocketServer } from "ws";
 import dotenv from "dotenv";
 import fs from "fs";
-import { error } from "console";
 
 dotenv.config();
 const app = express();
@@ -12,6 +11,24 @@ const wss = new WebSocketServer({ server });
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+
+// Allow CORS for all domains and handle preflight
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader(
+        "Access-Control-Allow-Methods",
+        "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+    );
+    res.setHeader(
+        "Access-Control-Allow-Headers",
+        "Content-Type, Authorization, X-Requested-With"
+    );
+    res.setHeader("Access-Control-Allow-Credentials", "false");
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(204);
+    }
+    next();
+});
 
 app.get("/", (req, res) => {
     res.json({ message: "Server is running" });
@@ -201,7 +218,7 @@ wss.on("connection", (ws) => {
             }
 
             if (!ws.auth.is_authenticated || ws.auth.role !== "admin") {
-                throw new error("Invalid Auth");
+                throw new Error("Invalid Auth");
                 return;
             }
 
