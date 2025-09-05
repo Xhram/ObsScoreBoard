@@ -28,10 +28,11 @@
 //fact check #22 in json
 // Last, First
 let team_home_roster = {
-    '-1': 'Player Home Team'
+    // '-1': 'Player Home Team'
+    '-1': ['zych', 'norbert']
 }
 let team_away_roster = {
-    '-1': 'Player Other Team'
+    // '-1': 'Player Other Team'
 }
 
 async function load_rosters() {
@@ -222,6 +223,8 @@ function clear_flag(animation = true) {
 function emit_flag(status = 'flag', team = "none", player_key = '') {
     clear_flag(false);
     flag_container_element.classList.add('emitted');
+    if(status === 'none') status = 'flag';
+
     flag_status_element.textContent = status;
     
     if(team !== "none") {

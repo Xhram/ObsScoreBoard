@@ -40,8 +40,9 @@ function imageToDataURL(imagePath) {
     return `data:${mimeType};base64,${base64}`;
 }
 function load_scoreboard_state() {
+    return undefined
     try {
-        const data = fs.readFileSync("./scoreboard_state.json", "utf-8");
+        const data = fs.readFileSync(process.env.SCOREBOARD_STATE_FILE || "./scoreboard_state.json", "utf-8");
         return JSON.parse(data);
     } catch (error) {
         console.error("Error loading scoreboard state:", error);
@@ -50,7 +51,7 @@ function load_scoreboard_state() {
 }
 function save_scoreboard_state(state) {
     try {
-        fs.writeFileSync("./scoreboard_state.json", JSON.stringify(state, null, 4));
+        fs.writeFileSync(process.env.SCOREBOARD_STATE_FILE || "./scoreboard_state.json", JSON.stringify(state, null, 4));
     } catch (error) {
         console.error("Error saving scoreboard state:", error);
     }
@@ -65,7 +66,7 @@ let scoreboard_state = load_scoreboard_state() || {
         color: "#35ffa1",
         timeouts_remaining: 3,
         roster: {
-            "-1": "Home Player Name",
+            "-1": "Home Player Name".split(' '),
         },
     },
     team_away: {
@@ -76,7 +77,7 @@ let scoreboard_state = load_scoreboard_state() || {
         color: "#ff6c32",
         timeouts_remaining: 3,
         roster: {
-            "-1": "Home Player Name",
+            "-1": "Away Player Name".split(' '),
         },
     },
     possession: "none", // can be home or away or none
@@ -90,12 +91,12 @@ let scoreboard_state = load_scoreboard_state() || {
         is_game_clock_running: false,
         is_play_clock_running: false,
     },
-    // flag: {
-    //     is_flag_emitted: false,
-    //     team: "none", // team is either 'home' or 'away' or 'none'
-    //     status: "none", // status is either 'flag' or 'review'
-    //     // flag_color
-    // }
+    flag: {
+        is_flag_emitted: false,
+        team: "none", // team is either 'home' or 'away' or 'none'
+        status: "none", // status is either 'flag' or 'review'
+        player_blame: -2, // player number who threw the flag
+    }
 };
 save_scoreboard_state(scoreboard_state);
 function update_clock(delta) {
@@ -442,6 +443,29 @@ wss.on("connection", (ws) => {
                             scoreboard_state.team_home.timeouts_remaining,
                         away_timeouts:
                             scoreboard_state.team_away.timeouts_remaining,
+                    },
+                });
+            }
+            if (action.type == "set_flag") {
+                if (action.payload.is_flag_emitted != undefined) {
+                    scoreboard_state.flag.is_flag_emitted = action.payload.is_flag_emitted;
+                }
+                if (action.payload.team != undefined) {
+                    scoreboard_state.flag.team = action.payload.team; // "home", "away", or "none"
+                }
+                if (action.payload.status != undefined) {
+                    scoreboard_state.flag.status = action.payload.status; // "flag", "review", or "none"
+                }
+                if (action.payload.player_blame != undefined) {
+                    scoreboard_state.flag.player_blame = action.payload.player_blame;
+                }
+                broadcast({
+                    type: "sync:flag",
+                    payload: {
+                        is_flag_emitted: scoreboard_state.flag.is_flag_emitted,
+                        team: scoreboard_state.flag.team,
+                        status: scoreboard_state.flag.status,
+                        player_blame: scoreboard_state.flag.player_blame,
                     },
                 });
             }

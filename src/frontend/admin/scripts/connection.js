@@ -59,6 +59,9 @@ function connect() {
                 if(action.type == "sync:timeouts"){
                     sync_timeouts_state(action.payload)
                 }
+                if(action.type == "sync:flag"){
+                    sync_flag_state(action.payload)
+                }
             } else if(action.type == "auth:success"){
                 is_authenticated = true;
                 has_successfully_authenticated = true;
@@ -212,6 +215,11 @@ function sync_possession_state(possession_state) {
 function sync_timeouts_state(timeouts_state) {
     elm.home_timeouts.value = timeouts_state.home_timeouts;
     elm.away_timeouts.value = timeouts_state.away_timeouts;
+}
+
+function sync_flag_state(flag_state) {
+    // TODO: Implement flag state synchronization
+    // flag_state contains: is_flag_emitted, team, status, player_blame
 }
 
 function add_team_score_event_reducer(payload){
@@ -606,3 +614,9 @@ elm.away_timeouts.addEventListener("change", (event) => {
         set_team_timeouts_action_issure("away", new_timeouts);
     }
 });
+
+// Flags
+
+function set_flag_state_action_issure(flag_state) {
+    send_action("set_flag", flag_state);
+}

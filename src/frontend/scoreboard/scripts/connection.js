@@ -54,6 +54,9 @@ function connect() {
                 if(action.type == "sync:timeouts"){
                     sync_timeouts_state(action.payload)
                 }
+                if(action.type == "sync:flag"){
+                    sync_flag_state(action.payload)
+                }
 
             } else if(action.type == "auth:success"){
                 is_authenticated = true;
@@ -89,6 +92,8 @@ connect();
 
 
 function sync_state(state){
+    team_home_roster = state.team_home.roster
+    team_away_roster = state.team_away.roster
     set_team_score("home", state.team_home.score)
     set_team_score("away", state.team_away.score)
     set_team_name("home", state.team_home.name)
@@ -104,6 +109,8 @@ function sync_state(state){
 
     sync_down_state({ down: state.down, distance: state.distance });
     sync_time_state(state.time)
+    sync_flag_state(state.flag)
+
 }
 function sync_time_state(time_state){
     play_clock_seconds = time_state.play_clock_current_time / 1000
@@ -151,6 +158,16 @@ function sync_possession_state(possession_state) {
 function sync_timeouts_state(timeouts_state) {
     set_timeouts("home", timeouts_state.home_timeouts);
     set_timeouts("away", timeouts_state.away_timeouts);
+}
+
+function sync_flag_state(flag_state) {
+    // TODO: Implement flag state synchronization
+    // flag_state contains: is_flag_emitted, team, status, player_blame
+    if(flag_state.is_flag_emitted){
+        emit_flag(flag_state.status, flag_state.team, flag_state.player_blame)
+    } else {
+        clear_flag();
+    }
 }
 
 function add_team_score_event_reducer(payload){
