@@ -136,7 +136,37 @@ wss.on('connection', (ws) => {
             
             let action = JSON.parse(data)
             
-            if(ws.auth.is_authenticated){
+            if(!ws.auth.is_authenticated){
+                AutenticateUser();
+                return
+            }
+
+            switch (action.type) {
+                case "set_team_name":
+                    SetTeamName(action.payload);
+                    break;
+
+                default:
+                    break;
+            }
+
+                    broadcast({
+                        type: "sync:name",
+                        payload: {home_name: scoreboard_state.team_home.name, away_name: scoreboard_state.team_away.name}
+                    })
+                    break;
+
+                default:
+                    break;
+            }
+
+                    
+                    break;
+            
+                default:
+                    break;
+            }
+
                 if(action.type == "set_team_score"){
                     if(action.payload.team === "home"){
                         scoreboard_state.team_home.score = clamp(action.payload.score, 0, 9999)
@@ -290,39 +320,39 @@ wss.on('connection', (ws) => {
                     })
                 }
 
-            } else {
-                if(action.type == "auth:admin"){
+            // } else {
+            //     if(action.type == "auth:admin"){
 
-                    if(action.payload.password === process.env.ADMIN_PASSWORD){
-                        ws.auth.is_authenticated = true
-                        ws.auth.role = "admin"
-                        ws.sendData({
-                            type: "auth:success",
-                            payload:{role:"admin"}
-                        })
-                        connections.push(ws)
-                        ws.sendData({
-                            type: "sync",
-                            payload: scoreboard_state
-                        })
-                    } else {
-                        ws.close()
-                    }
-                    clearTimeout(ws.auth.no_auth_auto_close_timer)
-                } else if(action.type == "auth:scoreboard"){
-                    ws.auth.is_authenticated = true
-                    ws.auth.role = "scoreboard"
-                    ws.sendData({
-                        type: "auth:success",
-                        payload:{role:"scoreboard"}
-                    })
-                    clearTimeout(ws.auth.no_auth_auto_close_timer)
-                    connections.push(ws)
-                    ws.sendData({
-                        type: "sync",
-                        payload: scoreboard_state
-                    })
-                }
+            //         if(action.payload.password === process.env.ADMIN_PASSWORD){
+            //             ws.auth.is_authenticated = true
+            //             ws.auth.role = "admin"
+            //             ws.sendData({
+            //                 type: "auth:success",
+            //                 payload:{role:"admin"}
+            //             })
+            //             connections.push(ws)
+            //             ws.sendData({
+            //                 type: "sync",
+            //                 payload: scoreboard_state
+            //             })
+            //         } else {
+            //             ws.close()
+            //         }
+            //         clearTimeout(ws.auth.no_auth_auto_close_timer)
+            //     } else if(action.type == "auth:scoreboard"){
+            //         ws.auth.is_authenticated = true
+            //         ws.auth.role = "scoreboard"
+            //         ws.sendData({
+            //             type: "auth:success",
+            //             payload:{role:"scoreboard"}
+            //         })
+            //         clearTimeout(ws.auth.no_auth_auto_close_timer)
+            //         connections.push(ws)
+            //         ws.sendData({
+            //             type: "sync",
+            //             payload: scoreboard_state
+            //         })
+            //     }
             }
         } catch (error) {
             console.log("Error On Message:")
