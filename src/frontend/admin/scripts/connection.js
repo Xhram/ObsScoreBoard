@@ -323,7 +323,7 @@ function stop_play_clock(){
 }
 
 // Score event Listeners
-selall(".home .score .increment").forEach((elm) => {
+selall(".home .team-score .increment").forEach((elm) => {
     elm.addEventListener("click", (event) => {
         let amount = parseInt(event.srcElement.innerText.replace("+", ""));
         let animation_type = "none";
@@ -337,14 +337,14 @@ selall(".home .score .increment").forEach((elm) => {
         });
     });
 });
-selall(".home .score .decrement").forEach((elm) => {
+selall(".home .team-score .decrement").forEach((elm) => {
     elm.addEventListener("click", (event) => {
         let amount = -parseInt(event.srcElement.innerText.replace("-", ""));
         send_action("add_team_score", { team: "home", amount, animation: false, animation_type: "none" });
     });
 });
 
-selall(".away .score .increment").forEach((elm) => {
+selall(".away .team-score .increment").forEach((elm) => {
     elm.addEventListener("click", (event) => {
         let amount = parseInt(event.srcElement.innerText.replace("+", ""));
         let animation_type = "none";
@@ -358,7 +358,7 @@ selall(".away .score .increment").forEach((elm) => {
         });
     });
 });
-selall(".away .score .decrement").forEach((elm) => {
+selall(".away .team-score .decrement").forEach((elm) => {
     elm.addEventListener("click", (event) => {
         let amount = -parseInt(event.srcElement.innerText.replace("-", ""));
         send_action("add_team_score", { team: "away", amount, animation: false, animation_type: "none"  });
