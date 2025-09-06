@@ -157,28 +157,39 @@ function sync_state(state){
     console.log("Sync State Called")
     console.log(state)  
     // Team Scores
-    elm.home_team_score.value = state.team_home.score
-    elm.away_team_score.value = state.team_away.score
+    sync_score_state({
+        home_score: state.team_home.score,
+        away_score: state.team_away.score
+    });
     
     // Timer values
-    sync_time_state(state.time)
+    sync_time_state(state.time);
     
     // Down & Distance
-    elm.down.value = state.down
-    elm.distance.value = state.distance
-    elm.quarter.value = state.quarter
+    sync_down_state({
+        down: state.down,
+        distance: state.distance
+    });
+    
+    sync_quarter_state({
+        quarter: state.quarter
+    });
     
     // Home Team Management
-    elm.home_team_name.value = state.team_home.name
-    elm.home_team_color_hex.value = state.team_home.color
-    elm.home_team_color.value = state.team_home.color
-    elm.home_timeouts.value = state.team_home.timeouts_remaining
+    sync_name_state({
+        home_name: state.team_home.name,
+        away_name: state.team_away.name
+    });
     
-    // Away Team Management
-    elm.away_team_name.value = state.team_away.name
-    elm.away_team_color_hex.value = state.team_away.color
-    elm.away_team_color.value = state.team_away.color
-    elm.away_timeouts.value = state.team_away.timeouts_remaining
+    sync_color_state({
+        home_color: state.team_home.color,
+        away_color: state.team_away.color
+    });
+    
+    sync_timeouts_state({
+        home_timeouts: state.team_home.timeouts_remaining,
+        away_timeouts: state.team_away.timeouts_remaining
+    });
 }
 function sync_name_state(name_state) {
     elm.home_team_name.value = name_state.home_name;
@@ -399,63 +410,63 @@ elm.shot_clock_toggle_button.addEventListener("click", (event) => {
     }
 });
 // Timer Input Listeners
-function add_clock_time_action_issure(clock,amount){
+function add_clock_time_action_issuer(clock,amount){
     send_action("add_clock_time",{clock,amount})
 }
-function add_clock_time_to_game_timer_action_issure(amount){
-    add_clock_time_action_issure("game",amount)
+function add_clock_time_to_game_timer_action_issuer(amount){
+    add_clock_time_action_issuer("game",amount)
 }
-function add_clock_time_to_play_clock_action_issure(amount){
-    add_clock_time_action_issure("play",amount)
+function add_clock_time_to_play_clock_action_issuer(amount){
+    add_clock_time_action_issuer("play",amount)
 }
 
-function set_play_clock_to_default_action_issure(){
+function set_play_clock_to_default_action_issuer(){
     send_action("set_clock_time", { clock: "play", time: parseInt(elm.shot_clock_duration_default.value) * 1000 });
 }
-function set_play_clock_to_value_action_issure(time){
+function set_play_clock_to_value_action_issuer(time){
     send_action("set_clock_time", { clock: "play", time: time });
 }
-function set_game_clock_to_default_action_issure(){
+function set_game_clock_to_default_action_issuer(){
     send_action("set_clock_time", { clock: "game", time: parseInt(elm.game_timer_duration_default.value) * 1000 });
 }
 // Down & Distance Event Listeners
-function set_down_action_issure(down){
+function set_down_action_issuer(down){
     send_action("set_down", { down });
 }
-function set_distance_action_issure(distance){
+function set_distance_action_issuer(distance){
     send_action("set_distance", { distance });
 }
-function add_down_action_issure(amount){
+function add_down_action_issuer(amount){
     send_action("add_down", { amount });
 }
-function add_distance_action_issure(amount){
+function add_distance_action_issuer(amount){
     send_action("add_distance", { amount });
 }
 
 // Quarter & Period Event Listeners
-function set_quarter_action_issure(quarter){
+function set_quarter_action_issuer(quarter){
     send_action("set_quarter", { quarter });
 }
-function add_quarter_action_issure(amount){
+function add_quarter_action_issuer(amount){
     send_action("add_quarter", { amount });
 }
 
 // Possession Event Listeners
-function set_possession_action_issure(team){
+function set_possession_action_issuer(team){
     send_action("set_possession", { team });
 }
 
 // Timeouts Event Listeners
-function set_team_timeouts_action_issure(team, timeouts){
+function set_team_timeouts_action_issuer(team, timeouts){
     send_action("set_team_timeouts", { team, timeouts });
 }
-function add_team_timeouts_action_issure(team, amount){
+function add_team_timeouts_action_issuer(team, amount){
     send_action("add_team_timeouts", { team, amount });
 }
 
 
 // Input Box Event Listeners
-function set_team_score_action_issure(team, score){
+function set_team_score_action_issuer(team, score){
     send_action("set_team_score", { team, score });
 }
 
@@ -463,7 +474,7 @@ elm.home_team_score.addEventListener("change", (event) => {
     let value = elm.home_team_score.value
     let new_score = parseInt(value);
     if (!isNaN(new_score) && new_score >= 0) {
-        set_team_score_action_issure("home", new_score);
+        set_team_score_action_issuer("home", new_score);
     }
 
 });
@@ -471,7 +482,7 @@ elm.away_team_score.addEventListener("change", (event) => {
     let value = elm.away_team_score.value
     let new_score = parseInt(value);
     if (!isNaN(new_score) && new_score >= 0) {
-        set_team_score_action_issure("away", new_score);
+        set_team_score_action_issuer("away", new_score);
     }
 
 });
@@ -481,7 +492,7 @@ elm.down.addEventListener("change", (event) => {
     let value = elm.down.value;
     let new_down = parseInt(value);
     if (!isNaN(new_down) && new_down >= 1 && new_down <= 4) {
-        set_down_action_issure(new_down);
+        set_down_action_issuer(new_down);
     }
 });
 
@@ -490,7 +501,7 @@ elm.distance.addEventListener("change", (event) => {
     let value = elm.distance.value;
     let new_distance = parseInt(value);
     if (!isNaN(new_distance)) {
-        set_distance_action_issure(new_distance);
+        set_distance_action_issuer(new_distance);
     }
 });
 
@@ -499,7 +510,7 @@ elm.quarter.addEventListener("change", (event) => {
     let value = elm.quarter.value;
     let new_quarter = parseInt(value);
     if (!isNaN(new_quarter) && new_quarter >= 0 && new_quarter <= 5) {
-        set_quarter_action_issure(new_quarter);
+        set_quarter_action_issuer(new_quarter);
     }
 });
 
@@ -608,7 +619,7 @@ elm.home_timeouts.addEventListener("change", (event) => {
     let value = elm.home_timeouts.value;
     let new_timeouts = parseInt(value);
     if (!isNaN(new_timeouts) && new_timeouts >= 0 && new_timeouts <= 3) {
-        set_team_timeouts_action_issure("home", new_timeouts);
+        set_team_timeouts_action_issuer("home", new_timeouts);
     }
 });
 
@@ -616,12 +627,12 @@ elm.away_timeouts.addEventListener("change", (event) => {
     let value = elm.away_timeouts.value;
     let new_timeouts = parseInt(value);
     if (!isNaN(new_timeouts) && new_timeouts >= 0 && new_timeouts <= 3) {
-        set_team_timeouts_action_issure("away", new_timeouts);
+        set_team_timeouts_action_issuer("away", new_timeouts);
     }
 });
 
 // Flags
 
-function set_flag_state_action_issure(flag_state) {
+function set_flag_state_action_issuer(flag_state) {
     send_action("set_flag", flag_state);
 }

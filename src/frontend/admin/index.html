@@ -78,10 +78,10 @@
                         <div class="content">
                             <div class="control-group" style="height: 100%;">
                                 <div class="score">
-                                    <div class="decrement" onclick="add_clock_time_to_game_timer_action_issure(-5 * 60 * 1000)">-5m</div>
-                                    <div class="decrement" onclick="add_clock_time_to_game_timer_action_issure(-1 * 60 * 1000)">-1m</div>
-                                    <div class="decrement" onclick="add_clock_time_to_game_timer_action_issure(-10 * 1000)">-10s</div>
-                                    <div class="decrement" onclick="add_clock_time_to_game_timer_action_issure(-1000)">-1s</div>
+                                    <div class="decrement" onclick="add_clock_time_to_game_timer_action_issuer(-5 * 60 * 1000)">-5m</div>
+                                    <div class="decrement" onclick="add_clock_time_to_game_timer_action_issuer(-1 * 60 * 1000)">-1m</div>
+                                    <div class="decrement" onclick="add_clock_time_to_game_timer_action_issuer(-10 * 1000)">-10s</div>
+                                    <div class="decrement" onclick="add_clock_time_to_game_timer_action_issuer(-1000)">-1s</div>
                                     <!-- change text dynamically -->
                                     <div class="start-stop">
                                         <input id="game-timer-duration" class="input" value="900" placeholder="900"/>
@@ -90,15 +90,15 @@
                                             <span class="stop">Stop</span>
                                         </div>
                                     </div>
-                                    <div class="increment" onclick="add_clock_time_to_game_timer_action_issure(1000)">+1s</div>
-                                    <div class="increment" onclick="add_clock_time_to_game_timer_action_issure(10000)">+10s</div>
-                                    <div class="increment" onclick="add_clock_time_to_game_timer_action_issure(1 * 60 * 1000)">+1m</div>
-                                    <div class="increment" onclick="add_clock_time_to_game_timer_action_issure(5 * 60 * 1000)">+5m</div>
+                                    <div class="increment" onclick="add_clock_time_to_game_timer_action_issuer(1000)">+1s</div>
+                                    <div class="increment" onclick="add_clock_time_to_game_timer_action_issuer(10000)">+10s</div>
+                                    <div class="increment" onclick="add_clock_time_to_game_timer_action_issuer(1 * 60 * 1000)">+1m</div>
+                                    <div class="increment" onclick="add_clock_time_to_game_timer_action_issuer(5 * 60 * 1000)">+5m</div>
                                 </div>
                                 <!-- Start/stop</div> -->
                                 <h3 style="margin-top: auto;">Reset Timer</h3>
                                 <div class="score">
-                                    <div class="decrement" onclick="set_game_clock_to_default_action_issure()">Reset</div>
+                                    <div class="decrement" onclick="set_game_clock_to_default_action_issuer()">Reset</div>
                                     <input id="game-timer-duration-default" class="input" value="900" placeholder="900"/>
                                 </div>
                             </div>
@@ -113,8 +113,8 @@
                         <div class="content">
                             <div class="control-group" style="height: 100%;">
                                 <div class="score">
-                                    <div class="decrement" onclick="add_clock_time_to_play_clock_action_issure(-10000)">-10s</div>
-                                    <div class="decrement" onclick="add_clock_time_to_play_clock_action_issure(-1000)">-1s</div>
+                                    <div class="decrement" onclick="add_clock_time_to_play_clock_action_issuer(-10000)">-10s</div>
+                                    <div class="decrement" onclick="add_clock_time_to_play_clock_action_issuer(-1000)">-1s</div>
                                     <div class="start-stop">
                                         <input id="shot-clock-duration" class="input" value="40" placeholder="40"/>
                                         <div id="shot-clock-toggle" class="start-stop-button paused" >
@@ -122,15 +122,15 @@
                                             <span class="stop">Stop</span>
                                         </div>
                                     </div>
-                                    <div class="increment" onclick="add_clock_time_to_play_clock_action_issure(1000)">+1s</div>
-                                    <div class="increment" onclick="add_clock_time_to_play_clock_action_issure(10000)">+10s</div>
+                                    <div class="increment" onclick="add_clock_time_to_play_clock_action_issuer(1000)">+1s</div>
+                                    <div class="increment" onclick="add_clock_time_to_play_clock_action_issuer(10000)">+10s</div>
                                 </div>
                                 <h3 style="margin-top: 35px;">Reset Timer</h3>
                                 <div class="score">
-                                    <div class="decrement" onclick="set_play_clock_to_default_action_issure()">Reset</div>
+                                    <div class="decrement" onclick="set_play_clock_to_default_action_issuer()">Reset</div>
                                     <input id="shot-clock-duration-default" class="input" value="40" placeholder="40"/>
-                                    <div class="increment" onclick="set_play_clock_to_value_action_issure(40 * 1000)">40s</div>
-                                    <div class="increment" onclick="set_play_clock_to_value_action_issure(25 * 1000)">25s</div>
+                                    <div class="increment" onclick="set_play_clock_to_value_action_issuer(40 * 1000)">40s</div>
+                                    <div class="increment" onclick="set_play_clock_to_value_action_issuer(25 * 1000)">25s</div>
                                 </div>
                             </div>
                         </div>
@@ -145,22 +145,22 @@
                             <div class="control-group" style="height: 100%;">
                                 <h3>Down</h3>
                                 <div class="score">
-                                    <div class="decrement" onclick="add_down_action_issure(-1)">-1</div>
+                                    <div class="decrement" onclick="add_down_action_issuer(-1)">-1</div>
                                     <input id="down" class="input" value="1" placeholder="1"/>
-                                    <div class="increment" onclick="add_down_action_issure(1)">+1</div>
-                                    <div class="increment" onclick="set_down_action_issure(1)">1st</div>
-                                    <div class="increment" onclick="set_down_action_issure(2)">2nd</div>
-                                    <div class="increment" onclick="set_down_action_issure(3)">3rd</div>
-                                    <div class="increment" onclick="set_down_action_issure(4)">4th</div>
+                                    <div class="increment" onclick="add_down_action_issuer(1)">+1</div>
+                                    <div class="increment" onclick="set_down_action_issuer(1)">1st</div>
+                                    <div class="increment" onclick="set_down_action_issuer(2)">2nd</div>
+                                    <div class="increment" onclick="set_down_action_issuer(3)">3rd</div>
+                                    <div class="increment" onclick="set_down_action_issuer(4)">4th</div>
                                 </div>
                                 <h3 style="margin-top: 15px;">Distance</h3>
                                 <div class="score">
-                                    <div class="decrement" onclick="add_distance_action_issure(-5)">-5</div>
-                                    <div class="decrement" onclick="add_distance_action_issure(-1)">-1</div>
+                                    <div class="decrement" onclick="add_distance_action_issuer(-5)">-5</div>
+                                    <div class="decrement" onclick="add_distance_action_issuer(-1)">-1</div>
                                     <input id="distance" class="input" value="10" placeholder="10"/>
-                                    <div class="increment" onclick="add_distance_action_issure(1)">+1</div>
-                                    <div class="increment" onclick="add_distance_action_issure(5)">+5</div>
-                                    <div class="increment" onclick="set_distance_action_issure(-1)">Goal</div>
+                                    <div class="increment" onclick="add_distance_action_issuer(1)">+1</div>
+                                    <div class="increment" onclick="add_distance_action_issuer(5)">+5</div>
+                                    <div class="increment" onclick="set_distance_action_issuer(-1)">Goal</div>
                                 </div>
                             </div>
                         </div>
@@ -175,15 +175,15 @@
                             <div class="control-group" style="height: 100%;">
                                 <h3>Quarter</h3>
                                 <div class="score">
-                                    <div class="decrement" onclick="add_quarter_action_issure(-1)">Prev</div>
+                                    <div class="decrement" onclick="add_quarter_action_issuer(-1)">Prev</div>
                                     <input id="quarter" class="input" value="1" placeholder="1"/>
-                                    <div class="increment" onclick="add_quarter_action_issure(1)">Next</div>
-                                    <div class="increment" onclick="set_quarter_action_issure(0)">Final</div>
-                                    <div class="increment" onclick="set_quarter_action_issure(1)">1st</div>
-                                    <div class="increment" onclick="set_quarter_action_issure(2)">2nd</div>
-                                    <div class="increment" onclick="set_quarter_action_issure(3)">3rd</div>
-                                    <div class="increment" onclick="set_quarter_action_issure(4)">4th</div>
-                                    <div class="increment" onclick="set_quarter_action_issure(5)">OT</div>
+                                    <div class="increment" onclick="add_quarter_action_issuer(1)">Next</div>
+                                    <div class="increment" onclick="set_quarter_action_issuer(0)">Final</div>
+                                    <div class="increment" onclick="set_quarter_action_issuer(1)">1st</div>
+                                    <div class="increment" onclick="set_quarter_action_issuer(2)">2nd</div>
+                                    <div class="increment" onclick="set_quarter_action_issuer(3)">3rd</div>
+                                    <div class="increment" onclick="set_quarter_action_issuer(4)">4th</div>
+                                    <div class="increment" onclick="set_quarter_action_issuer(5)">OT</div>
                                 </div>
                             </div>
                         </div>
@@ -198,19 +198,19 @@
                             <div class="control-group home">
                                 <h3>Home Team</h3>
                                 <div class="score">
-                                    <div id="home-possession" class="increment" onclick="set_possession_action_issure('home')">Give Possession</div>
+                                    <div id="home-possession" class="increment" onclick="set_possession_action_issuer('home')">Give Possession</div>
                                 </div>
                             </div>
                             <div class="control-group away" style="margin-top: auto;">
                                 <h3>Away Team</h3>
                                 <div class="score">
-                                    <div id="away-possession" class="increment" onclick="set_possession_action_issure('away')">Give Possession</div>
+                                    <div id="away-possession" class="increment" onclick="set_possession_action_issuer('away')">Give Possession</div>
                                 </div>
                             </div>
                             <div class="control-group" style="background-color: gray; margin-top: auto;">
                                 <h3>Clear Possession</h3>
                                 <div class="score">
-                                    <div id="clear-possession" class="decrement" onclick="set_possession_action_issure('none')">Clear</div>
+                                    <div id="clear-possession" class="decrement" onclick="set_possession_action_issuer('none')">Clear</div>
                                 </div>
                             </div>
                         </div>
@@ -247,10 +247,10 @@
                                 </div>
                                 <h3 style="margin-top: 15px;">Timeouts</h3>
                                 <div class="score">
-                                    <div class="decrement" onclick="add_team_timeouts_action_issure('home', -1)">-1</div>
+                                    <div class="decrement" onclick="add_team_timeouts_action_issuer('home', -1)">-1</div>
                                     <input id="home-timeouts" class="input" value="3" placeholder="3"/>
-                                    <div class="increment" onclick="add_team_timeouts_action_issure('home', 1)">+1</div>
-                                    <div class="increment" onclick="set_team_timeouts_action_issure('home', 3)">Reset</div>
+                                    <div class="increment" onclick="add_team_timeouts_action_issuer('home', 1)">+1</div>
+                                    <div class="increment" onclick="set_team_timeouts_action_issuer('home', 3)">Reset</div>
                                 </div>
                             </div>
                         </div>
@@ -279,10 +279,10 @@
                                 </div>
                                 <h3 style="margin-top: 15px;">Timeouts</h3>
                                 <div class="score timeouts">
-                                    <div class="decrement" onclick="add_team_timeouts_action_issure('away', -1)">-1</div>
+                                    <div class="decrement" onclick="add_team_timeouts_action_issuer('away', -1)">-1</div>
                                     <input id="away-timeouts" class="input" value="3" placeholder="3"/>
-                                    <div class="increment" onclick="add_team_timeouts_action_issure('away', 1)">+1</div>
-                                    <div class="increment" onclick="set_team_timeouts_action_issure('away', 3)">Reset</div>
+                                    <div class="increment" onclick="add_team_timeouts_action_issuer('away', 1)">+1</div>
+                                    <div class="increment" onclick="set_team_timeouts_action_issuer('away', 3)">Reset</div>
                                 </div>
                             </div>
                         </div>
@@ -305,20 +305,20 @@
                             <div class="control-group" style="background-color: #ffa500;">
                                 <h3>Flag Actions</h3>
                                 <div class="score">
-                                    <div id="emit-flag" class="increment" onclick="set_flag_state_action_issure({is_flag_emitted: true, status: 'none', team: 'none', player_blame: -2})">Emit Flag</div>
-                                    <div id="hide-flag" class="decrement" onclick="set_flag_state_action_issure({is_flag_emitted: false, status: 'none', team: 'none', player_blame: -2})">Hide Flag</div>
+                                    <div id="emit-flag" class="increment" onclick="set_flag_state_action_issuer({is_flag_emitted: true, status: 'none', team: 'none', player_blame: -2})">Emit Flag</div>
+                                    <div id="hide-flag" class="decrement" onclick="set_flag_state_action_issuer({is_flag_emitted: false, status: 'none', team: 'none', player_blame: -2})">Hide Flag</div>
                                 </div>
                             </div>
                             <div class="control-group home" style="margin-top: 15px;">
                                 <h3>Blame Home Team</h3>
                                 <div class="score">
-                                    <div id="blame-home-team" class="decrement"  onclick="set_flag_state_action_issure({team: 'home'})">Team Penalty</div>
+                                    <div id="blame-home-team" class="decrement"  onclick="set_flag_state_action_issuer({team: 'home'})">Team Penalty</div>
                                 </div>
                             </div>
                             <div class="control-group away" style="margin-top: 15px;">
                                 <h3>Blame Away Team</h3>
                                 <div class="score">
-                                    <div id="blame-away-team" class="decrement"  onclick="set_flag_state_action_issure({team: 'away'})">Team Penalty</div>
+                                    <div id="blame-away-team" class="decrement"  onclick="set_flag_state_action_issuer({team: 'away'})">Team Penalty</div>
                                 </div>
                             </div>
                         </div>
@@ -334,14 +334,14 @@
                                 <h3>Home Player #</h3>
                                 <div class="score">
                                     <input id="home-player-number" class="input" value="" placeholder="Player #"/>
-                                    <div id="blame-home-player" class="decrement"  onclick="set_flag_state_action_issure({ player_blame: parseInt(sel('#home-player-number').value)})">Blame Player</div>
+                                    <div id="blame-home-player" class="decrement"  onclick="set_flag_state_action_issuer({ player_blame: parseInt(sel('#home-player-number').value)})">Blame Player</div>
                                 </div>
                             </div>
                             <div class="control-group away" style="margin-top: auto;">
                                 <h3>Away Player #</h3>
                                 <div class="score">
                                     <input id="away-player-number" class="input" value="" placeholder="Player #"/>
-                                    <div id="blame-away-player" class="decrement"   onclick="set_flag_state_action_issure({ player_blame: parseInt(sel('#away-player-number').value)})">Blame Player</div>
+                                    <div id="blame-away-player" class="decrement"   onclick="set_flag_state_action_issuer({ player_blame: parseInt(sel('#away-player-number').value)})">Blame Player</div>
                                 </div>
                             </div>
                         </div>
