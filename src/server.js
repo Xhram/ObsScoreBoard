@@ -35,14 +35,16 @@ app.get("/", (req, res) => {
 });
 app.use("/scoreboard", express.static("./src/frontend/scoreboard"));
 app.use("/admin", express.static("./src/frontend/admin"));
+app.use("/common", express.static("./src/frontend/common"));
 
 // WebSocket connection handling
 
 let connections = [];
 function broadcast(data) {
+    
     connections.forEach((ws) => {
         if (ws.readyState === ws.OPEN && ws.auth.is_authenticated) {
-            ws.sendData(data);
+            ws.sendData({...data,timestamp: Date.now()});
         }
     });
 }
@@ -231,7 +233,7 @@ wss.on("connection", (ws) => {
                 return;
             }
 
-            if (action.type == "set_team_score") {
+            if (action.type == "set:team_score") {
                 if (action.payload.team === "home") {
                     scoreboard_state.team_home.score = clamp(
                         action.payload.score,
@@ -253,7 +255,7 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
-            if (action.type == "set_team_name") {
+            if (action.type == "set:team_name") {
                 if (action.payload.team === "home") {
                     scoreboard_state.team_home.name = action.payload.name;
                 } else if (action.payload.team === "away") {
@@ -267,7 +269,7 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
-            if (action.type == "set_team_color") {
+            if (action.type == "set:team_color") {
                 if (action.payload.team === "home") {
                     scoreboard_state.team_home.color = action.payload.color;
                 } else if (action.payload.team === "away") {
@@ -281,7 +283,7 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
-            if (action.type == "add_team_score") {
+            if (action.type == "add:team_score") {
                 let target_team_state =
                     action.payload.team === "home"
                         ? scoreboard_state.team_home
@@ -293,19 +295,18 @@ wss.on("connection", (ws) => {
                     9999
                 );
                 broadcast({
-                    type: "add_team_score",
+                    type: "event:team_score",
                     payload: {
                         team: action.payload.team,
                         animation: action.payload.animation,
                         animation_type: action.payload.animation_type,
                         amount: action.payload.amount,
-                        previous_score:
-                            target_team_state.score - action.payload.amount,
+                        previous_score: target_team_state.score - action.payload.amount,
                         new_score: target_team_state.score,
                     },
                 });
             }
-            if (action.type == "set_clock_state") {
+            if (action.type == "set:clock_state") {
                 if (action.payload.clock == "game") {
                     scoreboard_state.time.is_game_clock_running =
                         action.payload.new_state;
@@ -319,7 +320,7 @@ wss.on("connection", (ws) => {
                     payload: scoreboard_state.time,
                 });
             }
-            if (action.type == "add_clock_time") {
+            if (action.type == "add:clock_time") {
                 if (action.payload.clock == "game") {
                     scoreboard_state.time.game_clock_current_time = Math.max(
                         scoreboard_state.time.game_clock_current_time +
@@ -340,7 +341,7 @@ wss.on("connection", (ws) => {
                     payload: scoreboard_state.time,
                 });
             }
-            if (action.type == "set_clock_time") {
+            if (action.type == "set:clock_time") {
                 if (action.payload.clock == "game") {
                     scoreboard_state.time.game_clock_current_time = Math.max(
                         action.payload.time,
@@ -359,7 +360,7 @@ wss.on("connection", (ws) => {
                     payload: scoreboard_state.time,
                 });
             }
-            if (action.type == "set_down") {
+            if (action.type == "set:down") {
                 scoreboard_state.down = clamp(action.payload.down, 1, 4);
                 broadcast({
                     type: "sync:down",
@@ -369,7 +370,7 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
-            if (action.type == "set_distance") {
+            if (action.type == "set:distance") {
                 scoreboard_state.distance = Math.max(action.payload.distance, -1);
                 broadcast({
                     type: "sync:down",
@@ -379,7 +380,7 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
-            if (action.type == "add_down") {
+            if (action.type == "add:down") {
                 scoreboard_state.down += action.payload.amount;
                 scoreboard_state.down = clamp(scoreboard_state.down, 1, 4);
                 broadcast({
@@ -390,7 +391,7 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
-            if (action.type == "add_distance") {
+            if (action.type == "add:distance") {
                 scoreboard_state.distance += action.payload.amount;
                 scoreboard_state.distance = Math.max(scoreboard_state.distance, -1);
                 broadcast({
@@ -401,14 +402,14 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
-            if (action.type == "set_quarter") {
+            if (action.type == "set:quarter") {
                 scoreboard_state.quarter = clamp(action.payload.quarter, 0, 5);
                 broadcast({
                     type: "sync:quarter",
                     payload: { quarter: scoreboard_state.quarter },
                 });
             }
-            if (action.type == "add_quarter") {
+            if (action.type == "add:quarter") {
                 scoreboard_state.quarter += action.payload.amount;
                 scoreboard_state.quarter = clamp(
                     scoreboard_state.quarter,
@@ -420,14 +421,14 @@ wss.on("connection", (ws) => {
                     payload: { quarter: scoreboard_state.quarter },
                 });
             }
-            if (action.type == "set_possession") {
+            if (action.type == "set:possession") {
                 scoreboard_state.possession = action.payload.team; // "home", "away", or "none"
                 broadcast({
                     type: "sync:possession",
                     payload: { possession: scoreboard_state.possession },
                 });
             }
-            if (action.type == "set_team_timeouts") {
+            if (action.type == "set:team_timeouts") {
                 if (action.payload.team === "home") {
                     scoreboard_state.team_home.timeouts_remaining = clamp(
                         action.payload.timeouts,
@@ -451,7 +452,7 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
-            if (action.type == "add_team_timeouts") {
+            if (action.type == "add:team_timeouts") {
                 let target_team_state =
                     action.payload.team === "home"
                         ? scoreboard_state.team_home
@@ -472,7 +473,7 @@ wss.on("connection", (ws) => {
                     },
                 });
             }
-            if (action.type == "set_flag") {
+            if (action.type == "set:flag") {
                 if (action.payload.is_flag_emitted != undefined) {
                     scoreboard_state.flag.is_flag_emitted = action.payload.is_flag_emitted;
                 }

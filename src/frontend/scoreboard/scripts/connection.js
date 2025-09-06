@@ -141,7 +141,7 @@ function ping_issuer(){
         }
     });
 }
-setInterval(ping_issuer, 1000);
+setInterval(ping_issuer, 5 * 60 * 1000);
 
 function sync_state(state){
     team_home_roster = state.team_home.roster
