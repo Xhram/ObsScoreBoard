@@ -2,6 +2,7 @@ let ws = undefined;
 let is_connected = false;
 let is_authenticated = false;
 let has_successfully_authenticated = false;
+let auto_reconnect_interval = undefined;
 function sel(value){
     return document.querySelector(value)
 }
@@ -13,6 +14,10 @@ function connect() {
     ws = new WebSocket(`ws://${window.location.host}`);
     ws.sendData = (data) => {return ws.send(JSON.stringify(data,null,4))}
     ws.onopen = () => {
+        if(auto_reconnect_interval !== undefined){
+            clearTimeout(auto_reconnect_interval);
+            auto_reconnect_interval = undefined;
+        }
         console.log('WebSocket connection opened');
         is_connected = true;
         ws.sendData({
@@ -88,7 +93,7 @@ function connect() {
         is_authenticated = false;
         sel("#connection-status").innerHTML = "Offline"
         if(has_successfully_authenticated){
-            setTimeout(()=>{
+            auto_reconnect_interval = setTimeout(()=>{
                 connect()
             },2000)
         }

@@ -154,7 +154,11 @@ setInterval(() => {
     update_clock(Date.now() - last_time);
     last_time = Date.now();
 }, 10);
-
+setInterval(() => {
+    console.log("Auto-saving & Auto-sync scoreboard state");
+    save_scoreboard_state(scoreboard_state);
+    broadcast({ type: "sync", payload: scoreboard_state });
+}, 60000);
 function authenticate_ws(ws, action) {
     if (action.type == "auth:admin") {
         if (action.payload.password === process.env.ADMIN_PASSWORD) {

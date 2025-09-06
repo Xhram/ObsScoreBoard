@@ -1,6 +1,7 @@
 let ws = undefined;
 let is_connected = false;
 let is_authenticated = false;
+let auto_reconnect_interval = undefined;
 function sel(value){
     return document.querySelector(value)
 }
@@ -11,6 +12,10 @@ function connect() {
     ws.onopen = () => {
         // console.clear()
         // console.log('WebSocket connection opened');
+        if(auto_reconnect_interval) {
+            clearTimeout(auto_reconnect_interval)
+            auto_reconnect_interval = undefined;
+        }
         is_connected = true;
         ws.sendData({
             type:"auth:scoreboard",
@@ -81,11 +86,13 @@ function connect() {
         // console.log('WebSocket connection closed');
         is_connected = false;
         is_authenticated = false;
-        setTimeout( () => {
+
+        let auto_reconnect_interval = setTimeout( () => {
             // window.location.reload();
 
             connect()
         }, 100)
+
     };
 }
 connect();
