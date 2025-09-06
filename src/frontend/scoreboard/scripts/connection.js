@@ -2,6 +2,10 @@ let ws = undefined;
 let is_connected = false;
 let is_authenticated = false;
 let auto_reconnect_interval = undefined;
+let role = "none"; // none, admin, scoreboard
+let server_time_sync_found = false;
+let server_time_offset = 0; // in ms, positive if server is ahead of client
+let ping = 0; // in ms
 function sel(value){
     return document.querySelector(value)
 }
@@ -21,7 +25,7 @@ function connect() {
             type:"auth:scoreboard",
             payload: {}
         });
-        sel("#connection-status").innerHTML = "Online, Auth:false"
+        update_debug_info();
     };
     
     ws.onmessage = (event) => {
@@ -29,6 +33,9 @@ function connect() {
         try {
             let action = JSON.parse(event.data)
             if(is_authenticated) {
+                if(action.type == "pong"){
+                    handle_pong_response(action.payload)
+                }
                 if(action.type == "sync") {
                     sync_state(action.payload)
                 }
@@ -65,7 +72,8 @@ function connect() {
 
             } else if(action.type == "auth:success"){
                 is_authenticated = true;
-                sel("#connection-status").innerHTML = `Online, Auth:true, Role:${action.payload.role}`
+                role = action.payload.role;
+                update_debug_info();
 
             }
         } catch (error) {
@@ -86,17 +94,54 @@ function connect() {
         // console.log('WebSocket connection closed');
         is_connected = false;
         is_authenticated = false;
-
-        let auto_reconnect_interval = setTimeout( () => {
+        role = "none";
+        update_debug_info();
+        if(auto_reconnect_interval !== undefined) clearTimeout(auto_reconnect_interval)
+        auto_reconnect_interval = setTimeout( () => {
             // window.location.reload();
-
+            
             connect()
         }, 100)
 
     };
 }
 connect();
+update_debug_info()
+function update_debug_info(){
+    let output = "";
+    if (is_connected) {
+        if (is_authenticated) {
+            output = `Online (${role})`;
+            if(server_time_sync_found){
+                output += `, Ping: ${ping.toFixed(0)} ms, Offset: ${server_time_offset.toFixed(0)} ms`
+            }
 
+        } else {
+            output = "Authenticating...";
+        }
+    } else {
+        output = "Offline";
+    }
+    sel("#connection-status").innerHTML = output;
+
+}
+function handle_pong_response(payload){
+    let now = Date.now();
+    ping = (now - payload.timestamp)/2;
+    server_time_offset = now + ping - payload.timestamp;
+    server_time_sync_found = true;
+    update_debug_info();
+}
+function ping_issuer(){
+    if(!is_connected || !is_authenticated) return;
+    ws.sendData({
+        type: "ping",
+        payload: {
+            timestamp: Date.now()
+        }
+    });
+}
+setInterval(ping_issuer, 1000);
 
 function sync_state(state){
     team_home_roster = state.team_home.roster

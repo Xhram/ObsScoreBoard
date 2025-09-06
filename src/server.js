@@ -223,8 +223,9 @@ wss.on("connection", (ws) => {
             if(ws.auth.role === "scoreboard" || ws.auth.role === "admin") {
                 if(action.type === "ping") {
                     ws.sendData({ type: "pong", payload: { timestamp: Date.now(), ping_issuer_timestamp: action.payload.timestamp } });
+                    return;
                 }
-
+            }
             if (ws.auth.role !== "admin") {
                 throw new Error("Invalid Auth");
                 return;
