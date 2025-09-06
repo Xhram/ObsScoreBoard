@@ -16,6 +16,8 @@
     "dependencies": {
         "dotenv": "^17.2.1",
         "express": "^5.1.0",
+        "postcss": "^8.5.6",
+        "postcss-nested": "^6.2.0",
         "ws": "^8.18.3"
     },
     "devDependencies": {

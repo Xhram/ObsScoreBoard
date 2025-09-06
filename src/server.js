@@ -3,6 +3,13 @@ import { createServer } from "http";
 import { WebSocketServer } from "ws";
 import dotenv from "dotenv";
 import fs from "fs";
+import postcss from "postcss";
+import postcssNested from "postcss-nested";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const app = express();
@@ -33,6 +40,32 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
     res.json({ message: "Server is running" });
 });
+
+// Custom PostCSS middleware for scoreboard CSS files
+app.get("/scoreboard/style/:filename", async (req, res) => {
+    try {
+        const filename = req.params.filename;
+        if (!filename.endsWith('.css')) {
+            return res.status(400).send('Invalid file type');
+        }
+        
+        const cssPath = path.join(__dirname, 'frontend', 'scoreboard', 'style', filename);
+        
+        if (!fs.existsSync(cssPath)) {
+            return res.status(404).send('CSS file not found');
+        }
+        
+        const css = fs.readFileSync(cssPath, 'utf8');
+        const result = await postcss([postcssNested]).process(css, { from: cssPath });
+        
+        res.setHeader('Content-Type', 'text/css');
+        res.send(result.css);
+    } catch (error) {
+        console.error('PostCSS processing error:', error);
+        res.status(500).send('CSS processing error');
+    }
+});
+
 app.use("/scoreboard", express.static("./src/frontend/scoreboard"));
 app.use("/admin", express.static("./src/frontend/admin"));
 app.use("/common", express.static("./src/frontend/common"));
