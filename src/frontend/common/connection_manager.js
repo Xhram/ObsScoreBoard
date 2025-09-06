@@ -246,7 +246,7 @@ class connection_manager {
         } else if(this.reducers[action.type]){
             this.reducers[action.type](action.payload);
         }
-        if(intelligent_predictive_rendering){
+        if(this.intelligent_predictive_rendering){
             _predicted_state_reducer(action)
         }
     }
