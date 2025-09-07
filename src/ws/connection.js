@@ -55,6 +55,9 @@ export class connection {
                 this._authenticate(action);
                 return;
             }
+            if(ARTIFICAL_NETWORK_DELAY){
+                await new Promise(resolve => setTimeout(resolve, random_internet_delay()));
+            }
             this.on_message(this, action);
         } catch (error) {
             console.log("message error")
