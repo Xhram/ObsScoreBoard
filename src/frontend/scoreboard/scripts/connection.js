@@ -1,7 +1,7 @@
 function sel(value){
     return document.querySelector(value)
 }
-let cm = new connection_manager({role: "scoreboard", reconnect_interval_time: 2000, intelligent_predictive_rendering: false});
+let cm = new connection_manager({role: "scoreboard", reconnect_interval_time: 2000});
 
 
 cm.on_auth = () => {
@@ -107,7 +107,7 @@ function update_debug_info(){
     let output = "";
     if (cm.is_connected) {
         if (cm.is_authenticated) {
-            output = `Online (${cm.role})`;
+            output = `Online (${cm.role}), IPR: ${cm._intelligent_predictive_rendering ? "Enabled" : "Disabled"}`;
             if(cm.server_time_sync_found){
                 output += `, Ping: ${(cm.ping * 2).toFixed(0)} ms, Offset: ${cm.server_time_offset.toFixed(0)} ms`
             }

@@ -67,10 +67,12 @@ class connection_manager {
     //filled to help vscode and avoid undefined errors
 
     constructor(options = {}){
+        let urlParams = new URLSearchParams(window.location.search);
+        let ipr = urlParams.has("ipr") ? urlParams.get("ipr") !== "false" : false;
         this.role = options.role || "none";
         this.reconnect_interval_time = options.reconnect_interval_time || 2000;
         this.password = options.password || "";
-        this._intelligent_predictive_rendering = options.intelligent_predictive_rendering || false;
+        this._intelligent_predictive_rendering = options.intelligent_predictive_rendering || ipr;
         this.ping_interval_time = options.ping_interval_time || 20000;
         this._send_ping();
         if(this._intelligent_predictive_rendering){
@@ -399,22 +401,15 @@ class connection_manager {
             this._handle_pong_response(action.payload);
             return;
         }
+
+
         if(action.type == "sync"){
             this._sync_breakdown_reducer(action);
-        } else if(action.type == "sync:time" && this._intelligent_predictive_rendering && this.server_time_sync_found) {//need tp add server time sync found check for other uses of ping
-            this._predictive_time_sync_reducer(action)
         } else if(this.reducers[action.type]){
             this.reducers[action.type](action.payload);
         }
         if(this._intelligent_predictive_rendering){
             this._predicted_state_reducer(action)
-        }
-    }
-    _predictive_time_sync_reducer = (action) => {
-        let now = Date.now();
-        let payload = action.payload
-        if(payload.is_game_clock_running){
-            payload.game_clock_current_time += action.timestamp - now + this.server_time_offset
         }
     }
 
@@ -473,8 +468,12 @@ class connection_manager {
         let timestamp = action.timestamp - this.server_time_offset
         let time_sense_send = now - timestamp;
         if(payload.is_game_clock_running){
+            console.log("Predicting Game Clock Running Delta:" + (this._predicted_state.time.game_clock_current_time - (payload.game_clock_current_time - time_sense_send)) + "ms")
+
             this._predicted_state.time.game_clock_current_time = payload.game_clock_current_time - time_sense_send
+            
         } else {
+            console.log("Predicting Game Clock Stopped Delta:" + (this._predicted_state.time.game_clock_current_time - payload.game_clock_current_time) + "ms")
             this._predicted_state.time.game_clock_current_time = payload.game_clock_current_time
         }
         if(payload.is_play_clock_running){
@@ -482,6 +481,9 @@ class connection_manager {
         } else {
             this._predicted_state.time.play_clock_current_time = payload.play_clock_current_time
         }
+        this._predicted_state.time.is_game_clock_running = payload.is_game_clock_running;
+        this._predicted_state.time.is_play_clock_running = payload.is_play_clock_running;
+        this.reducers["sync:time"](this._predicted_state.time);
 
     }
     //need to call ping
