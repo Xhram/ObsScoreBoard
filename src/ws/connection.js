@@ -1,4 +1,4 @@
-import { ADMIN_PASSWORD } from "../config/index.js";
+import { ADMIN_PASSWORD, ARTIFICAL_NETWORK_DELAY, random_internet_delay } from "../config/index.js";
 
 
 export class connection {
@@ -29,7 +29,10 @@ export class connection {
 
 
     //public functions
-    send_data = (data) => {
+    send_data = async (data) => {
+        if(ARTIFICAL_NETWORK_DELAY){
+            await new Promise(resolve => setTimeout(resolve, random_internet_delay()));
+        }
         this.ws.send(JSON.stringify(data,null,4))
     }
     send_action = async (type, payload, action_initiator) => {

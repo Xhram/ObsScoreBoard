@@ -82,7 +82,7 @@ class connection_manager {
         this.reconnect_interval_time = options.reconnect_interval_time || 2000;
         this.password = options.password || "";
         this._intelligent_predictive_rendering = options.intelligent_predictive_rendering || ipr;
-        this.ping_interval_time = options.ping_interval_time || 30000;
+        this.ping_interval_time = options.ping_interval_time || 1000;
         this._send_ping();
         if(this._intelligent_predictive_rendering){
             (() => {
