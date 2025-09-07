@@ -23,6 +23,9 @@ class connection_manager {
     //later on i need to incorpare some form for avraging to smooth these vals
     server_time_offset = 0;
     ping = 0;
+    samples_count = 20;
+    server_time_offset_samples = [];
+    ping_samples = [];
 
     reconnect_interval_time;
     ping_interval_time;
@@ -146,7 +149,7 @@ class connection_manager {
                     this._predicted_state.time.play_clock_current_time += amount;
                     this._predicted_state.time.play_clock_current_time = Math.max(this._predicted_state.time.play_clock_current_time, 0);
                 }
-                this.reducers["sync:time"]({ time: this._predicted_state.time } );
+                this.reducers["sync:time"](this._predicted_state.time);
             }
         },
         "add:down": (amount) => {
@@ -502,6 +505,23 @@ class connection_manager {
         let timings = action.timings;
         this.ping = (timings.client_receive_time - timings.client_send_time)/2;
         this.server_time_offset = timings.server_send_time + this.ping - timings.client_receive_time;
+
+        // Add samples for averaging
+        this.ping_samples.push(this.ping);
+        this.server_time_offset_samples.push(this.server_time_offset);
+
+        // Keep only the last N samples
+        if (this.ping_samples.length > this.samples_count) {
+            this.ping_samples.shift();
+        }
+        if (this.server_time_offset_samples.length > this.samples_count) {
+            this.server_time_offset_samples.shift();
+        }
+
+        // Calculate averages
+        const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+        this.ping = avg(this.ping_samples);
+        this.server_time_offset = avg(this.server_time_offset_samples);
         this.server_time_sync_found = true;
         this.on_pong();
     }
