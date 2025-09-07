@@ -48,9 +48,7 @@ app.get("/scoreboard/style/:filename", async (req, res) => {
         if (!filename.endsWith('.css')) {
             return res.status(400).send('Invalid file type');
         }
-        
-        const cssPath = path.join(__dirname, 'frontend', 'scoreboard', 'style', filename);
-        
+        const cssPath = path.join("./", 'frontend', 'scoreboard', 'style', filename);
         if (!fs.existsSync(cssPath)) {
             return res.status(404).send('CSS file not found');
         }
@@ -66,9 +64,9 @@ app.get("/scoreboard/style/:filename", async (req, res) => {
     }
 });
 
-app.use("/scoreboard", express.static("./src/frontend/scoreboard"));
-app.use("/admin", express.static("./src/frontend/admin"));
-app.use("/common", express.static("./src/frontend/common"));
+app.use("/scoreboard", express.static("./frontend/scoreboard"));
+app.use("/admin", express.static("./frontend/admin"));
+app.use("/common", express.static("./frontend/common"));
 
 // WebSocket connection handling
 
