@@ -204,10 +204,6 @@ function authenticate_ws(ws, action) {
                 payload: { role: "admin" },
             });
             connections.push(ws);
-            ws.sendData({
-                type: "sync",
-                payload: scoreboard_state,
-            });
         } else {
             ws.close();
         }
@@ -227,10 +223,15 @@ function authenticate_ws(ws, action) {
         });
     }
 }
+async function randomDelay() {
+    console.warn("Adding random delay for testing");
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 30 + 900));
+}
 
 wss.on("connection", (ws) => {
     console.log("New WebSocket connection");
-    ws.sendData = (data) => {
+    ws.sendData = async (data) => {
+        await randomDelay();
         return ws.send(JSON.stringify(data, null, 4));
     };
     ws.auth = {
@@ -247,7 +248,7 @@ wss.on("connection", (ws) => {
 
     ws.auth.no_auth_auto_close_timer = no_auth_auto_close_timer;
 
-    ws.on("message", (data) => {
+    ws.on("message", async (data) => {
         try {
             let action = JSON.parse(data);
 
@@ -255,9 +256,20 @@ wss.on("connection", (ws) => {
                 authenticate_ws(ws, action);
                 return;
             }
+            // add random delay for testing
+            await randomDelay();
+
+            if(action.type == "auth:success"){
+                ws.sendData({
+                    type: "sync",
+                    payload: scoreboard_state,
+                });
+                return
+            }
+
             if(ws.auth.role === "scoreboard" || ws.auth.role === "admin") {
                 if(action.type === "ping") {
-                    ws.sendData({ type: "pong", payload: { timestamp: Date.now(), ping_issuer_timestamp: action.payload.timestamp } });
+                    ws.sendData({ type: "pong", payload: { timestamp: Date.now(), ping_issuer_timestamp: action.payload.ping_issuer_timestamp } });
                     return;
                 }
             }

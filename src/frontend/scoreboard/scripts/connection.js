@@ -7,6 +7,9 @@ let cm = new connection_manager({role: "scoreboard", reconnect_interval_time: 20
 cm.on_auth = () => {
     update_debug_info();
 }
+cm.on_pong = () => {
+    update_debug_info();
+}
 
 // Set up reducers
 cm.reducers["sync:name"] = (name_state) => {
@@ -67,9 +70,14 @@ cm.reducers["sync:flag"] = (flag_state) => {
     }
 }
 
-cm.reducers["event:team_score"] = (payload) => {
-    set_team_score(payload.team, payload.previous_score)
-    add_points_to_team(payload.team, payload.amount, payload.animation ? payload.animation_type : "none")
+cm.reducers["event:team_score"] = (team_score_event) => {
+    set_team_score(team_score_event.team, team_score_event.previous_score)
+    add_points_to_team(team_score_event.team, team_score_event.amount, team_score_event.animation ? team_score_event.animation_type : "none")
+}
+
+cm.reducers["sync:roster"] = (roster_state) => {
+    team_home_roster = roster_state.home_roster
+    team_away_roster = roster_state.away_roster
 }
 
 cm.reducers["sync"] = (state) => {
@@ -101,7 +109,7 @@ function update_debug_info(){
         if (cm.is_authenticated) {
             output = `Online (${cm.role})`;
             if(cm.server_time_sync_found){
-                output += `, Ping: ${cm.ping.toFixed(0)} ms, Offset: ${cm.server_time_offset.toFixed(0)} ms`
+                output += `, Ping: ${(cm.ping * 2).toFixed(0)} ms, Offset: ${cm.server_time_offset.toFixed(0)} ms`
             }
 
         } else {

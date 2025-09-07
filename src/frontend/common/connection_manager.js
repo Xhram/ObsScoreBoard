@@ -1,4 +1,6 @@
-
+function clamp(num, min, max) {
+    return Math.min(Math.max(num, min), max)
+}
 class connection_manager {
     is_connected = false;
     is_authenticated = false;
@@ -8,11 +10,15 @@ class connection_manager {
     password = "";
     has_successfully_authenticated_before = false;
     server_time_sync_found = true;
+
+    //later on i need to incorpare some form for avraging to smooth these vals
     server_time_offset = 0;
     ping = 0;
-    reconnect_interval_time = 2000;
 
-    intelligent_predictive_rendering = false;
+    reconnect_interval_time = 2000;
+    ping_interval_time = 10000;
+
+    _intelligent_predictive_rendering = false;
     //this allows the client to perdict the servers response optmisticly and with greater accercy event at large ping values
     //it fakes imideate sync events from the server and uses its knowlage of the network's speed to predict desync between time of server and client
     
@@ -64,86 +70,226 @@ class connection_manager {
         this.role = options.role || "none";
         this.reconnect_interval_time = options.reconnect_interval_time || 2000;
         this.password = options.password || "";
-        this.intelligent_predictive_rendering = options.intelligent_predictive_rendering || false;
+        this._intelligent_predictive_rendering = options.intelligent_predictive_rendering || false;
+        this.ping_interval_time = options.ping_interval_time || 20000;
+        this._send_ping();
+        if(this._intelligent_predictive_rendering){
+            (() => {
+                let last_time = Date.now();
+                setInterval(() => {
+                    let now = Date.now();
+                    this._update_clocks(now - last_time);
+                    last_time = now;
+                })
+            })()
+        }
     }
     //hooks
     on_connect = () => {};
     on_auth = () => {};
     on_close = () => {};
-
+    on_pong = () => {};
     //reducer hooks
+
+    //remember to hook into the sync:time reducer to ajust for server ping
+
     reducers = {
-        "sync:name": () => {},
-        "sync:score": () => {},
-        "sync:color": () => {},
-        "sync:time": () => {},
-        "sync:down": () => {},
-        "sync:quarter": () => {},
-        "sync:possession": () => {},
-        "sync:timeout": () => {},
-        "sync:flag": () => {},
-        "event:team_score": () => {},
+        "sync:name": (name_state) => {},
+        "sync:score": (score_state) => {},
+        "sync:color": (color_state) => {},
+        "sync:time": (time_state) => {},
+        "sync:down": (down_state) => {},
+        "sync:quarter": (quarter_state) => {},
+        "sync:possession": (possession_state) => {},
+        "sync:timeout": (timeout_state) => {},
+        "sync:flag": (flag_state) => {},
+        "sync:roster": (roster_state) => {},
+        "event:team_score": (team_score_event) => {},
+
     }
     //action issuers
     actions = {
         "add:team_score": (team, amount, options = {}) => {
             const payload = { team, amount, ...options };
             this.send_action("add:team_score", payload)
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state[team == "home" ? "team_home" : "team_away"].score += amount;
+                this._predicted_state[team == "home" ? "team_home" : "team_away"].score = clamp(this._predicted_state[team == "home" ? "team_home" : "team_away"].score, 0, 9999);
+                this.reducers["sync:score"]({
+                    home_score: this._predicted_state.team_home.score,
+                    away_score: this._predicted_state.team_away.score
+                });
+            }
         },
         "add:clock_time": (clock, amount) => {
             this.send_action("add:clock_time", { clock, amount })
+            if(this._intelligent_predictive_rendering){
+                //might be wrong maybe if by the time the request reaches the server the clock has ended
+                //but in that case i dont think you can predict that
+                //and it will have already triggered the server to stop the timer so
+                //the sync form the server will correct this action 
+                if(clock == "game"){
+                    this._predicted_state.time.game_clock_current_time += amount;
+                    this._predicted_state.time.game_clock_current_time = Math.max(this._predicted_state.time.game_clock_current_time, 0);
+                } else if(clock == "play"){
+                    this._predicted_state.time.play_clock_current_time += amount;
+                    this._predicted_state.time.play_clock_current_time = Math.max(this._predicted_state.time.play_clock_current_time, 0);
+                }
+                this.reducers["sync:time"]({ time: this._predicted_state.time } );
+            }
         },
         "add:down": (amount) => {
             this.send_action("add:down", { amount })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state.down += amount;
+                this._predicted_state.down = clamp(this._predicted_state.down, 1, 4);
+                this.reducers["sync:down"]({ down: this._predicted_state.down, distance: this._predicted_state.distance });
+            }
         },
         "add:distance": (amount) => {
             this.send_action("add:distance", { amount })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state.distance += amount;
+                this._predicted_state.distance = clamp(this._predicted_state.distance, -1, Infinity);
+                this.reducers["sync:down"]({ down: this._predicted_state.down, distance: this._predicted_state.distance });
+            }
         },
         "add:quarter": (amount) => {
             this.send_action("add:quarter", { amount })
-        },
-        "add:team_timeout": (team, amount) => {
-            this.send_action("add:team_timeout", { team, amount })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state.quarter += amount;
+                this._predicted_state.quarter = clamp(this._predicted_state.quarter, 1, 4);
+                this.reducers["sync:quarter"]({ quarter: this._predicted_state.quarter });
+            }
         },
         "add:team_timeouts": (team, amount) => {
             this.send_action("add:team_timeouts", { team, amount })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state[team == "home" ? "team_home" : "team_away"].timeouts_remaining += amount;
+                this._predicted_state[team == "home" ? "team_home" : "team_away"].timeouts_remaining = clamp(this._predicted_state[team == "home" ? "team_home" : "team_away"].timeouts_remaining, 0, 3);
+                this.reducers["sync:timeouts"]({
+                    home_timeouts: this._predicted_state.team_home.timeouts_remaining,
+                    away_timeouts: this._predicted_state.team_away.timeouts_remaining
+                });
+            }
         },
         "set:team_score": (team, score) => {
             this.send_action("set:team_score", { team, score })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state[team == "home" ? "team_home" : "team_away"].score = score;
+                this.reducers["sync:score"]({
+                    home_score: this._predicted_state.team_home.score,
+                    away_score: this._predicted_state.team_away.score
+                });
+            }
         },
         "set:team_name": (team, name) => {
             this.send_action("set:team_name", { team, name })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state[team == "home" ? "team_home" : "team_away"].name = name;
+                this.reducers["sync:name"]({
+                    home_name: this._predicted_state.team_home.name,
+                    away_name: this._predicted_state.team_away.name
+                });
+            }
         },
         "set:team_color": (team, color) => {
             this.send_action("set:team_color", { team, color })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state[team == "home" ? "team_home" : "team_away"].color = color;
+                this.reducers["sync:color"]({
+                    home_color: this._predicted_state.team_home.color,
+                    away_color: this._predicted_state.team_away.color
+                });
+            }
         },
         "set:clock_state": (clock, new_state) => {
             this.send_action("set:clock_state", { clock, new_state })
+            if(this._intelligent_predictive_rendering){
+                if(clock == "game"){
+                    if(new_state == true){
+                        //is going to start running
+                        this._predicted_state.time.game_clock_current_time + this.ping
+                        this._predicted_state.time.is_game_clock_running = true;
+                        this.reducers["sync:time"](this._predicted_state.time);
+                    } else if(new_state == false) {
+                        //stoping the clock
+                        this._predicted_state.time.game_clock_current_time - this.ping
+                        this._predicted_state.time.is_game_clock_running = false;
+
+                        //When switching to desycned game and play clocks please remove following 2 lines
+                        this._predicted_state.time.play_clock_current_time - this.ping
+                        this._predicted_state.time.is_play_clock_running = false;
+
+                        this.reducers["sync:time"](this._predicted_state.time);
+                    }
+                }
+                if(clock == "play"){
+                    if(new_state == true){
+                        //is going to start running
+                        this._predicted_state.time.play_clock_current_time + this.ping
+                        this._predicted_state.time.is_play_clock_running = true;
+                        this.reducers["sync:time"](this._predicted_state.time);
+                    } else if(new_state == false) {
+                        //stoping the clock
+                        this._predicted_state.time.play_clock_current_time - this.ping
+                        this._predicted_state.time.is_play_clock_running = false;
+                        this.reducers["sync:time"](this._predicted_state.time);
+                    } 
+                }
+            }
         },
         "set:clock_time": (clock, time) => {
             this.send_action("set:clock_time", { clock, time })
+            //i dont think there is any perdiction only on reciving
         },
         "set:down": (down) => {
             this.send_action("set:down", { down })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state.down = down;
+                this.reducers["sync:down"]({ down: this._predicted_state.down });
+            }
         },
         "set:distance": (distance) => {
             this.send_action("set:distance", { distance })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state.distance = distance;
+                this.reducers["sync:down"]({ distance: this._predicted_state.distance });
+            }
         },
         "set:quarter": (quarter) => {
             this.send_action("set:quarter", { quarter })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state.quarter = quarter;
+                this.reducers["sync:quarter"]({ quarter: this._predicted_state.quarter });
+            }
         },
         "set:possession": (team) => {
             this.send_action("set:possession", { team })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state.possession = team;
+                this.reducers["sync:possession"]({ possession: this._predicted_state.possession });
+            }
         },
         "set:team_timeouts": (team, timeouts) => {
             this.send_action("set:team_timeouts", { team, timeouts })
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state[team == "home" ? "team_home" : "team_away"].timeouts_remaining = timeouts;
+                this.reducers["sync:timeouts"]({ timeouts: this._predicted_state[team == "home" ? "team_home" : "team_away"].timeouts_remaining });
+            }
         },
         "set:flag": (flag_state) => {
             this.send_action("set:flag", flag_state)
+            if(this._intelligent_predictive_rendering){
+                this._predicted_state.flag = flag_state;
+                this.reducers["sync:flag"](this._predicted_state.flag);
+            }
         }
     }
 
     //funcs
+
+
     clear_auto_reconnect_interval = () => {
         if(this.auto_reconnect_interval) {
             clearTimeout(this.auto_reconnect_interval)
@@ -193,9 +339,21 @@ class connection_manager {
             this.is_authenticated = true;
             this.has_successfully_authenticated_before = true;
             this.role = action.payload.role;
+            this.send_action("auth:success",{})
+            this._send_ping(true)
             this.on_auth();
         }
     }
+    _send_ping = (cancel_timeout = false) => {
+        if(this.is_connected && this.is_authenticated){
+            this.send_action("ping", { ping_issuer_timestamp: Date.now() });
+        }
+        if(!cancel_timeout){
+            setTimeout(() => { this._send_ping() }, this.ping_interval_time);
+
+        }
+    }
+
 
     connect = () => {
         if(this.is_connected){ return; }
@@ -242,14 +400,24 @@ class connection_manager {
             return;
         }
         if(action.type == "sync"){
-            this._sync_breakdown_reducer(action.payload);
+            this._sync_breakdown_reducer(action);
+        } else if(action.type == "sync:time" && this._intelligent_predictive_rendering && this.server_time_sync_found) {//need tp add server time sync found check for other uses of ping
+            this._predictive_time_sync_reducer(action)
         } else if(this.reducers[action.type]){
             this.reducers[action.type](action.payload);
         }
-        if(this.intelligent_predictive_rendering){
-            _predicted_state_reducer(action)
+        if(this._intelligent_predictive_rendering){
+            this._predicted_state_reducer(action)
         }
     }
+    _predictive_time_sync_reducer = (action) => {
+        let now = Date.now();
+        let payload = action.payload
+        if(payload.is_game_clock_running){
+            payload.game_clock_current_time += action.timestamp - now + this.server_time_offset
+        }
+    }
+
     _predicted_state_reducer = (action) => {
         let payload = action.payload;
         switch (action.type) {
@@ -290,6 +458,10 @@ class connection_manager {
             case "sync:flag":
                 this._predicted_state.flag = payload;
                 break;
+            case "sync:roster":
+                this._predicted_state.team_home.roster = payload.home_roster;
+                this._predicted_state.team_away.roster = payload.away_roster;
+                break;
             default:
                 break;
         }
@@ -320,8 +492,10 @@ class connection_manager {
         this.ping = (current_time - sent_time)/2;
         this.server_time_offset = server_time + this.ping - current_time;
         this.server_time_sync_found = true;
+        this.on_pong();
     }
-    _sync_breakdown_reducer = (state) => {
+    _sync_breakdown_reducer = (action) => {
+        let state = action.payload
         this.reducers["sync:name"]({
             home_name: state.team_home.name,
             away_name: state.team_away.name
@@ -334,7 +508,11 @@ class connection_manager {
             home_score: state.team_home.score,
             away_score: state.team_away.score
         });
-        this.reducers["sync:time"](state.time);
+        if(this._intelligent_predictive_rendering && this.server_time_sync_found){
+            this._predicted_state_reducer({timestamp:action.timestamp,payload:state.time})
+        } else {
+            this.reducers["sync:time"](state.time);
+        }
         this.reducers["sync:down"]({
             down: state.down,
             distance: state.distance
@@ -355,5 +533,29 @@ class connection_manager {
             status: state.flag.status,
             player_blame: state.flag.player_blame
         });
+        this.reducers["sync:roster"]({
+            home_roster: state.team_home.roster,
+            away_roster: state.team_away.roster
+        });
+    }
+
+    //handle clock tick
+    _update_clocks = (detla_time) => {
+        if(this._predicted_state.time.is_game_clock_running){
+            this._predicted_state.time.game_clock_current_time =
+                Math.max(this._predicted_state.time.game_clock_current_time - detla_time, 0);
+            if(this._predicted_state.time.game_clock_current_time == 0){
+                this._predicted_state.time.is_game_clock_running = false;
+                this.reducers["sync:time"](this._predicted_state.time)
+            }
+        }
+        if(this._predicted_state.time.is_play_clock_running && this._predicted_state.time.is_game_clock_running){//please remove later for update
+            this._predicted_state.time.play_clock_current_time =
+                Math.max(this._predicted_state.time.play_clock_current_time - detla_time, 0);
+            if(this._predicted_state.time.play_clock_current_time == 0){
+                this._predicted_state.time.is_play_clock_running = false;
+                this.reducers["sync:time"](this._predicted_state.time)
+            }
+        }
     }
 }

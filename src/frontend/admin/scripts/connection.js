@@ -4,12 +4,15 @@ function sel(value){
 function selall(value){
     return document.querySelectorAll(value)
 }
-let cm = new connection_manager({role: "admin", reconnect_interval_time: 2000, intelligent_predictive_rendering: false, password: localStorage.getItem("password")});
+let cm = new connection_manager({role: "admin", reconnect_interval_time: 2000, intelligent_predictive_rendering: true, password: localStorage.getItem("password")});
 
 
 cm.on_auth = () => {
     sel("#auth").classList.add("hide")
     sel("#controls").classList.remove("hide")
+    update_debug_info();
+}
+cm.on_pong = () => {
     update_debug_info();
 }
 sel("#password").value = localStorage.getItem("password")
@@ -26,7 +29,7 @@ function update_debug_info(){
         if (cm.is_authenticated) {
             output = `Online (${cm.role})`;
             if(cm.server_time_sync_found){
-                output += `, Ping: ${cm.ping.toFixed(0)} ms, Offset: ${cm.server_time_offset.toFixed(0)} ms`
+                output += `, Ping: ${(cm.ping * 2).toFixed(0)} ms, Offset: ${cm.server_time_offset.toFixed(0)} ms`
             }
 
         } else {
