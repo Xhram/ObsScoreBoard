@@ -478,9 +478,9 @@ class connection_manager {
     _predict_time_state = (action) => {
         if(!this.server_time_sync_found){ this._predict_time_state.time = action.payload;console.log("Can not predict time state, because sync not found"); return; }
         let payload = action.payload
-        let now = Date.now();
-        let timestamp = action.timestamp - this.server_time_offset
-        let time_sense_send = now - timestamp;
+        
+        let timestamp = action.timings.server_send_time - this.server_time_offset
+        let time_sense_send = Date.now() - timestamp;
         if(payload.is_game_clock_running){
             console.log("Predicting Game Clock Running Delta:" + (this._predicted_state.time.game_clock_current_time - (payload.game_clock_current_time - time_sense_send)) + "ms")
 
