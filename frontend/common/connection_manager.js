@@ -1,6 +1,15 @@
 function clamp(num, min, max) {
     return Math.min(Math.max(num, min), max)
 }
+if(document.querySelector("#connection-status")){
+    document.querySelector("#connection-status").classList.add("hide");
+    let urlParams = new URLSearchParams(window.location.search);
+    let debug = urlParams.has("debug") ? urlParams.get("debug") !== "false" : false;
+    if(debug){
+        document.querySelector("#connection-status").classList.remove("hide");
+    }
+}
+
 class connection_manager {
     is_connected = false;
     is_authenticated = false;
@@ -15,8 +24,8 @@ class connection_manager {
     server_time_offset = 0;
     ping = 0;
 
-    reconnect_interval_time = 2000;
-    ping_interval_time = 10000;
+    reconnect_interval_time;
+    ping_interval_time;
 
     _intelligent_predictive_rendering = false;
     //this allows the client to perdict the servers response optmisticly and with greater accercy event at large ping values
@@ -73,7 +82,7 @@ class connection_manager {
         this.reconnect_interval_time = options.reconnect_interval_time || 2000;
         this.password = options.password || "";
         this._intelligent_predictive_rendering = options.intelligent_predictive_rendering || ipr;
-        this.ping_interval_time = options.ping_interval_time || 20000;
+        this.ping_interval_time = options.ping_interval_time || 30000;
         this._send_ping();
         if(this._intelligent_predictive_rendering){
             (() => {
@@ -205,16 +214,16 @@ class connection_manager {
                 });
             }
         },
-        "set:clock_state": (clock, new_state) => {
-            this.send_action("set:clock_state", { clock, new_state })
+        "set:clock_state": (clock, is_running) => {
+            this.send_action("set:clock_state", { clock, is_running })
             if(this._intelligent_predictive_rendering){
                 if(clock == "game"){
-                    if(new_state == true){
+                    if(is_running == true){
                         //is going to start running
                         this._predicted_state.time.game_clock_current_time + this.ping
                         this._predicted_state.time.is_game_clock_running = true;
                         this.reducers["sync:time"](this._predicted_state.time);
-                    } else if(new_state == false) {
+                    } else if(is_running == false) {
                         //stoping the clock
                         this._predicted_state.time.game_clock_current_time - this.ping
                         this._predicted_state.time.is_game_clock_running = false;
@@ -227,12 +236,12 @@ class connection_manager {
                     }
                 }
                 if(clock == "play"){
-                    if(new_state == true){
+                    if(is_running == true){
                         //is going to start running
                         this._predicted_state.time.play_clock_current_time + this.ping
                         this._predicted_state.time.is_play_clock_running = true;
                         this.reducers["sync:time"](this._predicted_state.time);
-                    } else if(new_state == false) {
+                    } else if(is_running == false) {
                         //stoping the clock
                         this._predicted_state.time.play_clock_current_time - this.ping
                         this._predicted_state.time.is_play_clock_running = false;
@@ -316,7 +325,7 @@ class connection_manager {
     }
     send_action = (action_type, payload) => {
         if(!this.is_authenticated){ console.log("Not authenticated, cannot send action"); return; }
-        this.send_data({type: action_type, payload: payload});
+        this.send_data({type: action_type, payload: payload, timings: {client_send_time:Date.now()}});
     }
 
     _send_auth = () => {
@@ -341,14 +350,14 @@ class connection_manager {
             this.is_authenticated = true;
             this.has_successfully_authenticated_before = true;
             this.role = action.payload.role;
-            this.send_action("auth:success",{})
+            this.send_action("request:sync",{})
             this._send_ping(true)
             this.on_auth();
         }
     }
     _send_ping = (cancel_timeout = false) => {
         if(this.is_connected && this.is_authenticated){
-            this.send_action("ping", { ping_issuer_timestamp: Date.now() });
+            this.send_action("ping", {});
         }
         if(!cancel_timeout){
             setTimeout(() => { this._send_ping() }, this.ping_interval_time);
@@ -382,6 +391,8 @@ class connection_manager {
                 this._handle_auth_message(action);
                 return;
             }
+            if (!action.timings) action.timings = {};
+            action.timings.client_receive_time = Date.now();
             this._handle_reducer_message(action);
         } catch (error) {
             console.log("Error On Message:")
@@ -398,7 +409,7 @@ class connection_manager {
     }
     _handle_reducer_message = (action) => {
         if(action.type == "pong"){
-            this._handle_pong_response(action.payload);
+            this._handle_pong_response(action);
             return;
         }
 
@@ -486,13 +497,11 @@ class connection_manager {
         this.reducers["sync:time"](this._predicted_state.time);
 
     }
-    //need to call ping
-    _handle_pong_response = (payload) => {
-        let current_time = Date.now();
-        let sent_time = payload.ping_issuer_timestamp;
-        let server_time = payload.timestamp;
-        this.ping = (current_time - sent_time)/2;
-        this.server_time_offset = server_time + this.ping - current_time;
+    //need to call ping -> i think i fixed this
+    _handle_pong_response = (action) => {
+        let timings = action.timings;
+        this.ping = (timings.client_receive_time - timings.client_send_time)/2;
+        this.server_time_offset = timings.server_send_time + this.ping - timings.client_receive_time;
         this.server_time_sync_found = true;
         this.on_pong();
     }

@@ -1,7 +1,7 @@
 function sel(value){
     return document.querySelector(value)
 }
-let cm = new connection_manager({role: "scoreboard", reconnect_interval_time: 2000});
+let cm = new connection_manager({role: "scoreboard", reconnect_interval_time: 200});
 
 
 cm.on_auth = () => {

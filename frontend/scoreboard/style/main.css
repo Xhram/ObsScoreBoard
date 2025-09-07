@@ -37,6 +37,10 @@ body, html {
 .hide {
     display: none !important;
 }
+:root {
+    --zoom: 1;
+    zoom: var(--zoom);
+}
 
 #connection-status {
     position: absolute;
