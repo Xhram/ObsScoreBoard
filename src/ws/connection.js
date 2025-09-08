@@ -60,9 +60,9 @@ export class connection {
             }
             this.on_message(this, action);
         } catch (error) {
-            console.log("message error")
-            console.log("message:" + data.toString())
-            console.log("error:" + error)
+            console.error("Error handling incoming WebSocket message.");
+            console.error("Raw message data:", data.toString());
+            console.error("Error details:", error && error.stack ? error.stack : error);
         }
     }
     _on_close = async () => {
