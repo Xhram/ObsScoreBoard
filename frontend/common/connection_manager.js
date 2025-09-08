@@ -38,7 +38,6 @@ class connection_manager {
     _predicted_state = {
         team_home: {
             name: "Palatine",
-            initals: "PHS",
             image: "blank",
             score: 0,
             color: "#35ffa1",
@@ -49,7 +48,6 @@ class connection_manager {
         },
         team_away: {
             name: "Away Team",
-            initals: "AT",
             image: "blank",
             score: 0,
             color: "#ff6c32",
@@ -571,10 +569,10 @@ class connection_manager {
     }
 
     //handle clock tick
-    _update_clocks = (detla_time) => {
+    _update_clocks = (delta_time) => {
         if(this._predicted_state.time.is_game_clock_running){
             this._predicted_state.time.game_clock_current_time =
-                Math.max(this._predicted_state.time.game_clock_current_time - detla_time, 0);
+                Math.max(this._predicted_state.time.game_clock_current_time - delta_time, 0);
             if(this._predicted_state.time.game_clock_current_time == 0){
                 this._predicted_state.time.is_game_clock_running = false;
                 this.reducers["sync:time"](this._predicted_state.time)
@@ -582,7 +580,7 @@ class connection_manager {
         }
         if(this._predicted_state.time.is_play_clock_running && this._predicted_state.time.is_game_clock_running){//please remove later for update
             this._predicted_state.time.play_clock_current_time =
-                Math.max(this._predicted_state.time.play_clock_current_time - detla_time, 0);
+                Math.max(this._predicted_state.time.play_clock_current_time - delta_time, 0);
             if(this._predicted_state.time.play_clock_current_time == 0){
                 this._predicted_state.time.is_play_clock_running = false;
                 this.reducers["sync:time"](this._predicted_state.time)

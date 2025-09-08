@@ -18,10 +18,10 @@ export class state_manager {
         })()
     }
 
-    update_clocks = (detla_time) => {
+    update_clocks = (delta_time) => {
         if(this.scoreboard.time.is_game_clock_running){
             this.scoreboard.time.game_clock_current_time =
-                Math.max(this.scoreboard.time.game_clock_current_time - detla_time, 0);
+                Math.max(this.scoreboard.time.game_clock_current_time - delta_time, 0);
             if(this.scoreboard.time.game_clock_current_time == 0){
                 this.scoreboard.time.is_game_clock_running = false;
             }
@@ -30,7 +30,7 @@ export class state_manager {
         //translation for norbs:this is also on client cus i cmd+c and cmd+v
         if(this.scoreboard.time.is_play_clock_running && this.scoreboard.time.is_game_clock_running){
             this.scoreboard.time.play_clock_current_time =
-                Math.max(this.scoreboard.time.play_clock_current_time - detla_time, 0);
+                Math.max(this.scoreboard.time.play_clock_current_time - delta_time, 0);
             if(this.scoreboard.time.play_clock_current_time == 0){
                 this.scoreboard.time.is_play_clock_running = false;
             }
@@ -90,7 +90,6 @@ export class state_manager {
         return {
             team_home: {
                 name: "Palatine",
-                initals: "PHS",
                 image: image_to_data_url("./src/assets/phs_ptv_64.png"),
                 score: 0,
                 color: "#35ffa1",
@@ -101,7 +100,6 @@ export class state_manager {
             },
             team_away: {
                 name: "Away Team",
-                initals: "AT",
                 image: image_to_data_url("./src/assets/phs_ptv_64.png"),
                 score: 0,
                 color: "#ff6c32",

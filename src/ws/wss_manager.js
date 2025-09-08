@@ -2,6 +2,7 @@ import { WebSocketServer } from "ws";
 import { handle_message } from "./handlers.js";
 import { state_manager } from "../utils/state_manager.js";
 import { connection } from "./connection.js";
+import { json } from "express";
 
 export class wss_manager {
     connections = [];
@@ -52,7 +53,7 @@ export class wss_manager {
             handle_message(this, conn, action);
         } catch (error) {
             console.log("message error")
-            console.log("message:" + data.toString())
+            console.log("message:" + JSON.stringify(action,null,4))
             console.log("error:" + error)
         }
     }

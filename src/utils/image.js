@@ -1,3 +1,5 @@
+import fs from "fs";
+
 export function image_to_data_url(imagePath) {
     const imageBuffer = fs.readFileSync(imagePath);
     const mimeType = "image/png";
