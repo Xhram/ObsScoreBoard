@@ -26,8 +26,12 @@ export class state_manager {
                 this.scoreboard.time.is_game_clock_running = false;
             }
         }
-        //please remove later for update -> this is also on client cus i ctrl+c and ctrl+v
-        //translation for norbs:this is also on client cus i cmd+c and cmd+v
+        /**
+         * The play clock is updated in parallel with the game clock when both are running.
+         * This logic is intentionally duplicated on both the server and client to ensure
+         * consistent clock state across platforms, as timing events may not be perfectly
+         * synchronized due to network latency or platform-specific event handling.
+         */
         if(this.scoreboard.time.is_play_clock_running && this.scoreboard.time.is_game_clock_running){
             this.scoreboard.time.play_clock_current_time =
                 Math.max(this.scoreboard.time.play_clock_current_time - delta_time, 0);
