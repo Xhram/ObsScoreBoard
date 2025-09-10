@@ -20,7 +20,7 @@ class connection_manager {
     has_successfully_authenticated_before = false;
     server_time_sync_found = true;
 
-    //later on i need to incorpare some form for avraging to smooth these vals
+    //later on i need to incorporate some form for averaging to smooth these vals
     server_time_offset = 0;
     ping = 0;
     samples_count = 20;
