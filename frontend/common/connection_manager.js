@@ -32,7 +32,7 @@ class connection_manager {
 
     _intelligent_predictive_rendering = false;
     //this allows the client to perdict the servers response optmisticly and with greater accercy event at large ping values
-    //it fakes imideate sync events from the server and uses its knowlage of the network's speed to predict desync between time of server and client
+    //it fakes immediate sync events from the server and uses its knowledge of the network's speed to predict desync between time of server and client
     
 
     _predicted_state = {
