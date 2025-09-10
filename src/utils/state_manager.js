@@ -4,7 +4,7 @@ import path from "path";
 import { SCOREBOARD_STATE_FILE } from "../config/index.js";
 import { image_to_data_url } from "./image.js";
 
-export class state_manager {
+export class StateManager {
     scoreboard = undefined;
     constructor(){
         this.scoreboard = this.load_scoreboard_state() || this.default_scoreboard_state();

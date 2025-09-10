@@ -1,13 +1,13 @@
 import { ADMIN_PASSWORD, ARTIFICIAL_NETWORK_DELAY, random_internet_delay } from "../config/index.js";
 
 
-export class connection {
-    ws = undefined;
-    wm = undefined;
+export class Connection {
+    webSocket = undefined;
+    webSocketServerManager = undefined;
     auth;
-    constructor(ws,wm){
-        this.ws = ws
-        this.wm = wm
+    constructor(webSocket,webSocketServerManager){
+        this.webSocket = webSocket
+        this.webSocketServerManager = webSocketServerManager
         this.auth = {
             is_authenticated: false,
             role: "none", // can be admin or scoreboard
@@ -18,14 +18,14 @@ export class connection {
                 this._auth_fail()
             }
         }, 10000);
-        this.ws.on("message", this._on_message)
-        this.ws.on("close",this._on_close)
+        this.webSocket.on("message", this._on_message)
+        this.webSocket.on("close",this._on_close)
     }
     //hooks
-    on_auth = (conn) => {}
-    on_auth_fail = (conn) => {}
-    on_message = (conn,action) => {}
-    on_disconnect = (conn) => {}
+    on_auth = (connection) => {}
+    on_auth_fail = (connection) => {}
+    on_message = (connection,action) => {}
+    on_disconnect = (connection) => {}
 
 
     //public functions
@@ -33,7 +33,7 @@ export class connection {
         if(ARTIFICIAL_NETWORK_DELAY){
             await new Promise(resolve => setTimeout(resolve, random_internet_delay()));
         }
-        this.ws.send(JSON.stringify(data,null,4))
+        this.webSocket.send(JSON.stringify(data,null,4))
     }
     send_action = async (type, payload, action_initiator) => {
         let data = {
@@ -70,7 +70,7 @@ export class connection {
     }
     //internal functions
     _auth_fail = () => {
-        this.ws.close(1008, "Authentication timeout");
+        this.webSocket.close(1008, "Authentication timeout");
         this.on_auth_fail();
     }
 

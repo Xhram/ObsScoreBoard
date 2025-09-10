@@ -2,15 +2,15 @@ import express from "express";
 import { createServer } from "http";
 import { setupRoutes } from "./routes/index.js";
 import { PORT } from "./config/index.js";
-import { wss_manager } from "./ws/wss_manager.js";
-import { state_manager } from "./utils/state_manager.js";
+import { WebSocketServerManager } from "./ws/web_socket_server_manager.js";
+import { StateManager } from "./utils/state_manager.js";
 
 const app = express();
 const server = createServer(app);
-const sm = new state_manager();
-const wm = new wss_manager({
+const stateManager = new StateManager();
+const webSocketServerManager = new WebSocketServerManager({
     server,
-    state_manager:sm
+    stateManager: stateManager
 })
 
 app.use(express.json());

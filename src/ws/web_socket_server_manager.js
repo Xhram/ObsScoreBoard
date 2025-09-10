@@ -1,26 +1,26 @@
 import { WebSocketServer } from "ws";
-import { handle_message } from "./handlers.js";
-import { state_manager } from "../utils/state_manager.js";
-import { connection } from "./connection.js";
+import { handleMessage } from "./handlers.js";
+import { StateManager } from "../utils/state_manager.js";
+import { Connection } from "./connection.js";
 import { json } from "express";
 
-export class wss_manager {
+export class WebSocketServerManager {
     connections = [];
-    wss;
+    webSocketServer;
     server;
-    sm;
+    stateManager;
 
     get scoreboard() {
-        return this.sm.scoreboard;
+        return this.stateManager.scoreboard;
     }
     constructor(options = {}) {
         if (!options.server) {
             throw new Error("Server option is required");
         }
         this.server = options.server;
-        this.sm = options.state_manager || new state_manager();
-        this.wss = new WebSocketServer({ server: this.server });
-        this.wss.on("connection", this._on_connection);
+        this.stateManager = options.stateManager || new StateManager();
+        this.webSocketServer = new WebSocketServer({ server: this.server });
+        this.webSocketServer.on("connection", this._on_connection);
     }
     
     //public functions
@@ -34,23 +34,23 @@ export class wss_manager {
     }
 
     //internal hooks
-    _on_connection = (ws) => {
-        let conn = new connection(ws, this)
-        conn.on_auth = () => {
-            this.connections.push(conn);
+    _on_connection = (webSocket) => {
+        let connection = new Connection(webSocket, this)
+        connection.on_auth = () => {
+            this.connections.push(connection);
         }
-        conn.on_disconnect = () => {
-            let index = this.connections.indexOf(conn);
+        connection.on_disconnect = () => {
+            let index = this.connections.indexOf(connection);
             if (index > -1) {
                 this.connections.splice(index, 1);
             }
         }
-        conn.on_message = this._on_message;
+        connection.on_message = this._on_message;
     }
 
     _on_message = async (conn, action) => {
         try {
-            handle_message(this, conn, action);
+            handleMessage(this, conn, action);
         } catch (error) {
             console.log("message error")
             console.log("message:" + JSON.stringify(action,null,4))
