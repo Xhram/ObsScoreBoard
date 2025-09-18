@@ -369,7 +369,7 @@ class connection_manager {
 
     connect = () => {
         if(this.is_connected){ return; }
-        this.ws = new WebSocket(`ws://${window.location.host}`);
+        this.ws = new WebSocket(`ws://${window.location.host}/${this.role}_ws`);
         this.ws.onopen = this._on_open
         this.ws.onmessage = this._on_message
         this.ws.onerror = (error) => {
