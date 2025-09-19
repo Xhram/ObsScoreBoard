@@ -18,6 +18,15 @@
     90%  { height: calc(100% + 20px); }
     100% { height: 0; }
 }
+@keyframes come-from-top {
+    0%   { transform: translateY(00%) translateX(-50%); }
+    100% { transform: translateY(100%) translateX(-50%); }
+}
+@keyframes come-from-bottom {
+    0%   { transform: translateY(100%) }
+    100% { transform: translateY(0%) }
+}
+
 
 body, html { 
     margin: 0; 
@@ -61,10 +70,11 @@ body, html {
     left: 50%;
     transform: translateX(-50%);
     height: 145px;
-    aspect-ratio: 5;
+    /* aspect-ratio: 5; */
+    width: 725px;
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
-    grid-template-rows: 30px 75px 40px;
+    grid-template-rows: auto auto auto;
     gap: 0;
     --team-left-color: red;
     --team-left-color-text: white;
@@ -86,7 +96,87 @@ body, html {
     --time-carousel-popup-delay: 2s;
     --time-meta-data-popup-time: 0.3s;
     --time-flag-popup-time: 0.15s;
+
+    transition: height 0.15s linear, width 0.15s ease;
 }
+#scoreboard.isolate-score {
+    height: 105px;
+
+    .game-data-container {
+        height: 0;
+    }
+}
+#scoreboard.halftime {
+    .quarter {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.3s ease;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.6rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: transparent;
+        width: fit-content;
+        animation: come-from-top 0.3s ease forwards;
+        transition: left 0.3s ease;
+        /* overflow: visible; */
+
+        &::after {
+            content: "Halftime";
+            opacity: 1;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: var(--color-game-data-text);
+            transform: translateY(-100%);
+        }
+    }
+
+    .clock {
+        transition: transform 0.3s ease;
+        transform: translateY(100%);
+    }
+
+    .down-distance {
+        transition: transform 0.3s ease;
+        transform: translateY(100%);
+    }
+}
+#scoreboard.minimal {
+    width: 315px;
+
+    .name {
+        width: 0;
+        transition: width 0.3s ease, padding 0.3s ease, flex 0.3s ease;
+        padding: 0;
+        overflow: hidden;
+        flex: 0;
+    }
+    .down-distance {
+        width: 0;
+        transition: width 0.3s ease, padding 0.3s ease;
+        padding: 0;
+        overflow: hidden;
+    }
+}
+#scoreboard.minimal:not(.halftime) {
+    .clock {
+        flex: 0;
+        margin-left: auto;
+        transform: translateX(50%);   
+    }
+}
+
+
+
 .container {
     padding: 5px;
     width: 100%;
@@ -102,6 +192,7 @@ body, html {
     transition: transform var(--time-meta-data-popup-time) ease;
     transform: translateY(100%);
     z-index: -1;
+    height: 30px;
 
     &.visible {
         transform: translateY(0%);
@@ -118,6 +209,7 @@ body, html {
         align-items: center;
         width: fit-content;
         animation-play-state: paused;
+        min-width: 100%;
         /* min-width: 200%; */
         
     }
@@ -176,6 +268,7 @@ body, html {
     flex-direction: row;
     background-color: var(--color-game-data-background);
     padding: 0;
+    min-height: 75px;
 
     .flag-container {
         position: absolute;
@@ -612,6 +705,8 @@ body, html {
     font-weight: bolder;
     padding: 0 6px;
     overflow: hidden;
+    height: 40px;
+    transition: height 0.15s linear;
 
     .badge {
         position: absolute;
@@ -629,14 +724,18 @@ body, html {
         flex-direction: row;
         justify-content: space-evenly;
         .quarter {
-            color: var(--color-game-data-text-neutral);
+            position: relative;
+            color: var(--color-game-data-text);
             margin-right: auto;
             flex: 1;
+            transition: transform 0.3s ease;
+            animation: come-from-bottom 0.3s ease forwards;
         }
         .clock {
             color: var(--color-game-data-text);
             flex: 2;
             margin-right: auto;
+            transition: transform 0.3s ease;
         }
     }
     .play-clock {
@@ -652,6 +751,7 @@ body, html {
         overflow: hidden;
         transition: width 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
         box-shadow: 0 0 4px 4px var(--color-game-data-background-highlight);
+        transition: transform 0.3s ease;
 
         &.hidden {
             width: 0;
@@ -667,6 +767,7 @@ body, html {
         flex-direction: row;
         justify-content: center;
         gap: 6px;
+        transition: transform 0.3s ease;
 
         span {
             color: var(--color-game-data-text);
