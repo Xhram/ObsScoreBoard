@@ -18,19 +18,23 @@ export class state_manager {
         })()
     }
 
-    update_clocks = (detla_time) => {
+    update_clocks = (delta_time) => {
         if(this.scoreboard.time.is_game_clock_running){
             this.scoreboard.time.game_clock_current_time =
-                Math.max(this.scoreboard.time.game_clock_current_time - detla_time, 0);
+                Math.max(this.scoreboard.time.game_clock_current_time - delta_time, 0);
             if(this.scoreboard.time.game_clock_current_time == 0){
                 this.scoreboard.time.is_game_clock_running = false;
             }
         }
-        //please remove later for update -> this is also on client cus i ctrl+c and ctrl+v
-        //translation for norbs:this is also on client cus i cmd+c and cmd+v
+        /**
+         * The play clock is updated in parallel with the game clock when both are running.
+         * This logic is intentionally duplicated on both the server and client to ensure
+         * consistent clock state across platforms, as timing events may not be perfectly
+         * synchronized due to network latency or platform-specific event handling.
+         */
         if(this.scoreboard.time.is_play_clock_running && this.scoreboard.time.is_game_clock_running){
             this.scoreboard.time.play_clock_current_time =
-                Math.max(this.scoreboard.time.play_clock_current_time - detla_time, 0);
+                Math.max(this.scoreboard.time.play_clock_current_time - delta_time, 0);
             if(this.scoreboard.time.play_clock_current_time == 0){
                 this.scoreboard.time.is_play_clock_running = false;
             }
@@ -63,7 +67,7 @@ export class state_manager {
         "sync:possession": () => ({
             possession: this.scoreboard.possession,
         }),
-        "sync:timeout": () => ({
+        "sync:timeouts": () => ({
             home_timeouts: this.scoreboard.team_home.timeouts_remaining,
             away_timeouts: this.scoreboard.team_away.timeouts_remaining,
         }),
@@ -90,7 +94,6 @@ export class state_manager {
         return {
             team_home: {
                 name: "Palatine",
-                initals: "PHS",
                 image: image_to_data_url("./src/assets/phs_ptv_64.png"),
                 score: 0,
                 color: "#35ffa1",
@@ -101,7 +104,6 @@ export class state_manager {
             },
             team_away: {
                 name: "Away Team",
-                initals: "AT",
                 image: image_to_data_url("./src/assets/phs_ptv_64.png"),
                 score: 0,
                 color: "#ff6c32",

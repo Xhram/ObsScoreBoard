@@ -29,7 +29,7 @@
 // Last, First
 let team_home_roster = {
     // '-1': 'Player Home Team'
-    '-1': ['zych', 'norbert']
+    '-1': []
 }
 let team_away_roster = {
     // '-1': 'Player Other Team'

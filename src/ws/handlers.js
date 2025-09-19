@@ -120,7 +120,7 @@ function handle_set_type(wm, conn, action) {
             } else if (payload.team === "away") {
                 scoreboard.team_away.timeouts_remaining = clamp(payload.timeouts, 0, 3);
             }
-            wm.broadcast_action("sync:timeout", sm.sync_getters["sync:timeout"](), action);
+            wm.broadcast_action("sync:timeouts", sm.sync_getters["sync:timeouts"](), action);
             break;
         }
         case "set:flag": {
@@ -199,7 +199,7 @@ function handle_add_type(wm, conn, action) {
             } else if (payload.team === "away") {
                 scoreboard.team_away.timeouts_remaining = clamp(scoreboard.team_away.timeouts_remaining + payload.amount, 0, 3);
             }
-            wm.broadcast_action("sync:timeout", sm.sync_getters["sync:timeout"](), action);
+            wm.broadcast_action("sync:timeouts", sm.sync_getters["sync:timeouts"](), action);
             break;
         }
         default:

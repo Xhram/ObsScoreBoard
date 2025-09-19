@@ -20,7 +20,7 @@ class connection_manager {
     has_successfully_authenticated_before = false;
     server_time_sync_found = true;
 
-    //later on i need to incorpare some form for avraging to smooth these vals
+    //later on i need to incorporate some form for averaging to smooth these vals
     server_time_offset = 0;
     ping = 0;
     samples_count = 20;
@@ -32,13 +32,12 @@ class connection_manager {
 
     _intelligent_predictive_rendering = false;
     //this allows the client to perdict the servers response optmisticly and with greater accercy event at large ping values
-    //it fakes imideate sync events from the server and uses its knowlage of the network's speed to predict desync between time of server and client
+    //it fakes immediate sync events from the server and uses its knowledge of the network's speed to predict desync between time of server and client
     
 
     _predicted_state = {
         team_home: {
             name: "Palatine",
-            initals: "PHS",
             image: "blank",
             score: 0,
             color: "#35ffa1",
@@ -49,7 +48,6 @@ class connection_manager {
         },
         team_away: {
             name: "Away Team",
-            initals: "AT",
             image: "blank",
             score: 0,
             color: "#ff6c32",
@@ -371,7 +369,7 @@ class connection_manager {
 
     connect = () => {
         if(this.is_connected){ return; }
-        this.ws = new WebSocket(`ws://${window.location.host}`);
+        this.ws = new WebSocket(`ws://${window.location.host}/${this.role}_ws`);
         this.ws.onopen = this._on_open
         this.ws.onmessage = this._on_message
         this.ws.onerror = (error) => {
@@ -571,10 +569,10 @@ class connection_manager {
     }
 
     //handle clock tick
-    _update_clocks = (detla_time) => {
+    _update_clocks = (delta_time) => {
         if(this._predicted_state.time.is_game_clock_running){
             this._predicted_state.time.game_clock_current_time =
-                Math.max(this._predicted_state.time.game_clock_current_time - detla_time, 0);
+                Math.max(this._predicted_state.time.game_clock_current_time - delta_time, 0);
             if(this._predicted_state.time.game_clock_current_time == 0){
                 this._predicted_state.time.is_game_clock_running = false;
                 this.reducers["sync:time"](this._predicted_state.time)
@@ -582,7 +580,7 @@ class connection_manager {
         }
         if(this._predicted_state.time.is_play_clock_running && this._predicted_state.time.is_game_clock_running){//please remove later for update
             this._predicted_state.time.play_clock_current_time =
-                Math.max(this._predicted_state.time.play_clock_current_time - detla_time, 0);
+                Math.max(this._predicted_state.time.play_clock_current_time - delta_time, 0);
             if(this._predicted_state.time.play_clock_current_time == 0){
                 this._predicted_state.time.is_play_clock_running = false;
                 this.reducers["sync:time"](this._predicted_state.time)
