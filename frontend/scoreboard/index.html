@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="style/main.css">
 </head>
 <body>
+    <div id="connection-status" class=""></div>
     <div id="scoreboard">
         <div class="container meta-data-container">
             <!-- <div class="data">PHS Homecoming game</div> -->
@@ -78,7 +79,7 @@
                 <div class="quarter">1st</div>
                 <div class="clock">00:00</div>
             </div>
-            <div class="play-clock"><span>:00</span></div>
+            <div class="play-clock hide"><span>:00</span></div>
             <div class="down-distance">
                 <div class="down"><span>1st</span></div>
                 <span class="filler">&</span>
@@ -87,5 +88,8 @@
         </div>
     </div>
 </body>
+<script src="/common/connection_manager.js"></script>
 <script src="scripts/main.js"></script>
+<script src="scripts/connection.js"></script>
+<script src="scripts/zoom.js"></script>
 </html>

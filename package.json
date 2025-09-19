@@ -5,9 +5,10 @@
     "description": "",
     "main": "./src/server.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "nodemon ./src/server.js",
-        "prod": "node ./src/server.js"
+        "dev": "nodemon --watch src ./src/server.js",
+        "dev_backend": "nodemon --watch src --ignore src/frontend ./src/server.js",
+        "prod": "node ./src/server.js",
+        "remove_state": "rimraf ./scoreboard_state.json"
     },
     "keywords": [],
     "author": "",
@@ -15,6 +16,12 @@
     "dependencies": {
         "dotenv": "^17.2.1",
         "express": "^5.1.0",
+        "postcss": "^8.5.6",
+        "postcss-nested": "^6.2.0",
         "ws": "^8.18.3"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.10",
+        "rimraf": "^6.0.1"
     }
 }

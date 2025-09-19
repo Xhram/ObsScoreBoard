@@ -1,5 +1,57 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
 
+.hide {
+    display: none !important;
+}
+
+#auth {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+
+    input {
+        color: rgb(255, 255, 255);
+        background-color: oklab(0 0 0 / 0.0784314);
+        margin-bottom: 15px;
+        margin-top: 15px;
+        width: 300px;
+        height: 50px;
+        border: 1px solid oklab(98.809% 0 -0.00011 / 0.13);
+        font-size: 25px;
+        border-radius: 8px;
+    }
+    button {
+        color: white;
+        background-color: rgb(88, 101, 242);
+        border: 1px solid oklab(98.809% 0 -0.00011 / 0.13);
+        width: 300px;
+        height: 50px;
+        font-size: 25px;
+        border-radius: 8px;
+    } 
+    div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+}
+#connection-status {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color:#ffffff;
+    font-size: 21px;
+    background-color: rgba(147, 141, 158, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 0px 5px;
+    z-index: 100;
+}
+
 html,
 body,
 #controls {
@@ -13,6 +65,12 @@ body,
     font-weight: 600;
     font-style: normal;
     color: white;
+}
+html{
+    overflow: hidden;
+}
+body {
+    overflow-y: scroll;
 }
 button,
 input {

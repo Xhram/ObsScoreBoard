@@ -1,37 +1,22 @@
-import express from 'express';
-import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
-import dotenv from 'dotenv';
+import express from "express";
+import { createServer } from "http";
+import { setupRoutes } from "./routes/index.js";
+import { PORT } from "./config/index.js";
+import { wss_manager } from "./ws/wss_manager.js";
+import { state_manager } from "./utils/state_manager.js";
 
-dotenv.config();
 const app = express();
 const server = createServer(app);
-const wss = new WebSocketServer({ server });
-const PORT = process.env.PORT || 3000;
+const sm = new state_manager();
+const wm = new wss_manager({
+    server,
+    state_manager:sm
+})
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.json({ message: 'Server is running' });
-});
-app.use('/scoreboard', express.static('./src/frontend/scoreboard'));
-app.use('/admin', express.static('./src/frontend/admin'));
-
-// WebSocket connection handling
-wss.on('connection', (ws) => {
-    console.log('New WebSocket connection');
-    
-    ws.on('message', (data) => {
-        console.log('Received:', data.toString());
-        // Echo message back to client
-        ws.send(`Echo: ${data}`);
-    });
-    
-    ws.on('close', () => {
-        console.log('WebSocket connection closed');
-    });
-});
+setupRoutes(app);
 
 server.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -23,6 +23,15 @@
         background-color: rgb(60, 116, 180);
         cursor: pointer;
         z-index: 1;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    .running-clock {
+        background-color: rgb(187, 148, 103) !important;
+    }
+    #game-timer-toggle, #game-timer-toggle span, #shot-clock-toggle, #shot-clock-toggle span{
+        -webkit-user-select: none;
+        user-select: none;
     }
     .increment.animation::after, .decrement.animation::after {
         content: '';
