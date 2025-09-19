@@ -215,6 +215,56 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="control">
+                        <div class="label">
+                            <h2>Flag Management</h2>
+                        </div>
+                        <div class="content">
+                            <div class="control-group" style="background-color: #ffa500;">
+                                <h3>Flag Actions</h3>
+                                <div class="score">
+                                    <div id="emit-flag" class="increment" onclick="set_flag_state_action_issuer({is_flag_emitted: true, status: 'none', team: 'none', player_blame: -2})">Emit Flag</div>
+                                    <div id="hide-flag" class="decrement" onclick="set_flag_state_action_issuer({is_flag_emitted: false, status: 'none', team: 'none', player_blame: -2})">Hide Flag</div>
+                                </div>
+                            </div>
+                            <div class="control-group home" style="margin-top: 15px;">
+                                <h3>Blame Home Team</h3>
+                                <div class="score">
+                                    <div id="blame-home-team" class="decrement"  onclick="set_flag_state_action_issuer({team: 'home'})">Team Penalty</div>
+                                </div>
+                            </div>
+                            <div class="control-group away" style="margin-top: 15px;">
+                                <h3>Blame Away Team</h3>
+                                <div class="score">
+                                    <div id="blame-away-team" class="decrement"  onclick="set_flag_state_action_issuer({team: 'away'})">Team Penalty</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- player blame -->
+                    <div class="control">
+                        <div class="label">
+                            <h2>Player Penalties</h2>
+                        </div>
+                        <div class="content">
+                            <div class="control-group home">
+                                <h3>Home Player #</h3>
+                                <div class="score">
+                                    <input id="home-player-number" class="input" value="" placeholder="Player #"/>
+                                    <div id="blame-home-player" class="decrement"  onclick="set_flag_state_action_issuer({ player_blame: parseInt(sel('#home-player-number').value)})">Blame Player</div>
+                                </div>
+                            </div>
+                            <div class="control-group away" style="margin-top: auto;">
+                                <h3>Away Player #</h3>
+                                <div class="score">
+                                    <input id="away-player-number" class="input" value="" placeholder="Player #"/>
+                                    <div id="blame-away-player" class="decrement"   onclick="set_flag_state_action_issuer({ player_blame: parseInt(sel('#away-player-number').value)})">Blame Player</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
