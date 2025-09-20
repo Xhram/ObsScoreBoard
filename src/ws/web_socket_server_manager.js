@@ -20,21 +20,21 @@ export class WebSocketServerManager {
         this.server = options.server;
         this.stateManager = options.stateManager || new StateManager();
         this.webSocketServer = new WebSocketServer({ server: this.server });
-        this.webSocketServer.on("connection", this._on_connection);
+        this.webSocketServer.on("connection", this._onConnection);
     }
     
     //public functions
-    broadcast_action = async (type, payload, action_initiator) => {
+    broadcastAction = async (type, payload, actionInitiator) => {
         this.connections.forEach((conn) => {
-            conn.send_action(type, payload, action_initiator);
+            conn.sendAction(type, payload, actionInitiator);
         })
     }
-    send_action = async (conn, type, payload, action_initiator) => {
-        return conn.send_action(type, payload, action_initiator)
+    sendAction = async (conn, type, payload, actionInitiator) => {
+        return conn.sendAction(type, payload, actionInitiator)
     }
 
     //internal hooks
-    _on_connection = (webSocket) => {
+    _onConnection = (webSocket) => {
         let connection = new Connection(webSocket, this)
         connection.on_auth = () => {
             this.connections.push(connection);
@@ -45,10 +45,10 @@ export class WebSocketServerManager {
                 this.connections.splice(index, 1);
             }
         }
-        connection.on_message = this._on_message;
+        connection.onMessage = this._onMessage;
     }
 
-    _on_message = async (conn, action) => {
+    _onMessage = async (conn, action) => {
         try {
             handleMessage(this, conn, action);
         } catch (error) {
@@ -57,7 +57,7 @@ export class WebSocketServerManager {
             console.log("error:" + error)
         }
     }
-    _on_close = async (conn) => {
+    _onClose = async (conn) => {
 
     }
 

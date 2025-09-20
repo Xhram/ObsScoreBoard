@@ -11,21 +11,21 @@ export class Connection {
         this.auth = {
             is_authenticated: false,
             role: "none", // can be admin or scoreboard
-            no_auth_auto_disconnect_timer: null,
+            noAuthAutoDisconnectTimer: null,
         }
-        this.auth.no_auth_auto_disconnect_timer = setTimeout(() => {
+        this.auth.noAuthAutoDisconnectTimer = setTimeout(() => {
             if (!this.auth.is_authenticated) {
-                this._auth_fail()
+                this._onAuthFail()
             }
         }, 10000);
-        this.webSocket.on("message", this._on_message)
-        this.webSocket.on("close",this._on_close)
+        this.webSocket.on("message", this._onMessage)
+        this.webSocket.on("close",this._onClose)
     }
     //hooks
-    on_auth = (connection) => {}
-    on_auth_fail = (connection) => {}
-    on_message = (connection,action) => {}
-    on_disconnect = (connection) => {}
+    onAuth = (connection) => {}
+    onAuthFail = (connection) => {}
+    onMessage = (connection,action) => {}
+    onDisconnect = (connection) => {}
 
 
     //public functions
@@ -35,12 +35,12 @@ export class Connection {
         }
         this.webSocket.send(JSON.stringify(data,null,4))
     }
-    send_action = async (type, payload, action_initiator) => {
+    sendAction = async (type, payload, actionInitiator) => {
         let data = {
             type,
             payload,
             timings:{
-                ...action_initiator.timings,
+                ...actionInitiator.timings,
                 server_send_time: Date.now()
             }
         }
@@ -48,7 +48,7 @@ export class Connection {
     }
 
     //interal hooks
-    _on_message = async (data) => {
+    _onMessage = async (data) => {
         try {
             let action = JSON.parse(data)
             if(!this.auth.is_authenticated){
@@ -58,20 +58,20 @@ export class Connection {
             if(ARTIFICIAL_NETWORK_DELAY){
                 await new Promise(resolve => setTimeout(resolve, random_internet_delay()));
             }
-            this.on_message(this, action);
+            this.onMessage(this, action);
         } catch (error) {
             console.error("Error handling incoming WebSocket message.");
             console.error("Raw message data:", data.toString());
             console.error("Error details:", error && error.stack ? error.stack : error);
         }
     }
-    _on_close = async () => {
+    _onClose = async () => {
         this.on_disconnect(this)
     }
     //internal functions
-    _auth_fail = () => {
+    _onAuthFail = () => {
         this.webSocket.close(1008, "Authentication timeout");
-        this.on_auth_fail();
+        this.onAuthFail();
     }
 
     _authenticate = (action) => {
@@ -79,17 +79,17 @@ export class Connection {
             if(action.payload.password === ADMIN_PASSWORD){
                 this.auth.is_authenticated = true;
                 this.auth.role = "admin";
-                this.send_action("auth:success", {role: "admin"}, action);
+                this.sendAction("auth:success", {role: "admin"}, action);
                 this.on_auth(this);
             } else {
-                this._auth_fail();
+                this._onAuthFail();
                 return;
             }
         }
         if(action.type == "auth:scoreboard"){
             this.auth.is_authenticated = true;
             this.auth.role = "scoreboard";
-            this.send_action("auth:success", {role: "scoreboard"}, action);
+            this.sendAction("auth:success", {role: "scoreboard"}, action);
             this.on_auth(this);
         }
     }
