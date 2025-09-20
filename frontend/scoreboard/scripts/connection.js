@@ -28,16 +28,16 @@ cm.reducers["sync:color"] = (color_state) => {
 }
 
 cm.reducers["sync:time"] = (time_state) => {
-    play_clock_seconds = time_state.play_clock_current_time / 1000
-    game_clock_seconds = time_state.game_clock_current_time / 1000
+    play_clock_seconds = time_state.playClockCurrentTime / 1000
+    game_clock_seconds = time_state.gameClockCurrentTime / 1000
     update_game_clock_display();
     update_play_clock_display();
-    if(time_state.is_game_clock_running){
+    if(time_state.isGameClockRunning){
         start_game_clock();
     } else {
         stop_game_clock();
     }
-    if(time_state.is_play_clock_running && time_state.is_game_clock_running){
+    if(time_state.isPlayClockRunning && time_state.isGameClockRunning){
         start_play_clock();
     } else {
         stop_play_clock();
@@ -63,8 +63,8 @@ cm.reducers["sync:timeouts"] = (timeouts_state) => {
 }
 
 cm.reducers["sync:flag"] = (flag_state) => {
-    if(flag_state.is_flag_emitted){
-        emit_flag(flag_state.status, flag_state.team, flag_state.player_blame)
+    if(flag_state.isFlagEmitted){
+        emit_flag(flag_state.status, flag_state.team, flag_state.playerBlame)
     } else {
         clear_flag();
     }
@@ -76,24 +76,24 @@ cm.reducers["event:team_score"] = (team_score_event) => {
 }
 
 cm.reducers["sync:roster"] = (roster_state) => {
-    team_home_roster = roster_state.home_roster
-    team_away_roster = roster_state.away_roster
+    homeTeam_roster = roster_state.home_roster
+    awayTeam_roster = roster_state.away_roster
 }
 
 cm.reducers["sync"] = (state) => {
-    team_home_roster = state.team_home.roster
-    team_away_roster = state.team_away.roster
-    set_team_score("home", state.team_home.score)
-    set_team_score("away", state.team_away.score)
-    set_team_name("home", state.team_home.name)
-    set_team_name("away", state.team_away.name)
-    set_team_color("home", state.team_home.color)
-    set_team_color("away", state.team_away.color)
-    set_team_icon("home", state.team_home.image)
-    set_team_icon("away", state.team_away.image)
+    homeTeam_roster = state.homeTeam.roster
+    awayTeam_roster = state.awayTeam.roster
+    set_team_score("home", state.homeTeam.score)
+    set_team_score("away", state.awayTeam.score)
+    set_team_name("home", state.homeTeam.name)
+    set_team_name("away", state.awayTeam.name)
+    set_team_color("home", state.homeTeam.color)
+    set_team_color("away", state.awayTeam.color)
+    set_team_icon("home", state.homeTeam.image)
+    set_team_icon("away", state.awayTeam.image)
     set_team_possession(state.possession)
-    set_timeouts("home", state.team_home.timeouts_remaining)
-    set_timeouts("away", state.team_away.timeouts_remaining)
+    set_timeouts("home", state.homeTeam.timeouts_remaining)
+    set_timeouts("away", state.awayTeam.timeouts_remaining)
     set_game_quarter(state.quarter)
 
     cm.reducers["sync:down"]({ down: state.down, distance: state.distance });

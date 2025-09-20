@@ -49,47 +49,47 @@ function handleSetType(webSocketServerManager, connection, action) {
     switch (action.type) {
         case "set:team_score": {
             if (payload.team === "home") {
-                scoreboard.team_home.score = clamp(payload.score, 0, 9999);
+                scoreboard.homeTeam.score = clamp(payload.score, 0, 9999);
             } else if (payload.team === "away") {
-                scoreboard.team_away.score = clamp(payload.score, 0, 9999);
+                scoreboard.awayTeam.score = clamp(payload.score, 0, 9999);
             }
             webSocketServerManager.broadcastAction("sync:score", stateManager.sync_getters["sync:score"](), action);
             break;
         }
         case "set:team_name": {
             if (payload.team === "home") {
-                scoreboard.team_home.name = payload.name;
+                scoreboard.homeTeam.name = payload.name;
             } else if (payload.team === "away") {
-                scoreboard.team_away.name = payload.name;
+                scoreboard.awayTeam.name = payload.name;
             }
             webSocketServerManager.broadcastAction("sync:name", stateManager.sync_getters["sync:name"](), action);
             break;
         }
         case "set:team_color": {
             if (payload.team === "home") {
-                scoreboard.team_home.color = payload.color;
+                scoreboard.homeTeam.color = payload.color;
             } else if (payload.team === "away") {
-                scoreboard.team_away.color = payload.color;
+                scoreboard.awayTeam.color = payload.color;
             }
             webSocketServerManager.broadcastAction("sync:color", stateManager.sync_getters["sync:color"](), action);
             break;
         }
         case "set:clock_state": {
             if (payload.clock === "game") {
-                scoreboard.time.is_game_clock_running = payload.is_running;
+                scoreboard.time.isGameClockRunning = payload.is_running;
             }
             if (payload.clock === "play") {
-                scoreboard.time.is_play_clock_running = payload.is_running;
+                scoreboard.time.isPlayClockRunning = payload.is_running;
             }
             webSocketServerManager.broadcastAction("sync:time", stateManager.sync_getters["sync:time"](), action);
             break;
         }
         case "set:clock_time": {
             if (payload.clock === "game") {
-                scoreboard.time.game_clock_current_time = payload.time;
+                scoreboard.time.gameClockCurrentTime = payload.time;
             }
             if (payload.clock === "play") {
-                scoreboard.time.play_clock_current_time = payload.time;
+                scoreboard.time.playClockCurrentTime = payload.time;
             }
             webSocketServerManager.broadcastAction("sync:time", stateManager.sync_getters["sync:time"](), action);
             break;
@@ -116,16 +116,16 @@ function handleSetType(webSocketServerManager, connection, action) {
         }
         case "set:team_timeouts": {
             if (payload.team === "home") {
-                scoreboard.team_home.timeouts_remaining = clamp(payload.timeouts, 0, 3);
+                scoreboard.homeTeam.timeouts_remaining = clamp(payload.timeouts, 0, 3);
             } else if (payload.team === "away") {
-                scoreboard.team_away.timeouts_remaining = clamp(payload.timeouts, 0, 3);
+                scoreboard.awayTeam.timeouts_remaining = clamp(payload.timeouts, 0, 3);
             }
             webSocketServerManager.broadcastAction("sync:timeouts", stateManager.sync_getters["sync:timeouts"](), action);
             break;
         }
         case "set:flag": {
-            if(payload.is_flag_emitted != undefined){
-                scoreboard.flag.is_flag_emitted = payload.is_flag_emitted;
+            if(payload.isFlagEmitted != undefined){
+                scoreboard.flag.isFlagEmitted = payload.isFlagEmitted;
             }
             if(payload.team != undefined){
                 scoreboard.flag.team = payload.team;
@@ -133,8 +133,8 @@ function handleSetType(webSocketServerManager, connection, action) {
             if(payload.status != undefined){
                 scoreboard.flag.status = payload.status;
             }
-            if(payload.player_blame != undefined){
-                scoreboard.flag.player_blame = payload.player_blame;
+            if(payload.playerBlame != undefined){
+                scoreboard.flag.playerBlame = payload.playerBlame;
             }
             webSocketServerManager.broadcastAction("sync:flag", stateManager.sync_getters["sync:flag"](), action);
             break;
@@ -153,7 +153,7 @@ function handleAddType(webSocketServerManager, connection, action) {
     let scoreboard = stateManager.scoreboard;
     switch (action.type) {
         case "add:team_score": {
-            let team = payload.team === "home" ? scoreboard.team_home : scoreboard.team_away;
+            let team = payload.team === "home" ? scoreboard.homeTeam : scoreboard.awayTeam;
             let prev = team.score;
             team.score += payload.amount;
             team.score = clamp(team.score, 0, 9999);
@@ -189,21 +189,21 @@ function handleAddType(webSocketServerManager, connection, action) {
         }
         case "add:clock_time": {
             if (payload.clock === "game") {
-                scoreboard.time.game_clock_current_time += payload.amount;
-                scoreboard.time.game_clock_current_time = max(scoreboard.time.game_clock_current_time, 0);
+                scoreboard.time.gameClockCurrentTime += payload.amount;
+                scoreboard.time.gameClockCurrentTime = max(scoreboard.time.gameClockCurrentTime, 0);
             }
             if (payload.clock === "play") {
-                scoreboard.time.play_clock_current_time += payload.amount;
-                scoreboard.time.play_clock_current_time = max(scoreboard.time.play_clock_current_time, 0);
+                scoreboard.time.playClockCurrentTime += payload.amount;
+                scoreboard.time.playClockCurrentTime = max(scoreboard.time.playClockCurrentTime, 0);
             }
             webSocketServerManager.broadcastAction("sync:time", stateManager.sync_getters["sync:time"](), action);
             break;
         }
         case "add:team_timeouts": {
             if (payload.team === "home") {
-                scoreboard.team_home.timeouts_remaining = clamp(scoreboard.team_home.timeouts_remaining + payload.amount, 0, 3);
+                scoreboard.homeTeam.timeouts_remaining = clamp(scoreboard.homeTeam.timeouts_remaining + payload.amount, 0, 3);
             } else if (payload.team === "away") {
-                scoreboard.team_away.timeouts_remaining = clamp(scoreboard.team_away.timeouts_remaining + payload.amount, 0, 3);
+                scoreboard.awayTeam.timeouts_remaining = clamp(scoreboard.awayTeam.timeouts_remaining + payload.amount, 0, 3);
             }
             webSocketServerManager.broadcastAction("sync:timeouts", stateManager.sync_getters["sync:timeouts"](), action);
             break;

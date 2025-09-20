@@ -7,7 +7,7 @@ import { image_to_data_url } from "./image.js";
 export class StateManager {
     scoreboard = undefined;
     constructor(){
-        this.scoreboard = this.load_scoreboard_state() || this.default_scoreboard_state();
+        this.scoreboard = this.loadScoreboardState() || this.defaultScoreboardState();
         (()=>{
             let last_time = Date.now();
             setInterval(() => {
@@ -19,11 +19,11 @@ export class StateManager {
     }
 
     update_clocks = (delta_time) => {
-        if(this.scoreboard.time.is_game_clock_running){
-            this.scoreboard.time.game_clock_current_time =
-                Math.max(this.scoreboard.time.game_clock_current_time - delta_time, 0);
-            if(this.scoreboard.time.game_clock_current_time == 0){
-                this.scoreboard.time.is_game_clock_running = false;
+        if(this.scoreboard.time.isGameClockRunning){
+            this.scoreboard.time.gameClockCurrentTime =
+                Math.max(this.scoreboard.time.gameClockCurrentTime - delta_time, 0);
+            if(this.scoreboard.time.gameClockCurrentTime == 0){
+                this.scoreboard.time.isGameClockRunning = false;
             }
         }
         /**
@@ -32,11 +32,11 @@ export class StateManager {
          * consistent clock state across platforms, as timing events may not be perfectly
          * synchronized due to network latency or platform-specific event handling.
          */
-        if(this.scoreboard.time.is_play_clock_running && this.scoreboard.time.is_game_clock_running){
-            this.scoreboard.time.play_clock_current_time =
-                Math.max(this.scoreboard.time.play_clock_current_time - delta_time, 0);
-            if(this.scoreboard.time.play_clock_current_time == 0){
-                this.scoreboard.time.is_play_clock_running = false;
+        if(this.scoreboard.time.isPlayClockRunning && this.scoreboard.time.isGameClockRunning){
+            this.scoreboard.time.playClockCurrentTime =
+                Math.max(this.scoreboard.time.playClockCurrentTime - delta_time, 0);
+            if(this.scoreboard.time.playClockCurrentTime == 0){
+                this.scoreboard.time.isPlayClockRunning = false;
             }
         }
     }
@@ -45,16 +45,16 @@ export class StateManager {
     sync_getters = {
         "sync": () => this.scoreboard,
         "sync:score": () => ({
-            home_score: this.scoreboard.team_home.score,
-            away_score: this.scoreboard.team_away.score,
+            home_score: this.scoreboard.homeTeam.score,
+            away_score: this.scoreboard.awayTeam.score,
         }),
         "sync:name": () => ({
-            home_name: this.scoreboard.team_home.name,
-            away_name: this.scoreboard.team_away.name,
+            home_name: this.scoreboard.homeTeam.name,
+            away_name: this.scoreboard.awayTeam.name,
         }),
         "sync:color": () => ({
-            home_color: this.scoreboard.team_home.color,
-            away_color: this.scoreboard.team_away.color,
+            home_color: this.scoreboard.homeTeam.color,
+            away_color: this.scoreboard.awayTeam.color,
         }),
         "sync:time": () => this.scoreboard.time,
         "sync:down": () => ({
@@ -68,13 +68,13 @@ export class StateManager {
             possession: this.scoreboard.possession,
         }),
         "sync:timeouts": () => ({
-            home_timeouts: this.scoreboard.team_home.timeouts_remaining,
-            away_timeouts: this.scoreboard.team_away.timeouts_remaining,
+            home_timeouts: this.scoreboard.homeTeam.timeouts_remaining,
+            away_timeouts: this.scoreboard.awayTeam.timeouts_remaining,
         }),
         "sync:flag": () => this.scoreboard.flag,
     }
 
-    load_scoreboard_state = () => {
+    loadScoreboardState = () => {
         try {
             const data = fs.readFileSync(SCOREBOARD_STATE_FILE, "utf-8");
             return JSON.parse(data);
@@ -83,16 +83,16 @@ export class StateManager {
             return undefined;
         }
     }
-    save_scoreboard_state = () => {
+    saveScoreboardState = () => {
         try {
             fs.writeFileSync(SCOREBOARD_STATE_FILE, JSON.stringify(this.scoreboard, null, 4));
         } catch (error) {
             console.error("Error saving scoreboard state:", error);
         }
     }
-    default_scoreboard_state = () => {
+    defaultScoreboardState = () => {
         return {
-            team_home: {
+            homeTeam: {
                 name: "Palatine",
                 image: image_to_data_url("./src/assets/phs_ptv_64.png"),
                 score: 0,
@@ -102,7 +102,7 @@ export class StateManager {
                     "-1": "Home Player Name".split(" "),
                 },
             },
-            team_away: {
+            awayTeam: {
                 name: "Away Team",
                 image: image_to_data_url("./src/assets/phs_ptv_64.png"),
                 score: 0,
@@ -118,16 +118,16 @@ export class StateManager {
             down: 1,
             time: {
                 //time in ms
-                play_clock_current_time: 45 * 1000,
-                game_clock_current_time: 15 * 60 * 1000,
-                is_game_clock_running: false,
-                is_play_clock_running: false,
+                playClockCurrentTime: 45 * 1000,
+                gameClockCurrentTime: 15 * 60 * 1000,
+                isGameClockRunning: false,
+                isPlayClockRunning: false,
             },
             flag: {
-                is_flag_emitted: false,
+                isFlagEmitted: false,
                 team: "none", // team is either 'home' or 'away' or 'none'
                 status: "none", // status is either 'flag' or 'review'
-                player_blame: -2, // player number who threw the flag
+                playerBlame: -2, // player number who threw the flag
             },
         };
     }

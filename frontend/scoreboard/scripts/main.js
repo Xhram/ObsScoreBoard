@@ -27,11 +27,11 @@
 
 //fact check #22 in json
 // Last, First
-let team_home_roster = {
+let homeTeam_roster = {
     // '-1': 'Player Home Team'
     '-1': []
 }
-let team_away_roster = {
+let awayTeam_roster = {
     // '-1': 'Player Other Team'
 }
 
@@ -42,7 +42,7 @@ async function load_rosters() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        team_home_roster = data;
+        homeTeam_roster = data;
     } catch (error) {
         console.error('Error loading roster:', error);
     }
@@ -122,9 +122,9 @@ function show_point_score_announcement(team = 'home', text = 'touchdown!') {
     // set background logo to team logo
     const logo_img = point_score_annoucement_element.querySelector('.logo img');
     if (team === 'home') {
-        logo_img.src = team_home_icon;
+        logo_img.src = homeTeam_icon;
     } else if (team === 'away') {
-        logo_img.src = team_away_icon;
+        logo_img.src = awayTeam_icon;
     }
     point_score_annoucement_element.classList.remove('emitted');
     point_score_annoucement_element.getAnimations().forEach(a => a.cancel && a.cancel())
@@ -149,8 +149,8 @@ function show_point_score_announcement(team = 'home', text = 'touchdown!') {
     }, 3100); 
 }
 
-let team_home_name = 'Home';
-let team_away_name = 'Away';
+let homeTeam_name = 'Home';
+let awayTeam_name = 'Away';
 function set_team_name(team = 'home', name = 'Team') {
     if (team === 'home') {
         home_team_name_element.querySelector('.name').textContent = name;
@@ -159,27 +159,27 @@ function set_team_name(team = 'home', name = 'Team') {
     }
 }
 
-let team_home_color = '#0055ff';
-let team_away_color = '#ff5500';
+let homeTeam_color = '#0055ff';
+let awayTeam_color = '#ff5500';
 function set_team_color(team = 'home', color = '#ffffff') {
     if (team === 'home') {
-        team_home_color = color;
-        scoreboard_element.style.setProperty('--team-left-color', team_home_color);
+        homeTeam_color = color;
+        scoreboard_element.style.setProperty('--team-left-color', homeTeam_color);
     } else if (team === 'away') {
-        team_away_color = color;
-        scoreboard_element.style.setProperty('--team-right-color', team_away_color);
+        awayTeam_color = color;
+        scoreboard_element.style.setProperty('--team-right-color', awayTeam_color);
     }
 }
 
-let team_home_icon = 'assets/phs_ptv_64.png';
-let team_away_icon = 'assets/phs_ptv_64.png';
+let homeTeam_icon = 'assets/phs_ptv_64.png';
+let awayTeam_icon = 'assets/phs_ptv_64.png';
 function set_team_icon(team = 'home', icon = 'assets/phs_ptv_64.png') {
     if (team === 'home') {
         home_team_name_element.querySelector('.logo img').src = icon;
-        team_home_icon = icon;
+        homeTeam_icon = icon;
     } else if (team === 'away') {
         away_team_name_element.querySelector('.logo img').src = icon;
-        team_away_icon = icon;
+        awayTeam_icon = icon;
     }
 }
 
@@ -199,9 +199,9 @@ function set_team_possession(team = 'home') {
 
 function get_athlete_name_from_roster(team = 'home', player_key = '') {
     if(team === 'home') {
-        return team_home_roster[player_key] || ['Doe', 'John'];
+        return homeTeam_roster[player_key] || ['Doe', 'John'];
     } else if(team === 'away') {
-        return team_away_roster[player_key] || ['Doe', 'John'];
+        return awayTeam_roster[player_key] || ['Doe', 'John'];
     }
     return ['Doe', 'John'];
 }
@@ -248,35 +248,35 @@ function emit_flag(status = 'flag', team = "none", player_key = '') {
 }
 
 // amount is either 1 or -1
-let team_home_timeout = 3;
-let team_away_timeout = 3;
+let homeTeam_timeout = 3;
+let awayTeam_timeout = 3;
 function add_timeout(team = 'home', amount = -1) {
     if (team === 'home') {
-        team_home_timeout += amount;
-        team_home_timeout = Math.min(Math.max(team_home_timeout, 0), 3);
+        homeTeam_timeout += amount;
+        homeTeam_timeout = Math.min(Math.max(homeTeam_timeout, 0), 3);
     } else if (team === 'away') {
-        team_away_timeout += amount;
-        team_away_timeout = Math.min(Math.max(team_away_timeout, 0), 3);
+        awayTeam_timeout += amount;
+        awayTeam_timeout = Math.min(Math.max(awayTeam_timeout, 0), 3);
     }
-    set_timeouts(team, team === 'home' ? team_home_timeout : team_away_timeout);
+    set_timeouts(team, team === 'home' ? homeTeam_timeout : awayTeam_timeout);
 }
 
 function set_timeouts(team = 'home', timeouts = 3) {
     if (team === 'home') {
-        team_home_timeout = timeouts;
+        homeTeam_timeout = timeouts;
         const timeouts_elements = home_team_name_element.querySelectorAll('.timeout');
         timeouts_elements.forEach((el, index) => {
-            if (index < team_home_timeout) {
+            if (index < homeTeam_timeout) {
                 el.classList.remove('used');
             } else {
                 el.classList.add('used');
             }
         });
     } else if (team === 'away') {
-        team_away_timeout = timeouts;
+        awayTeam_timeout = timeouts;
         const timeouts_elements = away_team_name_element.querySelectorAll('.timeout');
         timeouts_elements.forEach((el, index) => {
-            if (index < team_away_timeout) {
+            if (index < awayTeam_timeout) {
                 el.classList.remove('used');
             } else {
                 el.classList.add('used');
@@ -437,7 +437,7 @@ function stop_carousel() {
 function set_carasuel_data_to_home_team_roster() {
     for(let carousel of carousel_elements) {
         carousel.innerHTML = '';
-        for (const key in team_home_roster) {
+        for (const key in homeTeam_roster) {
             let athlete = get_athlete_name_from_roster('home', key);
             let athlete_full_name = `${athlete[1]} ${athlete[0]}`;
             const player_badge = document.createElement('div');

@@ -140,7 +140,7 @@ cm.reducers["sync:timeouts"] = (timeouts_state) => {
 
 cm.reducers["sync:flag"] = (flag_state) => {
     // TODO: Implement flag state synchronization
-    // flag_state contains: is_flag_emitted, team, status, player_blame
+    // flag_state contains: isFlagEmitted, team, status, playerBlame
 }
 
 cm.reducers["event:team_score"] = (payload) => {
@@ -158,21 +158,21 @@ let play_clock_interval = undefined;
 let game_clock_seconds = 15 * 60 * 1000;
 let play_clock_seconds = 45 * 1000;
 cm.reducers["sync:time"] = (time_state) => {
-    game_clock_seconds = time_state.game_clock_current_time
-    play_clock_seconds = time_state.play_clock_current_time
+    game_clock_seconds = time_state.gameClockCurrentTime
+    play_clock_seconds = time_state.playClockCurrentTime
     update_clock_display();
-    if(time_state.is_game_clock_running){
+    if(time_state.isGameClockRunning){
         start_game_clock();
     } else {
         stop_game_clock();
     }
-    if(time_state.is_play_clock_running && time_state.is_game_clock_running){
+    if(time_state.isPlayClockRunning && time_state.isGameClockRunning){
         start_play_clock();
     } else {
         stop_play_clock();
         // this will show it if the shot clock is queued to be running
         // but it low key looks a bit jank
-        // if(time_state.is_play_clock_running){
+        // if(time_state.isPlayClockRunning){
         //     elm.shot_clock_duration.classList.add("running-clock");
         // }
     }
