@@ -96,51 +96,51 @@ let elm = {
 
 
 
-cm.reducers["sync:name"] = (name_state) => {
-    elm.home_team_name.value = name_state.home_name;
-    elm.away_team_name.value = name_state.away_name;
+cm.reducers["sync:name"] = (nameState) => {
+    elm.home_team_name.value = nameState.home_name;
+    elm.away_team_name.value = nameState.away_name;
 }
 
-cm.reducers["sync:score"] = (score_state) => {
-    if(elm.home_team_score.value != score_state.home_score){
-        elm.home_team_score.value = score_state.home_score;
+cm.reducers["sync:score"] = (scoreState) => {
+    if(elm.home_team_score.value != scoreState.home_score){
+        elm.home_team_score.value = scoreState.home_score;
 
     }
-    if(elm.away_team_score.value != score_state.away_score){
-        elm.away_team_score.value = score_state.away_score;
+    if(elm.away_team_score.value != scoreState.away_score){
+        elm.away_team_score.value = scoreState.away_score;
     }
 }
 
-cm.reducers["sync:color"] = (color_state) => {
-    elm.home_team_color.value = color_state.home_color;
-    elm.home_team_color_hex.value = color_state.home_color;
-    elm.away_team_color.value = color_state.away_color;
-    elm.away_team_color_hex.value = color_state.away_color;
+cm.reducers["sync:color"] = (colorState) => {
+    elm.home_team_color.value = colorState.home_color;
+    elm.home_team_color_hex.value = colorState.home_color;
+    elm.away_team_color.value = colorState.away_color;
+    elm.away_team_color_hex.value = colorState.away_color;
 }
 
-cm.reducers["sync:down"] = (down_state) => {
-    elm.down.value = down_state.down;
-    elm.distance.value = down_state.distance;
+cm.reducers["sync:down"] = (downState) => {
+    elm.down.value = downState.down;
+    elm.distance.value = downState.distance;
 }
 
-cm.reducers["sync:quarter"] = (quarter_state) => {
-    elm.quarter.value = quarter_state.quarter;
+cm.reducers["sync:quarter"] = (quarterState) => {
+    elm.quarter.value = quarterState.quarter;
 }
 
-cm.reducers["sync:possession"] = (possession_state) => {
+cm.reducers["sync:possession"] = (possessionState) => {
     // Update possession visual indicators if needed
     // Note: Admin panel might not have visual possession indicators like the scoreboard does
-    console.log("Possession updated to:", possession_state.possession);
+    console.log("Possession updated to:", possessionState.possession);
 }
 
-cm.reducers["sync:timeouts"] = (timeouts_state) => {
-    elm.home_timeouts.value = timeouts_state.home_timeouts;
-    elm.away_timeouts.value = timeouts_state.away_timeouts;
+cm.reducers["sync:timeouts"] = (timeoutsState) => {
+    elm.home_timeouts.value = timeoutsState.home_timeouts;
+    elm.away_timeouts.value = timeoutsState.away_timeouts;
 }
 
-cm.reducers["sync:flag"] = (flag_state) => {
+cm.reducers["sync:flag"] = (flagState) => {
     // TODO: Implement flag state synchronization
-    // flag_state contains: isFlagEmitted, team, status, playerBlame
+    // flagState contains: isFlagEmitted, team, status, playerBlame
 
 }
 
@@ -158,22 +158,22 @@ let game_clock_interval = undefined;
 let play_clock_interval = undefined;
 let game_clock_seconds = 15 * 60 * 1000;
 let play_clock_seconds = 45 * 1000;
-cm.reducers["sync:time"] = (time_state) => {
-    game_clock_seconds = time_state.gameClockCurrentTime
-    play_clock_seconds = time_state.playClockCurrentTime
+cm.reducers["sync:time"] = (timeState) => {
+    game_clock_seconds = timeState.gameClockCurrentTime
+    play_clock_seconds = timeState.playClockCurrentTime
     update_clock_display();
-    if(time_state.isGameClockRunning){
+    if(timeState.isGameClockRunning){
         start_game_clock();
     } else {
         stop_game_clock();
     }
-    if(time_state.isPlayClockRunning && time_state.isGameClockRunning){
+    if(timeState.isPlayClockRunning && timeState.isGameClockRunning){
         start_play_clock();
     } else {
         stop_play_clock();
         // this will show it if the shot clock is queued to be running
         // but it low key looks a bit jank
-        // if(time_state.isPlayClockRunning){
+        // if(timeState.isPlayClockRunning){
         //     elm.shot_clock_duration.classList.add("running-clock");
         // }
     }
@@ -522,8 +522,8 @@ elm.away_timeouts.addEventListener("change", (event) => {
 
 // Flags
 
-function set_flag_state_action_issuer(flag_state) {
-    cm.actions["set:flag"](flag_state);
+function set_flagState_action_issuer(flagState) {
+    cm.actions["set:flag"](flagState);
 }
 
 // Icons 

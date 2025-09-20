@@ -12,78 +12,78 @@ cm.onPong = () => {
 }
 
 // Set up reducers
-cm.reducers["sync:name"] = (name_state) => {
-    set_team_name("home", name_state.home_name);
-    set_team_name("away", name_state.away_name);
+cm.reducers["sync:name"] = (nameState) => {
+    set_team_name("home", nameState.home_name);
+    set_team_name("away", nameState.away_name);
 }
 
-cm.reducers["sync:score"] = (score_state) => {
-    set_team_score("home", score_state.home_score);
-    set_team_score("away", score_state.away_score);
+cm.reducers["sync:score"] = (scoreState) => {
+    set_team_score("home", scoreState.home_score);
+    set_team_score("away", scoreState.away_score);
 }
 
-cm.reducers["sync:color"] = (color_state) => {
-    set_team_color("home", color_state.home_color);
-    set_team_color("away", color_state.away_color);
+cm.reducers["sync:color"] = (colorState) => {
+    set_team_color("home", colorState.home_color);
+    set_team_color("away", colorState.away_color);
 }
 
-cm.reducers["sync:time"] = (time_state) => {
-    play_clock_seconds = time_state.playClockCurrentTime / 1000
-    game_clock_seconds = time_state.gameClockCurrentTime / 1000
+cm.reducers["sync:time"] = (timeState) => {
+    play_clock_seconds = timeState.playClockCurrentTime / 1000
+    game_clock_seconds = timeState.gameClockCurrentTime / 1000
     update_game_clock_display();
     update_play_clock_display();
-    if(time_state.isGameClockRunning){
+    if(timeState.isGameClockRunning){
         start_game_clock();
     } else {
         stop_game_clock();
     }
-    if(time_state.isPlayClockRunning && time_state.isGameClockRunning){
+    if(timeState.isPlayClockRunning && timeState.isGameClockRunning){
         start_play_clock();
     } else {
         stop_play_clock();
     }
 }
 
-cm.reducers["sync:down"] = (down_state) => {
-    set_game_down(down_state.down);
-    set_game_to_go(down_state.distance == -1 ? "Goal" : down_state.distance, down_state.distance == -1 ? "" : down_state.distance == 0 ? "INCHES" : "YDS");
+cm.reducers["sync:down"] = (downState) => {
+    set_game_down(downState.down);
+    set_game_to_go(downState.distance == -1 ? "Goal" : downState.distance, downState.distance == -1 ? "" : downState.distance == 0 ? "INCHES" : "YDS");
 }
 
-cm.reducers["sync:quarter"] = (quarter_state) => {
-    set_game_quarter(quarter_state.quarter);
+cm.reducers["sync:quarter"] = (quarterState) => {
+    set_game_quarter(quarterState.quarter);
 }
 
-cm.reducers["sync:possession"] = (possession_state) => {
-    set_team_possession(possession_state.possession);
+cm.reducers["sync:possession"] = (possessionState) => {
+    set_team_possession(possessionState.possession);
 }
 
-cm.reducers["sync:timeouts"] = (timeouts_state) => {
-    set_timeouts("home", timeouts_state.home_timeouts);
-    set_timeouts("away", timeouts_state.away_timeouts);
+cm.reducers["sync:timeouts"] = (timeoutsState) => {
+    set_timeouts("home", timeoutsState.home_timeouts);
+    set_timeouts("away", timeoutsState.away_timeouts);
 }
 
-cm.reducers["sync:flag"] = (flag_state) => {
-    if(flag_state.isFlagEmitted){
-        emit_flag(flag_state.status, flag_state.team, flag_state.playerBlame)
+cm.reducers["sync:flag"] = (flagState) => {
+    if(flagState.isFlagEmitted){
+        emit_flag(flagState.status, flagState.team, flagState.playerBlame)
     } else {
         clear_flag();
     }
 }
 
-cm.reducers["event:team_score"] = (team_score_event) => {
-    set_team_score(team_score_event.team, team_score_event.previous_score)
-    add_points_to_team(team_score_event.team, team_score_event.amount, team_score_event.animation ? team_score_event.animation_type : "none")
+cm.reducers["event:team_score"] = (teamScoreEvent) => {
+    set_team_score(teamScoreEvent.team, teamScoreEvent.previous_score)
+    add_points_to_team(teamScoreEvent.team, teamScoreEvent.amount, teamScoreEvent.animation ? teamScoreEvent.animation_type : "none")
 }
 
-cm.reducers["sync:roster"] = (roster_state) => {
-    homeTeam_roster = roster_state.home_roster
-    awayTeam_roster = roster_state.away_roster
+cm.reducers["sync:roster"] = (rosterState) => {
+    homeTeam_roster = rosterState.home_roster
+    awayTeam_roster = rosterState.away_roster
 }
 
 
-cm.reducers["sync:icon"] = (icon_state) => {
-    set_team_icon("home", icon_state.home_icon);
-    set_team_icon("away", icon_state.away_icon);
+cm.reducers["sync:icon"] = (iconState) => {
+    set_team_icon("home", iconState.home_icon);
+    set_team_icon("away", iconState.away_icon);
 }
 
 cm.connect();
