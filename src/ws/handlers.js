@@ -110,7 +110,7 @@ function handleSetType(webSocketServerManager, connection, action) {
             break;
         }
         case "set:possession": {
-            scoreboard.possession = payload.possession;
+            scoreboard.possession = payload.team;
             webSocketServerManager.broadcastAction("sync:possession", stateManager.sync_getters["sync:possession"](), action);
             break;
         }
