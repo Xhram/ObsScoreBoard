@@ -85,6 +85,7 @@ class connection_manager {
         this._intelligent_predictive_rendering = options.intelligent_predictive_rendering || ipr;
         this.ping_interval_time = options.ping_interval_time || 1000;
         this._send_ping();
+        this._fetch_config();
         if(this._intelligent_predictive_rendering){
             (() => {
                 let last_time = Date.now();
@@ -296,6 +297,17 @@ class connection_manager {
                 this._predicted_state.flag = flag_state;
                 this.reducers["sync:flag"](this._predicted_state.flag);
             }
+        }
+    }
+
+    // pull config from server
+    _fetch_config = async () => {
+        const response = await fetch("/config");
+        if (response.ok) {
+            const config = await response.json();
+            this.ping_interval_time = config.PING_INTERVAL_MS;
+        } else {
+            console.error("Failed to fetch config:", response.statusText);
         }
     }
 

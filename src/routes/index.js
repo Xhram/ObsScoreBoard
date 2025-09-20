@@ -3,6 +3,8 @@ import path from "path";
 import fs from "fs";
 import postcss from "postcss";
 import postcssNested from "postcss-nested";
+import { PING_INTERVAL_MS } from "../config/index.js";
+
 
 export function setupRoutes(app) {
     app.use((req, res, next) => {
@@ -48,6 +50,11 @@ export function setupRoutes(app) {
             console.error('PostCSS processing error:', error);
             res.status(500).send('CSS processing error');
         }
+    });
+    app.get("/config", (req, res) => {
+        res.send(JSON.stringify({
+            PING_INTERVAL_MS: PING_INTERVAL_MS
+        }, null, 4));
     });
     
     app.use("/scoreboard", express.static("./frontend/scoreboard"));
