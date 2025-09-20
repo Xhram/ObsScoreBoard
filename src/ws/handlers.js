@@ -199,7 +199,7 @@ function handleAddType(webSocketServerManager, connection, action) {
             } else if (payload.team === "away") {
                 scoreboard.team_away.timeouts_remaining = clamp(scoreboard.team_away.timeouts_remaining + payload.amount, 0, 3);
             }
-            wm.broadcast_action("sync:timeout", sm.sync_getters["sync:timeout"](), action);
+            webSocketServerManager.broadcast_action("sync:timeouts", stateManager.sync_getters["sync:timeouts"](), action);
             break;
         }
         default:
