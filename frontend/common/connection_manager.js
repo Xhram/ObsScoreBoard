@@ -108,6 +108,7 @@ class connection_manager {
 
     reducers = {
         "sync:name": (name_state) => {},
+        "sync:icon": (icon_state) => {},
         "sync:score": (score_state) => {},
         "sync:color": (color_state) => {},
         "sync:time": (time_state) => {},
@@ -297,6 +298,13 @@ class connection_manager {
                 this._predicted_state.flag = flag_state;
                 this.reducers["sync:flag"](this._predicted_state.flag);
             }
+        },
+        "set:team_icon": (team, icon) => {
+            this.sendAction("set:team_icon", { team, icon })
+            if(this._intelligentPredictiveRendering){
+                this._predicted_state[team == "home" ? "homeTeam" : "awayTeam"].icon = icon;
+                this.reducers["sync:icon"]({ icon: this._predicted_state[team == "home" ? "homeTeam" : "awayTeam"].icon });
+            }
         }
     }
 
@@ -336,9 +344,9 @@ class connection_manager {
         
         return this.ws.send(JSON.stringify(data,null,4));
     }
-    sendAction = (action_type, payload) => {
+    sendAction = (actionType, payload) => {
         if(!this.isAuthenticated){ console.log("Not authenticated, cannot send action"); return; }
-        this.sendData({type: action_type, payload: payload, timings: {client_send_time:Date.now()}});
+        this.sendData({type: actionType, payload: payload, timings: {client_send_time:Date.now()}});
     }
 
     _sendAuth = () => {
@@ -577,6 +585,10 @@ class connection_manager {
         this.reducers["sync:roster"]({
             home_roster: state.homeTeam.roster,
             away_roster: state.awayTeam.roster
+        });
+        this.reducers["sync:icon"]({
+            home_icon: state.homeTeam.image,
+            away_icon: state.awayTeam.image
         });
     }
 

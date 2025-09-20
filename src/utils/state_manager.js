@@ -44,6 +44,10 @@ export class StateManager {
     
     sync_getters = {
         "sync": () => this.scoreboard,
+        "sync:icon": () => ({
+            home_icon: this.scoreboard.homeTeam.image,
+            away_icon: this.scoreboard.awayTeam.image,
+        }),
         "sync:score": () => ({
             home_score: this.scoreboard.homeTeam.score,
             away_score: this.scoreboard.awayTeam.score,

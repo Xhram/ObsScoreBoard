@@ -141,6 +141,7 @@ cm.reducers["sync:timeouts"] = (timeouts_state) => {
 cm.reducers["sync:flag"] = (flag_state) => {
     // TODO: Implement flag state synchronization
     // flag_state contains: isFlagEmitted, team, status, playerBlame
+
 }
 
 cm.reducers["event:team_score"] = (payload) => {
@@ -524,3 +525,12 @@ elm.away_timeouts.addEventListener("change", (event) => {
 function set_flag_state_action_issuer(flag_state) {
     cm.actions["set:flag"](flag_state);
 }
+
+// Icons 
+elm.home_team_logo.addEventListener("change", (event) => {
+    cm.actions["set:team_icon"]("home", event.target.value);
+});
+
+elm.away_team_logo.addEventListener("change", (event) => {
+    cm.actions["set:team_icon"]("away", event.target.value);
+});

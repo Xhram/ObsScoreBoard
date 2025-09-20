@@ -80,25 +80,10 @@ cm.reducers["sync:roster"] = (roster_state) => {
     awayTeam_roster = roster_state.away_roster
 }
 
-cm.reducers["sync"] = (state) => {
-    homeTeam_roster = state.homeTeam.roster
-    awayTeam_roster = state.awayTeam.roster
-    set_team_score("home", state.homeTeam.score)
-    set_team_score("away", state.awayTeam.score)
-    set_team_name("home", state.homeTeam.name)
-    set_team_name("away", state.awayTeam.name)
-    set_team_color("home", state.homeTeam.color)
-    set_team_color("away", state.awayTeam.color)
-    set_team_icon("home", state.homeTeam.image)
-    set_team_icon("away", state.awayTeam.image)
-    set_team_possession(state.possession)
-    set_timeouts("home", state.homeTeam.timeouts_remaining)
-    set_timeouts("away", state.awayTeam.timeouts_remaining)
-    set_game_quarter(state.quarter)
 
-    cm.reducers["sync:down"]({ down: state.down, distance: state.distance });
-    cm.reducers["sync:time"](state.time)
-    cm.reducers["sync:flag"](state.flag)
+cm.reducers["sync:icon"] = (icon_state) => {
+    set_team_icon("home", icon_state.home_icon);
+    set_team_icon("away", icon_state.away_icon);
 }
 
 cm.connect();

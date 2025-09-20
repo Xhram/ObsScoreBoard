@@ -139,6 +139,15 @@ function handleSetType(webSocketServerManager, connection, action) {
             webSocketServerManager.broadcastAction("sync:flag", stateManager.sync_getters["sync:flag"](), action);
             break;
         }
+        case "set:team_icon": {
+            if (payload.team === "home") {
+                scoreboard.homeTeam.image = payload.icon;
+            } else if (payload.team === "away") {
+                scoreboard.awayTeam.image = payload.icon;
+            }
+            webSocketServerManager.broadcastAction("sync:icon", stateManager.sync_getters["sync:icon"](), action);
+            break;
+        }
         default:
             break;
     }
