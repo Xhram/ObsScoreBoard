@@ -1,13 +1,13 @@
 function sel(value){
     return document.querySelector(value)
 }
-let cm = new connection_manager({role: "scoreboard", reconnect_interval_time: 200});
+let cm = new connection_manager({role: "scoreboard", reconnectIntervalTime: 200});
 
 
-cm.on_auth = () => {
+cm.onAuth = () => {
     update_debug_info();
 }
-cm.on_pong = () => {
+cm.onPong = () => {
     update_debug_info();
 }
 
@@ -105,11 +105,11 @@ cm.connect();
 update_debug_info()
 function update_debug_info(){
     let output = "";
-    if (cm.is_connected) {
-        if (cm.is_authenticated) {
-            output = `Online (${cm.role}), IPR: ${cm._intelligent_predictive_rendering ? "Enabled" : "Disabled"}`;
-            if(cm.server_time_sync_found){
-                output += `, Ping: ${(cm.ping * 2).toFixed(0)} ms, Offset: ${cm.server_time_offset.toFixed(0)} ms`
+    if (cm.isConnected) {
+        if (cm.isAuthenticated) {
+            output = `Online (${cm.role}), IPR: ${cm._intelligentPredictiveRendering ? "Enabled" : "Disabled"}`;
+            if(cm.serverTimeSyncFound){
+                output += `, Ping: ${(cm.ping * 2).toFixed(0)} ms, Offset: ${cm.serverTimeOffset.toFixed(0)} ms`
             }
 
         } else {
