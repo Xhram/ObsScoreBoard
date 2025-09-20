@@ -67,7 +67,7 @@ export class StateManager {
         "sync:possession": () => ({
             possession: this.scoreboard.possession,
         }),
-        "sync:timeout": () => ({
+        "sync:timeouts": () => ({
             home_timeouts: this.scoreboard.team_home.timeouts_remaining,
             away_timeouts: this.scoreboard.team_away.timeouts_remaining,
         }),
