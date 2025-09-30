@@ -602,7 +602,7 @@ class connection_manager {
                 this.reducers["sync:time"](this._predictedState.time)
             }
         }
-        if(this._predictedState.time.isPlayClockRunning && this._predictedState.time.isGameClockRunning){//please remove later for update
+        if(this._predictedState.time.isPlayClockRunning){//please remove later for update
             this._predictedState.time.playClockCurrentTime =
                 Math.max(this._predictedState.time.playClockCurrentTime - delta_time, 0);
             if(this._predictedState.time.playClockCurrentTime == 0){

@@ -37,7 +37,7 @@ cm.reducers["sync:time"] = (timeState) => {
     } else {
         stop_game_clock();
     }
-    if(timeState.isPlayClockRunning && timeState.isGameClockRunning){
+    if(timeState.isPlayClockRunning){
         start_play_clock();
     } else {
         stop_play_clock();

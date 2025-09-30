@@ -32,7 +32,7 @@ export class StateManager {
          * consistent clock state across platforms, as timing events may not be perfectly
          * synchronized due to network latency or platform-specific event handling.
          */
-        if(this.scoreboard.time.isPlayClockRunning && this.scoreboard.time.isGameClockRunning){
+        if(this.scoreboard.time.isPlayClockRunning){
             this.scoreboard.time.playClockCurrentTime =
                 Math.max(this.scoreboard.time.playClockCurrentTime - delta_time, 0);
             if(this.scoreboard.time.playClockCurrentTime == 0){
@@ -83,7 +83,7 @@ export class StateManager {
             const data = fs.readFileSync(SCOREBOARD_STATE_FILE, "utf-8");
             return JSON.parse(data);
         } catch (error) {
-            console.error("Error loading scoreboard state:", error);
+            console.error("Error loading scoreboard state:", JSON.stringify(error));
             return undefined;
         }
     }
