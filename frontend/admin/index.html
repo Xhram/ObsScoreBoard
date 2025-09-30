@@ -238,7 +238,8 @@
                                 <h3 style="margin-top: 15px;">Team Logo</h3>
                                 <div class="score">
                                     <input id="home-team-logo" class="input" value="" placeholder="Logo URL or File Path" style="flex: 2;"/>
-                                    <div class="increment">Browse</div>
+                                    <input type="file" id="home-team-logo-file" accept="image/*" style="display: none;"/>
+                                    <div class="increment" onclick="openBrowseFilesToSetIcon('home')">Browse</div>
                                 </div>
                                 <h3 style="margin-top: 15px;">Team Color</h3>
                                 <div class="score">
@@ -270,7 +271,8 @@
                                 <h3 style="margin-top: 15px;">Team Logo</h3>
                                 <div class="score">
                                     <input id="away-team-logo" class="input" value="" placeholder="Logo URL or File Path" style="flex: 2;"/>
-                                    <div class="increment">Browse</div>
+                                    <input type="file" id="away-team-logo-file" accept="image/*" style="display: none;"/>
+                                    <div class="increment" onclick="openBrowseFilesToSetIcon('away')">Browse</div>
                                 </div>
                                 <h3 style="margin-top: 15px;">Team Color</h3>
                                 <div class="score">

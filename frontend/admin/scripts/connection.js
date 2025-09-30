@@ -94,7 +94,20 @@ let elm = {
     theme_selector: sel("#theme-selector")
 }
 
+// Add event listeners for file inputs
+const homeFileInput = sel('#home-team-logo-file');
+if (homeFileInput) {
+    homeFileInput.addEventListener('change', function(event) {
+        handleLogoFileSelection(event, 'home');
+    });
+}
 
+const awayFileInput = sel('#away-team-logo-file');
+if (awayFileInput) {
+    awayFileInput.addEventListener('change', function(event) {
+        handleLogoFileSelection(event, 'away');
+    });
+}
 
 cm.reducers["sync:name"] = (nameState) => {
     elm.home_team_name.value = nameState.home_name;
@@ -116,6 +129,11 @@ cm.reducers["sync:color"] = (colorState) => {
     elm.home_team_color_hex.value = colorState.home_color;
     elm.away_team_color.value = colorState.away_color;
     elm.away_team_color_hex.value = colorState.away_color;
+}
+
+cm.reducers["sync:icon"] = (iconState) => {
+    elm.home_team_logo.value = iconState.home_icon;
+    elm.away_team_logo.value = iconState.away_icon;
 }
 
 cm.reducers["sync:down"] = (downState) => {
@@ -534,3 +552,52 @@ elm.home_team_logo.addEventListener("change", (event) => {
 elm.away_team_logo.addEventListener("change", (event) => {
     cm.actions["set:team_icon"]("away", event.target.value);
 });
+
+function openBrowseFilesToSetIcon(team) {
+    const fileInput = sel(`#${team}-team-logo-file`);
+    if (fileInput) {
+        fileInput.click();
+    } else {
+        console.error(`File input not found for ${team} team logo`);
+    }
+}
+
+function handleLogoFileSelection(event, team) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
+        return;
+    }
+    
+    // Validate file size (optional - limit to 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+        alert('Image file is too large. Please select an image smaller than 5MB.');
+        return;
+    }
+    
+    // Convert file to data URL
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const dataUrl = e.target.result;
+        
+        // Update the input field to show the file name
+        const logoInput = sel(`#${team}-team-logo`);
+        logoInput.value = file.name;
+        
+        // Send the data URL to the server
+        cm.actions["set:team_icon"](team, dataUrl);
+        
+        console.log(`${team} team logo updated with file: ${file.name}`);
+    };
+    
+    reader.onerror = function() {
+        alert('Error reading the image file. Please try again.');
+    };
+    
+    // Read the file as data URL
+    reader.readAsDataURL(file);
+}
