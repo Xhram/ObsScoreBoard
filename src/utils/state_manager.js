@@ -72,8 +72,8 @@ export class StateManager {
             possession: this.scoreboard.possession,
         }),
         "sync:timeouts": () => ({
-            home_timeouts: this.scoreboard.homeTeam.timeouts_remaining,
-            away_timeouts: this.scoreboard.awayTeam.timeouts_remaining,
+            home_timeouts: this.scoreboard.homeTeam.timeoutsRemaining,
+            away_timeouts: this.scoreboard.awayTeam.timeoutsRemaining,
         }),
         "sync:flag": () => this.scoreboard.flag,
     }
@@ -89,7 +89,7 @@ export class StateManager {
     }
     saveScoreboardState = () => {
         try {
-            fs.writeFileSync(SCOREBOARD_STATE_FILE, JSON.stringify(this.scoreboard, null, 4));
+            fs.writeFileSync(SCOREBOARD_STATE_FILE, JSON.stringify({...this.scoreboard, saveTimestamp: Date.now()}, null, 4));
         } catch (error) {
             console.error("Error saving scoreboard state:", error);
         }
@@ -101,7 +101,7 @@ export class StateManager {
                 image: image_to_data_url("./src/assets/phs_ptv_64.png"),
                 score: 0,
                 color: "#35ffa1",
-                timeouts_remaining: 3,
+                timeoutsRemaining: 3,
                 roster: {
                     "-1": "Home Player Name".split(" "),
                 },
@@ -111,7 +111,7 @@ export class StateManager {
                 image: image_to_data_url("./src/assets/phs_ptv_64.png"),
                 score: 0,
                 color: "#ff6c32",
-                timeouts_remaining: 3,
+                timeoutsRemaining: 3,
                 roster: {
                     "-1": "Away Player Name".split(" "),
                 },

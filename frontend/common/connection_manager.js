@@ -41,7 +41,7 @@ class connection_manager {
             image: "blank",
             score: 0,
             color: "#35ffa1",
-            timeouts_remaining: 3,
+            timeoutsRemaining: 3,
             roster: {
                 "-1": "Home Player Name".split(' '),
             },
@@ -51,7 +51,7 @@ class connection_manager {
             image: "blank",
             score: 0,
             color: "#ff6c32",
-            timeouts_remaining: 3,
+            timeoutsRemaining: 3,
             roster: {
                 "-1": "Away Player Name".split(' '),
             },
@@ -179,11 +179,11 @@ class connection_manager {
         "add:team_timeouts": (team, amount) => {
             this.sendAction("add:team_timeouts", { team, amount })
             if(this._intelligentPredictiveRendering){
-                this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeouts_remaining += amount;
-                this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeouts_remaining = clamp(this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeouts_remaining, 0, 3);
+                this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeoutsRemaining += amount;
+                this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeoutsRemaining = clamp(this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeoutsRemaining, 0, 3);
                 this.reducers["sync:timeouts"]({
-                    home_timeouts: this._predictedState.homeTeam.timeouts_remaining,
-                    away_timeouts: this._predictedState.awayTeam.timeouts_remaining
+                    home_timeouts: this._predictedState.homeTeam.timeoutsRemaining,
+                    away_timeouts: this._predictedState.awayTeam.timeoutsRemaining
                 });
             }
         },
@@ -288,8 +288,8 @@ class connection_manager {
         "set:team_timeouts": (team, timeouts) => {
             this.sendAction("set:team_timeouts", { team, timeouts })
             if(this._intelligentPredictiveRendering){
-                this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeouts_remaining = timeouts;
-                this.reducers["sync:timeouts"]({ timeouts: this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeouts_remaining });
+                this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeoutsRemaining = timeouts;
+                this.reducers["sync:timeouts"]({ timeouts: this._predictedState[team == "home" ? "homeTeam" : "awayTeam"].timeoutsRemaining });
             }
         },
         "set:flag": (flagState) => {
@@ -573,8 +573,8 @@ class connection_manager {
             possession: state.possession
         });
         this.reducers["sync:timeouts"]({
-            home_timeouts: state.homeTeam.timeouts_remaining,
-            away_timeouts: state.awayTeam.timeouts_remaining
+            home_timeouts: state.homeTeam.timeoutsRemaining,
+            away_timeouts: state.awayTeam.timeoutsRemaining
         });
         this.reducers["sync:flag"]({
             isFlagEmitted: state.flag.isFlagEmitted,

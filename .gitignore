@@ -137,4 +137,4 @@ dist
 
 src/frontend/scoreboard/assets/roster.json
 
-scoreboard.json
+scoreboard_state.json

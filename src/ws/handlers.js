@@ -116,9 +116,9 @@ function handleSetType(webSocketServerManager, connection, action) {
         }
         case "set:team_timeouts": {
             if (payload.team === "home") {
-                scoreboard.homeTeam.timeouts_remaining = clamp(payload.timeouts, 0, 3);
+                scoreboard.homeTeam.timeoutsRemaining = clamp(payload.timeouts, 0, 3);
             } else if (payload.team === "away") {
-                scoreboard.awayTeam.timeouts_remaining = clamp(payload.timeouts, 0, 3);
+                scoreboard.awayTeam.timeoutsRemaining = clamp(payload.timeouts, 0, 3);
             }
             webSocketServerManager.broadcastAction("sync:timeouts", stateManager.sync_getters["sync:timeouts"](), action);
             break;
@@ -210,9 +210,9 @@ function handleAddType(webSocketServerManager, connection, action) {
         }
         case "add:team_timeouts": {
             if (payload.team === "home") {
-                scoreboard.homeTeam.timeouts_remaining = clamp(scoreboard.homeTeam.timeouts_remaining + payload.amount, 0, 3);
+                scoreboard.homeTeam.timeoutsRemaining = clamp(scoreboard.homeTeam.timeoutsRemaining + payload.amount, 0, 3);
             } else if (payload.team === "away") {
-                scoreboard.awayTeam.timeouts_remaining = clamp(scoreboard.awayTeam.timeouts_remaining + payload.amount, 0, 3);
+                scoreboard.awayTeam.timeoutsRemaining = clamp(scoreboard.awayTeam.timeoutsRemaining + payload.amount, 0, 3);
             }
             webSocketServerManager.broadcastAction("sync:timeouts", stateManager.sync_getters["sync:timeouts"](), action);
             break;
