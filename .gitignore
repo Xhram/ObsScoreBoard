@@ -136,3 +136,5 @@ dist
 .pnp.*
 
 src/frontend/scoreboard/assets/roster.json
+
+scoreboard.json
