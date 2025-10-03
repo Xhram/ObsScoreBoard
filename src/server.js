@@ -12,6 +12,9 @@ const webSocketServerManager = new WebSocketServerManager({
     server,
     stateManager: stateManager
 })
+setInterval(() => {
+    stateManager.saveScoreboardState();
+}, 10000);
 
 app.use(express.json());
 
