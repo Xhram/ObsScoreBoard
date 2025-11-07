@@ -5,10 +5,10 @@ let cm = new connection_manager({role: "scoreboard", reconnectIntervalTime: 200}
 
 
 cm.onAuth = () => {
-    update_debug_info();
+    updateDebugInfo();
 }
 cm.onPong = () => {
-    update_debug_info();
+    updateDebugInfo();
 }
 
 // Set up reducers
@@ -87,8 +87,8 @@ cm.reducers["sync:icon"] = (iconState) => {
 }
 
 cm.connect();
-update_debug_info()
-function update_debug_info(){
+updateDebugInfo()
+function updateDebugInfo(){
     let output = "";
     if (cm.isConnected) {
         if (cm.isAuthenticated) {

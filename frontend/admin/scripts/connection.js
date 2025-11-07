@@ -15,10 +15,10 @@ let cm = new connection_manager({
 cm.onAuth = () => {
     sel("#auth").classList.add("hide")
     sel("#controls").classList.remove("hide")
-    update_debug_info();
+    updateDebugInfo();
 }
 cm.onPong = () => {
-    update_debug_info();
+    updateDebugInfo();
 }
 sel("#password").value = localStorage.getItem("password")
 sel("#login").addEventListener("click", cm.connect);
@@ -27,8 +27,8 @@ sel("#password").addEventListener("input",(input_event)=>{localStorage.setItem("
 sel("#password").addEventListener("keydown", (event) => {if (event.key === "Enter") {cm.password = sel("#password").value; cm.connect()}});
 
 
-update_debug_info()
-function update_debug_info(){
+updateDebugInfo()
+function updateDebugInfo(){
     let output = "";
     if (cm.isConnected) {
         if (cm.isAuthenticated) {
@@ -49,21 +49,21 @@ function update_debug_info(){
 
 let elm = {
     // Team Scores
-    home_team_score: sel("#home-team-score"),
-    away_team_score: sel("#away-team-score"),
+    homeTeamScore: sel("#home-team-score"),
+    awayTeamScore: sel("#away-team-score"),
     
     // Game Timer
-    game_timer_duration: sel("#game-timer-duration"),
-    game_timer_duration_default: sel("#game-timer-duration-default"),
+    gameTimerDuration: sel("#game-timer-duration"),
+    gameTimerDurationDefault: sel("#game-timer-duration-default"),
 
 
     // Shot Clock
-    shot_clock_duration: sel("#shot-clock-duration"),
-    shot_clock_duration_default: sel("#shot-clock-duration-default"),
+    shotClockDuration: sel("#shot-clock-duration"),
+    shotClockDurationDefault: sel("#shot-clock-duration-default"),
     
     // Start stop buttons for clocks
-    game_timer_toggle_button: sel("#game-timer-toggle"),
-    shot_clock_toggle_button: sel("#shot-clock-toggle"),
+    gameTimerToggleButton: sel("#game-timer-toggle"),
+    shotClockToggleButton: sel("#shot-clock-toggle"),
 
     // Down & Distance
     down: sel("#down"),
@@ -73,25 +73,25 @@ let elm = {
     quarter: sel("#quarter"),
     
     // Home Team Management
-    home_team_name: sel("#home-team-name"),
-    home_team_logo: sel("#home-team-logo"),
-    home_team_color: sel("#home-team-color"),
-    home_team_color_hex: sel("#home-team-color-hex"),
-    home_timeouts: sel("#home-timeouts"),
+    homeTeamName: sel("#home-team-name"),
+    homeTeamLogo: sel("#home-team-logo"),
+    homeTeamColor: sel("#home-team-color"),
+    homeTeamColorHex: sel("#home-team-color-hex"),
+    homeTimeouts: sel("#home-timeouts"),
     
     // Away Team Management
-    away_team_name: sel("#away-team-name"),
-    away_team_logo: sel("#away-team-logo"),
-    away_team_color: sel("#away-team-color"),
-    away_team_color_hex: sel("#away-team-color-hex"),
-    away_timeouts: sel("#away-timeouts"),
+    awayTeamName: sel("#away-team-name"),
+    awayTeamLogo: sel("#away-team-logo"),
+    awayTeamColor: sel("#away-team-color"),
+    awayTeamColorHex: sel("#away-team-color-hex"),
+    awayTimeouts: sel("#away-timeouts"),
     
     // Player Numbers
-    home_player_number: sel("#home-player-number"),
-    away_player_number: sel("#away-player-number"),
+    homePlayerNumber: sel("#home-player-number"),
+    awayPlayerNumber: sel("#away-player-number"),
     
     // Display Settings
-    theme_selector: sel("#theme-selector")
+    themeSelector: sel("#theme-selector")
 }
 
 // Add event listeners for file inputs
@@ -110,30 +110,30 @@ if (awayFileInput) {
 }
 
 cm.reducers["sync:name"] = (nameState) => {
-    elm.home_team_name.value = nameState.home_name;
-    elm.away_team_name.value = nameState.away_name;
+    elm.homeTeamName.value = nameState.home_name;
+    elm.awayTeamName.value = nameState.away_name;
 }
 
 cm.reducers["sync:score"] = (scoreState) => {
-    if(elm.home_team_score.value != scoreState.home_score){
-        elm.home_team_score.value = scoreState.home_score;
+    if(elm.homeTeamScore.value != scoreState.home_score){
+        elm.homeTeamScore.value = scoreState.home_score;
 
     }
-    if(elm.away_team_score.value != scoreState.away_score){
-        elm.away_team_score.value = scoreState.away_score;
+    if(elm.awayTeamScore.value != scoreState.away_score){
+        elm.awayTeamScore.value = scoreState.away_score;
     }
 }
 
 cm.reducers["sync:color"] = (colorState) => {
-    elm.home_team_color.value = colorState.home_color;
-    elm.home_team_color_hex.value = colorState.home_color;
-    elm.away_team_color.value = colorState.away_color;
-    elm.away_team_color_hex.value = colorState.away_color;
+    elm.homeTeamColor.value = colorState.home_color;
+    elm.homeTeamColorHex.value = colorState.home_color;
+    elm.awayTeamColor.value = colorState.away_color;
+    elm.awayTeamColorHex.value = colorState.away_color;
 }
 
 cm.reducers["sync:icon"] = (iconState) => {
-    elm.home_team_logo.value = iconState.home_icon;
-    elm.away_team_logo.value = iconState.away_icon;
+    elm.homeTeamLogo.value = iconState.home_icon;
+    elm.awayTeamLogo.value = iconState.away_icon;
 }
 
 cm.reducers["sync:down"] = (downState) => {
@@ -152,8 +152,8 @@ cm.reducers["sync:possession"] = (possessionState) => {
 }
 
 cm.reducers["sync:timeouts"] = (timeoutsState) => {
-    elm.home_timeouts.value = timeoutsState.home_timeouts;
-    elm.away_timeouts.value = timeoutsState.away_timeouts;
+    elm.homeTimeouts.value = timeoutsState.home_timeouts;
+    elm.awayTimeouts.value = timeoutsState.away_timeouts;
 }
 
 cm.reducers["sync:flag"] = (flagState) => {
@@ -164,96 +164,96 @@ cm.reducers["sync:flag"] = (flagState) => {
 
 cm.reducers["event:team_score"] = (payload) => {
     if(payload.team === "home"){
-        elm.home_team_score.value = payload.new_score;
+        elm.homeTeamScore.value = payload.new_score;
     }
     if(payload.team === "away"){
-        elm.away_team_score.value = payload.new_score;
+        elm.awayTeamScore.value = payload.new_score;
     }
 }
 
 // Clock Managment
-let game_clock_interval = undefined;
-let play_clock_interval = undefined;
-let game_clock_seconds = 15 * 60 * 1000;
-let play_clock_seconds = 45 * 1000;
+let gameClockInterval = undefined;
+let playClockInterval = undefined;
+let gameClockSeconds = 15 * 60 * 1000;
+let playClockSeconds = 45 * 1000;
 cm.reducers["sync:time"] = (timeState) => {
-    game_clock_seconds = timeState.gameClockCurrentTime
-    play_clock_seconds = timeState.playClockCurrentTime
-    update_clock_display();
+    gameClockSeconds = timeState.gameClockCurrentTime
+    playClockSeconds = timeState.playClockCurrentTime
+    updateClockDisplay();
     if(timeState.isGameClockRunning){
-        start_game_clock();
+        startGameClock();
     } else {
-        stop_game_clock();
+        stopGameClock();
     }
     if(timeState.isPlayClockRunning){
-        start_play_clock();
+        startPlayClock();
     } else {
-        stop_play_clock();
+        stopPlayClock();
         // this will show it if the shot clock is queued to be running
         // but it low key looks a bit jank
         // if(timeState.isPlayClockRunning){
-        //     elm.shot_clock_duration.classList.add("running-clock");
+        //     elm.shotClockDuration.classList.add("running-clock");
         // }
     }
 }
-function update_clock_display(){
-    update_game_clock_display();
-    update_play_clock_display();
+function updateClockDisplay(){
+    updateGameClockDisplay();
+    updatePlayClockDisplay();
 }
-function update_game_clock_display(){
-    elm.game_timer_duration.value = (game_clock_seconds / 1000).toFixed(1);
+function updateGameClockDisplay(){
+    elm.gameTimerDuration.value = (gameClockSeconds / 1000).toFixed(1);
 }
-function update_play_clock_display(){
-    elm.shot_clock_duration.value = (play_clock_seconds / 1000).toFixed(1);
+function updatePlayClockDisplay(){
+    elm.shotClockDuration.value = (playClockSeconds / 1000).toFixed(1);
 }
 
 
-function start_game_clock(){
-    if(game_clock_interval === undefined){
-        elm.game_timer_duration.classList.add("running-clock");
-        elm.game_timer_toggle_button.classList.add("running")
-        elm.game_timer_toggle_button.classList.remove("paused")
+function startGameClock(){
+    if(gameClockInterval === undefined){
+        elm.gameTimerDuration.classList.add("running-clock");
+        elm.gameTimerToggleButton.classList.add("running")
+        elm.gameTimerToggleButton.classList.remove("paused")
 
-        let last_time = Date.now();
-        game_clock_interval = setInterval(()=>{
-            game_clock_seconds -= Date.now() - last_time;
-            game_clock_seconds = Math.max(game_clock_seconds, 0);
-            last_time = Date.now();
-            update_game_clock_display();
+        let lastTime = Date.now();
+        gameClockInterval = setInterval(()=>{
+            gameClockSeconds -= Date.now() - lastTime;
+            gameClockSeconds = Math.max(gameClockSeconds, 0);
+            lastTime = Date.now();
+            updateGameClockDisplay();
         }, 10);
     }
 }
-function stop_game_clock(){
-    if(game_clock_interval !== undefined){
-        elm.game_timer_duration.classList.remove("running-clock");
-        elm.game_timer_toggle_button.classList.remove("running")
-        elm.game_timer_toggle_button.classList.add("paused")
-        clearInterval(game_clock_interval);
-        game_clock_interval = undefined;
+function stopGameClock(){
+    if(gameClockInterval !== undefined){
+        elm.gameTimerDuration.classList.remove("running-clock");
+        elm.gameTimerToggleButton.classList.remove("running")
+        elm.gameTimerToggleButton.classList.add("paused")
+        clearInterval(gameClockInterval);
+        gameClockInterval = undefined;
     }
 }
 
-function start_play_clock(){
-    if(play_clock_interval === undefined){
-        let last_time = Date.now();
-        play_clock_interval = setInterval(()=>{
-            elm.shot_clock_duration.classList.add("running-clock");
-            elm.shot_clock_toggle_button.classList.add("running")
-            elm.shot_clock_toggle_button.classList.remove("paused")
-            play_clock_seconds -= Date.now() - last_time;
-            play_clock_seconds = Math.max(play_clock_seconds, 0);
-            last_time = Date.now();
-            update_play_clock_display();
+function startPlayClock(){
+    if(playClockInterval === undefined){
+        let lastTime = Date.now();
+        playClockInterval = setInterval(()=>{
+            elm.shotClockDuration.classList.add("running-clock");
+            elm.shotClockToggleButton.classList.add("running")
+            elm.shotClockToggleButton.classList.remove("paused")
+            playClockSeconds -= Date.now() - lastTime;
+            playClockSeconds = Math.max(playClockSeconds, 0);
+            lastTime = Date.now();
+            updatePlayClockDisplay();
         }, 10);
     }
 }
-function stop_play_clock(){
-    if(play_clock_interval !== undefined){
-        elm.shot_clock_duration.classList.remove("running-clock");
-        elm.shot_clock_toggle_button.classList.remove("running")
-        elm.shot_clock_toggle_button.classList.add("paused")
-        clearInterval(play_clock_interval);
-        play_clock_interval = undefined;
+function stopPlayClock(){
+    if(playClockInterval !== undefined){
+        elm.shotClockDuration.classList.remove("running-clock");
+        elm.shotClockToggleButton.classList.remove("running")
+        elm.shotClockToggleButton.classList.add("paused")
+        clearInterval(playClockInterval);
+        playClockInterval = undefined;
     }
 }
 
@@ -296,100 +296,100 @@ selall(".away .team-score .decrement").forEach((elm) => {
     });
 });
 // Timer Event Listeners
-elm.game_timer_toggle_button.addEventListener("click", (event) => {
-    if (elm.game_timer_toggle_button.classList.contains("running")) {
+elm.gameTimerToggleButton.addEventListener("click", (event) => {
+    if (elm.gameTimerToggleButton.classList.contains("running")) {
         cm.actions["set:clock_state"]("game", false);
         return;
     }    
-    if (elm.game_timer_toggle_button.classList.contains("paused")) {
+    if (elm.gameTimerToggleButton.classList.contains("paused")) {
         cm.actions["set:clock_state"]("game", true);
         return;
     }
 });
-elm.shot_clock_toggle_button.addEventListener("click", (event) => {
-    if (elm.shot_clock_toggle_button.classList.contains("running")) {
+elm.shotClockToggleButton.addEventListener("click", (event) => {
+    if (elm.shotClockToggleButton.classList.contains("running")) {
         cm.actions["set:clock_state"]("play", false);
         return;
     }    
-    if (elm.shot_clock_toggle_button.classList.contains("paused")) {
+    if (elm.shotClockToggleButton.classList.contains("paused")) {
         cm.actions["set:clock_state"]("play", true);
         return;
     }
 });
 // Timer Input Listeners
-function add_clock_time_action_issuer(clock,amount){
+function addClockTimeActionIssuer(clock,amount){
     cm.actions["add:clock_time"](clock, amount)
 }
-function add_clock_time_to_game_timer_action_issuer(amount){
-    add_clock_time_action_issuer("game",amount)
+function addClockTimeToGameTimerActionIssuer(amount){
+    addClockTimeActionIssuer("game",amount)
 }
-function add_clock_time_to_play_clock_action_issuer(amount){
-    add_clock_time_action_issuer("play",amount)
+function addClockTimeToPlayClockActionIssuer(amount){
+    addClockTimeActionIssuer("play",amount)
 }
 
-function set_play_clock_to_default_action_issuer(){
-    cm.actions["set:clock_time"]("play", parseInt(elm.shot_clock_duration_default.value) * 1000);
+function setPlayClockToDefaultActionIssuer(){
+    cm.actions["set:clock_time"]("play", parseInt(elm.shotClockDurationDefault.value) * 1000);
 }
-function set_play_clock_to_value_action_issuer(time){
+function setPlayClockToValueActionIssuer(time){
     cm.actions["set:clock_time"]("play", time);
 }
-function set_game_clock_to_default_action_issuer(){
-    cm.actions["set:clock_time"]("game", parseInt(elm.game_timer_duration_default.value) * 1000);
+function setGameClockToDefaultActionIssuer(){
+    cm.actions["set:clock_time"]("game", parseInt(elm.gameTimerDurationDefault.value) * 1000);
 }
 // Down & Distance Event Listeners
-function set_down_action_issuer(down){
+function setDownActionIssuer(down){
     cm.actions["set:down"](down);
 }
-function set_distance_action_issuer(distance){
+function setDistanceActionIssuer(distance){
     cm.actions["set:distance"](distance);
 }
-function add_down_action_issuer(amount){
+function addDownActionIssuer(amount){
     cm.actions["add:down"](amount);
 }
-function add_distance_action_issuer(amount){
+function addDistanceActionIssuer(amount){
     cm.actions["add:distance"](amount);
 }
 
 // Quarter & Period Event Listeners
-function set_quarter_action_issuer(quarter){
+function setQuarterActionIssuer(quarter){
     cm.actions["set:quarter"](quarter);
 }
-function add_quarter_action_issuer(amount){
+function addQuarterActionIssuer(amount){
     cm.actions["add:quarter"](amount);
 }
 
 // Possession Event Listeners
-function set_possession_action_issuer(team){
+function setPossessionActionIssuer(team){
     cm.actions["set:possession"](team);
 }
 
 // Timeouts Event Listeners
-function set_team_timeouts_action_issuer(team, timeouts){
+function setTeamTimeoutsActionIssuer(team, timeouts){
     cm.actions["set:team_timeouts"](team, timeouts);
 }
-function add_team_timeouts_action_issuer(team, amount){
+function addTeamTimeoutsActionIssuer(team, amount){
     cm.actions["add:team_timeouts"](team, amount);
 }
 
 
 // Input Box Event Listeners
-function set_team_score_action_issuer(team, score){
+function setTeamScoreActionIssuer(team, score){
     cm.actions["set:team_score"](team, score);
 }
 
-elm.home_team_score.addEventListener("change", (event) => {
-    let value = elm.home_team_score.value
-    let new_score = parseInt(value);
-    if (!isNaN(new_score) && new_score >= 0) {
-        set_team_score_action_issuer("home", new_score);
+elm.homeTeamScore.addEventListener("change", (event) => {
+    let value = elm.homeTeamScore.value
+    let newScore = parseInt(value);
+    if (!isNaN(newScore) && newScore >= 0) {
+        setTeamScoreActionIssuer("home", newScore);
     }
 
 });
-elm.away_team_score.addEventListener("change", (event) => {
-    let value = elm.away_team_score.value
-    let new_score = parseInt(value);
-    if (!isNaN(new_score) && new_score >= 0) {
-        set_team_score_action_issuer("away", new_score);
+elm.awayTeamScore.addEventListener("change", (event) => {
+    let value = elm.awayTeamScore.value
+    let newScore = parseInt(value);
+    if (!isNaN(newScore) && newScore >= 0) {
+        setTeamScoreActionIssuer("away", newScore);
     }
 
 });
@@ -397,159 +397,159 @@ elm.away_team_score.addEventListener("change", (event) => {
 // Down input box listener
 elm.down.addEventListener("change", (event) => {
     let value = elm.down.value;
-    let new_down = parseInt(value);
-    if (!isNaN(new_down) && new_down >= 1 && new_down <= 4) {
-        set_down_action_issuer(new_down);
+    let newDown = parseInt(value);
+    if (!isNaN(newDown) && newDown >= 1 && newDown <= 4) {
+        setDownActionIssuer(newDown);
     }
 });
 
 // Distance input box listener
 elm.distance.addEventListener("change", (event) => {
     let value = elm.distance.value;
-    let new_distance = parseInt(value);
-    if (!isNaN(new_distance)) {
-        set_distance_action_issuer(new_distance);
+    let newDistance = parseInt(value);
+    if (!isNaN(newDistance)) {
+        setDistanceActionIssuer(newDistance);
     }
 });
 
 // Quarter input box listener
 elm.quarter.addEventListener("change", (event) => {
     let value = elm.quarter.value;
-    let new_quarter = parseInt(value);
-    if (!isNaN(new_quarter) && new_quarter >= 0 && new_quarter <= 5) {
-        set_quarter_action_issuer(new_quarter);
+    let newQuarter = parseInt(value);
+    if (!isNaN(newQuarter) && newQuarter >= 0 && newQuarter <= 5) {
+        setQuarterActionIssuer(newQuarter);
     }
 });
 
 // Game Timer input box listener
-elm.game_timer_duration.addEventListener("change", (event) => {
-    if (game_clock_interval !== undefined) {
+elm.gameTimerDuration.addEventListener("change", (event) => {
+    if (gameClockInterval !== undefined) {
         event.preventDefault();
-        update_game_clock_display();
+        updateGameClockDisplay();
         return;
     }
-    let value = elm.game_timer_duration.value;
-    let new_time_seconds = parseFloat(value);
-    if (!isNaN(new_time_seconds) && new_time_seconds >= 0) {
-        cm.actions["set:clock_time"]("game", new_time_seconds * 1000);
+    let value = elm.gameTimerDuration.value;
+    let newTimeSeconds = parseFloat(value);
+    if (!isNaN(newTimeSeconds) && newTimeSeconds >= 0) {
+        cm.actions["set:clock_time"]("game", newTimeSeconds * 1000);
     }
 });
 
 // Game Timer keydown/input prevention when running
-elm.game_timer_duration.addEventListener("keydown", (event) => {
-    if (game_clock_interval !== undefined) {
+elm.gameTimerDuration.addEventListener("keydown", (event) => {
+    if (gameClockInterval !== undefined) {
         event.preventDefault();
     }
 });
 
-elm.game_timer_duration.addEventListener("input", (event) => {
-    if (game_clock_interval !== undefined) {
+elm.gameTimerDuration.addEventListener("input", (event) => {
+    if (gameClockInterval !== undefined) {
         event.preventDefault();
-        update_game_clock_display();
+        updateGameClockDisplay();
     }
 });
 
 // Shot Clock input box listener
-elm.shot_clock_duration.addEventListener("change", (event) => {
-    if (play_clock_interval !== undefined) {
+elm.shotClockDuration.addEventListener("change", (event) => {
+    if (playClockInterval !== undefined) {
         event.preventDefault();
-        update_play_clock_display();
+        updatePlayClockDisplay();
         return;
     }
-    let value = elm.shot_clock_duration.value;
-    let new_time_seconds = parseFloat(value);
-    if (!isNaN(new_time_seconds) && new_time_seconds >= 0) {
-        cm.actions["set:clock_time"]("play", new_time_seconds * 1000);
+    let value = elm.shotClockDuration.value;
+    let newTimeSeconds = parseFloat(value);
+    if (!isNaN(newTimeSeconds) && newTimeSeconds >= 0) {
+        cm.actions["set:clock_time"]("play", newTimeSeconds * 1000);
     }
 });
 
 // Shot Clock keydown/input prevention when running
-elm.shot_clock_duration.addEventListener("keydown", (event) => {
-    if (play_clock_interval !== undefined) {
+elm.shotClockDuration.addEventListener("keydown", (event) => {
+    if (playClockInterval !== undefined) {
         event.preventDefault();
     }
 });
 
-elm.shot_clock_duration.addEventListener("input", (event) => {
-    if (play_clock_interval !== undefined) {
+elm.shotClockDuration.addEventListener("input", (event) => {
+    if (playClockInterval !== undefined) {
         event.preventDefault();
-        update_play_clock_display(); 
+        updatePlayClockDisplay(); 
     }
 });
 
 // Team Name input box listeners
-elm.home_team_name.addEventListener("change", (event) => {
-    let value = elm.home_team_name.value;
+elm.homeTeamName.addEventListener("change", (event) => {
+    let value = elm.homeTeamName.value;
     if (value.trim() !== "") {
         cm.actions["set:team_name"]("home", value);
     }
 });
 
-elm.away_team_name.addEventListener("change", (event) => {
-    let value = elm.away_team_name.value;
+elm.awayTeamName.addEventListener("change", (event) => {
+    let value = elm.awayTeamName.value;
     if (value.trim() !== "") {
         cm.actions["set:team_name"]("away", value);
     }
 });
 
 // Team Color input box listeners
-elm.home_team_color.addEventListener("change", (event) => {
-    let value = elm.home_team_color.value;
-    elm.home_team_color_hex.value = value; 
+elm.homeTeamColor.addEventListener("change", (event) => {
+    let value = elm.homeTeamColor.value;
+    elm.homeTeamColorHex.value = value; 
     cm.actions["set:team_color"]("home", value);
 });
 
-elm.home_team_color_hex.addEventListener("change", (event) => {
-    let value = elm.home_team_color_hex.value;
+elm.homeTeamColorHex.addEventListener("change", (event) => {
+    let value = elm.homeTeamColorHex.value;
     if (value.match(/^#[0-9A-F]{6}$/i)) { // I totally wrote this regex myself :P
-        elm.home_team_color.value = value; 
+        elm.homeTeamColor.value = value; 
         cm.actions["set:team_color"]("home", value);
     }
 });
 
-elm.away_team_color.addEventListener("change", (event) => {
-    let value = elm.away_team_color.value;
-    elm.away_team_color_hex.value = value;
+elm.awayTeamColor.addEventListener("change", (event) => {
+    let value = elm.awayTeamColor.value;
+    elm.awayTeamColorHex.value = value;
     cm.actions["set:team_color"]("away", value);
 });
 
-elm.away_team_color_hex.addEventListener("change", (event) => {
-    let value = elm.away_team_color_hex.value;
+elm.awayTeamColorHex.addEventListener("change", (event) => {
+    let value = elm.awayTeamColorHex.value;
     if (value.match(/^#[0-9A-F]{6}$/i)) { 
-        elm.away_team_color.value = value; 
+        elm.awayTeamColor.value = value; 
         cm.actions["set:team_color"]("away", value);
     }
 });
 
 // Timeouts input box listeners
-elm.home_timeouts.addEventListener("change", (event) => {
-    let value = elm.home_timeouts.value;
-    let new_timeouts = parseInt(value);
-    if (!isNaN(new_timeouts) && new_timeouts >= 0 && new_timeouts <= 3) {
-        set_team_timeouts_action_issuer("home", new_timeouts);
+elm.homeTimeouts.addEventListener("change", (event) => {
+    let value = elm.homeTimeouts.value;
+    let newTimeouts = parseInt(value);
+    if (!isNaN(newTimeouts) && newTimeouts >= 0 && newTimeouts <= 3) {
+        setTeamTimeoutsActionIssuer("home", newTimeouts);
     }
 });
 
-elm.away_timeouts.addEventListener("change", (event) => {
-    let value = elm.away_timeouts.value;
-    let new_timeouts = parseInt(value);
-    if (!isNaN(new_timeouts) && new_timeouts >= 0 && new_timeouts <= 3) {
-        set_team_timeouts_action_issuer("away", new_timeouts);
+elm.awayTimeouts.addEventListener("change", (event) => {
+    let value = elm.awayTimeouts.value;
+    let newTimeouts = parseInt(value);
+    if (!isNaN(newTimeouts) && newTimeouts >= 0 && newTimeouts <= 3) {
+        setTeamTimeoutsActionIssuer("away", newTimeouts);
     }
 });
 
 // Flags
 
-function set_flagState_action_issuer(flagState) {
+function setFlagStateActionIssuer(flagState) {
     cm.actions["set:flag"](flagState);
 }
 
 // Icons 
-elm.home_team_logo.addEventListener("change", (event) => {
+elm.homeTeamLogo.addEventListener("change", (event) => {
     cm.actions["set:team_icon"]("home", event.target.value);
 });
 
-elm.away_team_logo.addEventListener("change", (event) => {
+elm.awayTeamLogo.addEventListener("change", (event) => {
     cm.actions["set:team_icon"]("away", event.target.value);
 });
 
