@@ -148,6 +148,31 @@ function handleSetType(webSocketServerManager, connection, action) {
             webSocketServerManager.broadcastAction("sync:icon", stateManager.sync_getters["sync:icon"](), action);
             break;
         }
+        case "set:visibility": {
+            // Initialize visibility object if it doesn't exist (for backwards compatibility)
+            if (!scoreboard.visibility) {
+                scoreboard.visibility = {
+                    playClock: true,
+                    gameClock: true,
+                    scores: true,
+                    downDistance: true,
+                };
+            }
+            if (payload.playClock !== undefined) {
+                scoreboard.visibility.playClock = payload.playClock;
+            }
+            if (payload.gameClock !== undefined) {
+                scoreboard.visibility.gameClock = payload.gameClock;
+            }
+            if (payload.scores !== undefined) {
+                scoreboard.visibility.scores = payload.scores;
+            }
+            if (payload.downDistance !== undefined) {
+                scoreboard.visibility.downDistance = payload.downDistance;
+            }
+            webSocketServerManager.broadcastAction("sync:visibility", stateManager.sync_getters["sync:visibility"](), action);
+            break;
+        }
         default:
             break;
     }

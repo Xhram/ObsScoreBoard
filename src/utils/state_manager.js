@@ -76,6 +76,18 @@ export class StateManager {
             away_timeouts: this.scoreboard.awayTeam.timeoutsRemaining,
         }),
         "sync:flag": () => this.scoreboard.flag,
+        "sync:visibility": () => {
+            // Initialize visibility object if it doesn't exist (for backwards compatibility)
+            if (!this.scoreboard.visibility) {
+                this.scoreboard.visibility = {
+                    playClock: true,
+                    gameClock: true,
+                    scores: true,
+                    downDistance: true,
+                };
+            }
+            return this.scoreboard.visibility;
+        },
     }
 
     loadScoreboardState = () => {
@@ -132,6 +144,12 @@ export class StateManager {
                 team: "none", // team is either 'home' or 'away' or 'none'
                 status: "none", // status is either 'flag' or 'review'
                 playerBlame: -2, // player number who threw the flag
+            },
+            visibility: {
+                playClock: true,
+                gameClock: true,
+                scores: true,
+                downDistance: true,
             },
         };
     }

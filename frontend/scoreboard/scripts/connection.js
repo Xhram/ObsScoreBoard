@@ -86,6 +86,10 @@ cm.reducers["sync:icon"] = (iconState) => {
     set_team_icon("away", iconState.away_icon);
 }
 
+cm.reducers["sync:visibility"] = (visibilityState) => {
+    set_visibility(visibilityState);
+}
+
 cm.connect();
 updateDebugInfo()
 function updateDebugInfo(){

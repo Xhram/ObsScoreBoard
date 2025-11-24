@@ -365,13 +365,12 @@
                             <div class="control-group" style="background-color: #444;">
                                 <h3>Show/Hide Elements</h3>
                                 <div class="score">
-                                    <div id="show-scoreboard" class="increment">Show All</div>
-                                    <div id="hide-scoreboard" class="decrement">Hide All</div>
+                                    <div id="toggle-scores" class="increment" onclick="toggleVisibilityActionIssuer('scores')">Toggle Scores</div>
+                                    <div id="toggle-game-clock" class="increment" onclick="toggleVisibilityActionIssuer('gameClock')">Toggle Game Clock</div>
                                 </div>
                                 <div class="score" style="margin-top: 10px;">
-                                    <div id="toggle-scores" class="increment">Toggle Scores</div>
-                                    <div id="toggle-timers" class="increment">Toggle Timers</div>
-                                    <div id="toggle-down-distance" class="increment">Toggle Down/Dist</div>
+                                    <div id="toggle-play-clock" class="increment" onclick="toggleVisibilityActionIssuer('playClock')">Toggle Play Clock</div>
+                                    <div id="toggle-down-distance" class="increment" onclick="toggleVisibilityActionIssuer('downDistance')">Toggle Down/Dist</div>
                                 </div>
                             </div>
                         </div>

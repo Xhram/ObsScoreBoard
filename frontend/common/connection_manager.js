@@ -72,6 +72,12 @@ class connection_manager {
             team: "none", // team is either 'home' or 'away' or 'none'
             status: "none", // status is either 'flag' or 'review'
             playerBlame: -2, // player number who threw the flag
+        },
+        visibility: {
+            playClock: true,
+            gameClock: true,
+            scores: true,
+            downDistance: true,
         }
     };
     //filled to help vscode and avoid undefined errors
@@ -297,6 +303,13 @@ class connection_manager {
             if(this._intelligentPredictiveRendering){
                 this._predictedState.flag = flagState;
                 this.reducers["sync:flag"](this._predictedState.flag);
+            }
+        },
+        "set:visibility": (visibilityState) => {
+            this.sendAction("set:visibility", visibilityState)
+            if(this._intelligentPredictiveRendering){
+                Object.assign(this._predictedState.visibility, visibilityState);
+                this.reducers["sync:visibility"](this._predictedState.visibility);
             }
         },
         "set:team_icon": (team, icon) => {

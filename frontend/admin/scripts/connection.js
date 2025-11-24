@@ -162,6 +162,18 @@ cm.reducers["sync:flag"] = (flagState) => {
 
 }
 
+// Visibility state - initialized here for use in reducer and action functions
+let visibilityState = {
+    playClock: true,
+    gameClock: true,
+    scores: true,
+    downDistance: true
+};
+
+cm.reducers["sync:visibility"] = (visibilityStateFromServer) => {
+    visibilityState = visibilityStateFromServer;
+}
+
 cm.reducers["event:team_score"] = (payload) => {
     if(payload.team === "home"){
         elm.homeTeamScore.value = payload.new_score;
@@ -542,6 +554,14 @@ elm.awayTimeouts.addEventListener("change", (event) => {
 
 function setFlagStateActionIssuer(flagState) {
     cm.actions["set:flag"](flagState);
+}
+
+// Visibility toggles
+function toggleVisibilityActionIssuer(element) {
+    visibilityState[element] = !visibilityState[element];
+    const payload = {};
+    payload[element] = visibilityState[element];
+    cm.actions["set:visibility"](payload);
 }
 
 // Icons 

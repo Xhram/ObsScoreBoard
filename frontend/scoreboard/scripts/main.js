@@ -479,3 +479,30 @@ function pop_to_carasuel_data(duration_per_item = 3, start_up_delay = 1) {
     scoreboard_element.style.setProperty('--time-carousel-duration', `${elements_in_carousel * duration_per_item}s`);
     scoreboard_element.style.setProperty('--time-carousel-popup-delay', `${start_up_delay}s`);
 }
+
+// Visibility functions
+function set_visibility(visibilityState) {
+    console.log('Setting visibility:', visibilityState);
+    if (visibilityState.playClock !== undefined) {
+        game_play_clock_element.style.display = visibilityState.playClock ? '' : 'none';
+    }
+    if (visibilityState.gameClock !== undefined) {
+        const gameClockContainer = scoreboard_element.querySelector('.game-duration');
+        if (gameClockContainer) {
+            gameClockContainer.style.display = visibilityState.gameClock ? '' : 'none';
+        }
+    }
+    if (visibilityState.scores !== undefined) {
+        const homeScore = home_team_name_element.querySelector('.score');
+        const awayScore = away_team_name_element.querySelector('.score');
+        if (homeScore) homeScore.style.display = visibilityState.scores ? '' : 'none';
+        if (awayScore) awayScore.style.display = visibilityState.scores ? '' : 'none';
+    }
+    if (visibilityState.downDistance !== undefined) {
+        const downDistanceContainer = scoreboard_element.querySelector('.down-distance');
+        console.log('Down distance container found:', downDistanceContainer, 'Setting display to:', visibilityState.downDistance ? '' : 'none');
+        if (downDistanceContainer) {
+            downDistanceContainer.style.display = visibilityState.downDistance ? '' : 'none';
+        }
+    }
+}
