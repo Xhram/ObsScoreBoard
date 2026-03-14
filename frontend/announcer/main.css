@@ -1,0 +1,94 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --panel: #ffffff;
+    --line: #d1d5db;
+    --text: #111111;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(180deg, #f9fafb 0%, #eef2f7 100%);
+    color: var(--text);
+}
+
+.page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header h1 {
+    margin: 0 0 14px;
+    font-size: 2rem;
+    color: #000000;
+}
+
+.grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.team-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    overflow-x: auto;
+}
+
+.team-card h2 {
+    margin: 0 0 10px;
+    color: #000000;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+}
+
+thead th {
+    text-align: left;
+    background: #f3f4f6;
+    border-bottom: 1px solid var(--line);
+    color: #000000;
+    font-size: 0.86rem;
+    padding: 8px;
+}
+
+tbody td {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 8px;
+    color: #111111;
+    font-size: 0.9rem;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.no-data,
+.empty {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.empty {
+    margin-top: 12px;
+}
+
+.hide {
+    display: none !important;
+}
+
+@media (max-width: 1100px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}

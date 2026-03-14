@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OBS Basketball Stats</title>
+    <link rel="stylesheet" href="./main.css" />
+</head>
+<body>
+    <main class="obs-page">
+        <header class="obs-header">
+            <h1>Basketball Player Stats</h1>
+            <span id="updated-at">Updating...</span>
+        </header>
+
+        <section class="obs-grid">
+            <article id="obs-home-card" class="obs-team-card">
+                <h2>Home</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>PTS</th>
+                            <th>REB</th>
+                            <th>AST</th>
+                            <th>STL</th>
+                            <th>BLK</th>
+                            <th>TO</th>
+                            <th>F</th>
+                        </tr>
+                    </thead>
+                    <tbody id="home-players"></tbody>
+                </table>
+            </article>
+
+            <article id="obs-away-card" class="obs-team-card">
+                <h2>Away</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>PTS</th>
+                            <th>REB</th>
+                            <th>AST</th>
+                            <th>STL</th>
+                            <th>BLK</th>
+                            <th>TO</th>
+                            <th>F</th>
+                        </tr>
+                    </thead>
+                    <tbody id="away-players"></tbody>
+                </table>
+            </article>
+        </section>
+
+        <div id="obs-empty" class="obs-empty hide">No players added yet.</div>
+    </main>
+
+    <script src="./main.js"></script>
+</body>
+</html>

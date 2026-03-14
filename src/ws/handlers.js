@@ -14,6 +14,8 @@ export function handleMessage(webSocketServerManager,connection,action){
         handleRequestType(webSocketServerManager,connection,action)
     } else if(action.type.startsWith("set:")){
         handleSetType(webSocketServerManager,connection,action)
+    } else if(action.type.startsWith("delete:")){
+        handleSetType(webSocketServerManager,connection,action)
     } else if(action.type.startsWith("add:")){
         handleAddType(webSocketServerManager,connection,action)
     } else if(action.type == "ping"){
@@ -173,6 +175,55 @@ function handleSetType(webSocketServerManager, connection, action) {
             webSocketServerManager.broadcastAction("sync:visibility", stateManager.sync_getters["sync:visibility"](), action);
             break;
         }
+        case "set:player_name": {
+            const team = payload.team === "home" ? "home" : "away";
+            const jersey = String(payload.jersey);
+            const name = (payload.name || "").trim();
+            if (!jersey) {
+                break;
+            }
+            if (!scoreboard.playerStats[team][jersey]) {
+                scoreboard.playerStats[team][jersey] = stateManager.createBlankPlayerStats();
+            }
+            scoreboard.playerStats[team][jersey].name = name;
+            webSocketServerManager.broadcastAction("sync:player_stats", stateManager.sync_getters["sync:player_stats"](), action);
+            break;
+        }
+        case "set:player_stats": {
+            const team = payload.team === "home" ? "home" : "away";
+            const jersey = String(payload.jersey);
+            if (!jersey || !payload.stats) {
+                break;
+            }
+            if (!scoreboard.playerStats[team][jersey]) {
+                scoreboard.playerStats[team][jersey] = stateManager.createBlankPlayerStats();
+            }
+            Object.assign(scoreboard.playerStats[team][jersey], payload.stats);
+            webSocketServerManager.broadcastAction("sync:player_stats", stateManager.sync_getters["sync:player_stats"](), action);
+            break;
+        }
+        case "set:player_stats_display": {
+            if (payload.visible !== undefined) {
+                scoreboard.playerStats.display.visible = Boolean(payload.visible);
+            }
+            if (payload.team === "home" || payload.team === "away") {
+                scoreboard.playerStats.display.team = payload.team;
+            }
+            if (payload.sortBy === "points" || payload.sortBy === "jersey" || payload.sortBy === "name") {
+                scoreboard.playerStats.display.sortBy = payload.sortBy;
+            }
+            webSocketServerManager.broadcastAction("sync:player_stats:display", stateManager.sync_getters["sync:player_stats:display"](), action);
+            break;
+        }
+        case "delete:player": {
+            const team = payload.team === "home" ? "home" : "away";
+            const jersey = String(payload.jersey);
+            if (jersey) {
+                delete scoreboard.playerStats[team][jersey];
+                webSocketServerManager.broadcastAction("sync:player_stats", stateManager.sync_getters["sync:player_stats"](), action);
+            }
+            break;
+        }
         default:
             break;
     }
@@ -240,6 +291,50 @@ function handleAddType(webSocketServerManager, connection, action) {
                 scoreboard.awayTeam.timeoutsRemaining = clamp(scoreboard.awayTeam.timeoutsRemaining + payload.amount, 0, 3);
             }
             webSocketServerManager.broadcastAction("sync:timeouts", stateManager.sync_getters["sync:timeouts"](), action);
+            break;
+        }
+        case "add:player_stat": {
+            const team = payload.team === "home" ? "home" : "away";
+            const jersey = String(payload.jersey);
+            const statName = String(payload.stat || "");
+            const amount = Number(payload.amount || 1);
+            const validStats = ["points", "rebounds", "assists", "steals", "blocks", "turnovers", "fouls"];
+            if (!jersey || !validStats.includes(statName)) {
+                break;
+            }
+            if (!scoreboard.playerStats[team][jersey]) {
+                scoreboard.playerStats[team][jersey] = stateManager.createBlankPlayerStats();
+            }
+            const playerStats = scoreboard.playerStats[team][jersey];
+            playerStats[statName] = max(playerStats[statName] + amount, 0);
+            webSocketServerManager.broadcastAction("sync:player_stats", stateManager.sync_getters["sync:player_stats"](), action);
+            break;
+        }
+        case "add:player_shot": {
+            const team = payload.team === "home" ? "home" : "away";
+            const jersey = String(payload.jersey);
+            if (!jersey) {
+                break;
+            }
+            if (!scoreboard.playerStats[team][jersey]) {
+                scoreboard.playerStats[team][jersey] = stateManager.createBlankPlayerStats();
+            }
+            const playerStats = scoreboard.playerStats[team][jersey];
+            const made = Boolean(payload.made);
+            const shotType = payload.shotType === "3" ? "threePointers" : payload.shotType === "ft" ? "freeThrows" : "fieldGoals";
+
+            playerStats[shotType].attempted += 1;
+            if (made) {
+                playerStats[shotType].made += 1;
+                if (shotType === "threePointers") {
+                    playerStats.points += 3;
+                } else if (shotType === "freeThrows") {
+                    playerStats.points += 1;
+                } else {
+                    playerStats.points += 2;
+                }
+            }
+            webSocketServerManager.broadcastAction("sync:player_stats", stateManager.sync_getters["sync:player_stats"](), action);
             break;
         }
         default:

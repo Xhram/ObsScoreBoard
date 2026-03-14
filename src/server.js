@@ -18,7 +18,7 @@ setInterval(() => {
 
 app.use(express.json());
 
-setupRoutes(app);
+setupRoutes(app, stateManager);
 
 server.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

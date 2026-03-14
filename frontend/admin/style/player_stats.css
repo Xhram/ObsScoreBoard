@@ -1,0 +1,250 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #0e1624;
+    color: #ecf2ff;
+}
+
+.hide {
+    display: none !important;
+}
+
+.auth-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: min(420px, 100%);
+    background: #17253b;
+    border: 1px solid #2d4468;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-card h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.auth-card input,
+.auth-card button {
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    padding: 11px 12px;
+    font-size: 16px;
+}
+
+.auth-card input {
+    background: #fff;
+    color: #000;
+}
+
+.auth-card button {
+    background: #2f7de1;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.conn-status {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 13px;
+}
+
+.controls {
+    width: min(1400px, calc(100% - 30px));
+    margin: 14px auto;
+}
+
+.controls-header {
+    margin-bottom: 10px;
+}
+
+.controls-header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.controls-header p {
+    margin: 4px 0 0;
+    color: #c5d2ea;
+}
+
+.bb-team-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.bb-team-column {
+    --team-accent: #2a3a58;
+    background: #161f31;
+    border: 1px solid #2a3a58;
+    border-top: 5px solid var(--team-accent);
+    border-radius: 12px;
+    padding: 12px;
+    min-width: 0;
+}
+
+.bb-team-column h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+}
+
+.bb-team-settings {
+    display: grid;
+    grid-template-columns: 1fr 70px;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.bb-team-settings input[type="text"] {
+    width: 100%;
+    border: 1px solid #4f648e;
+    border-radius: 7px;
+    padding: 8px;
+    font-size: 14px;
+    background: #fff;
+    color: #000;
+}
+
+.bb-team-settings input[type="color"] {
+    width: 100%;
+    border: 1px solid #4f648e;
+    border-radius: 7px;
+    padding: 2px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.bb-add-form {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.bb-add-form input {
+    width: 100%;
+    border: 1px solid #4f648e;
+    border-radius: 7px;
+    padding: 8px;
+    font-size: 14px;
+    background: #fff;
+    color: #000;
+}
+
+.bb-add-form button {
+    border: none;
+    border-radius: 7px;
+    padding: 8px 10px;
+    background: #2f7de1;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.bb-roster {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 72vh;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.bb-player-row {
+    border: 1px solid #314569;
+    border-radius: 8px;
+    padding: 8px;
+    background: #1c2740;
+}
+
+.bb-player-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.bb-player-name {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.bb-player-line {
+    font-size: 12px;
+    color: #d5e0f4;
+    margin-bottom: 8px;
+}
+
+.bb-action-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.bb-btn {
+    border: none;
+    border-radius: 5px;
+    padding: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #fff;
+    background: #3a4f79;
+}
+
+.bb-btn.stat {
+    background: #2b6cb0;
+}
+
+.bb-btn.shot {
+    background: #2f855a;
+}
+
+.bb-btn.miss {
+    background: #6b46c1;
+}
+
+.bb-btn.remove {
+    background: #c53030;
+}
+
+.bb-empty {
+    padding: 14px;
+    text-align: center;
+    color: #a9bad9;
+}
+
+@media (max-width: 1160px) {
+    .bb-team-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bb-add-form {
+        grid-template-columns: 1fr;
+    }
+
+    .bb-team-settings {
+        grid-template-columns: 1fr;
+    }
+
+    .bb-action-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

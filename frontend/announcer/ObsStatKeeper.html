@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Announcer Player Stats</title>
+    <link rel="stylesheet" href="./main.css" />
+</head>
+<body>
+    <main class="page">
+        <header class="topbar">
+            <h1>Live Player Stats Chart</h1>
+            <div id="refresh-status" class="status">Connecting...</div>
+        </header>
+
+        <section class="tables-wrap">
+            <div class="team-card">
+                <h2>Home Team</h2>
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>PTS</th>
+                            <th>REB</th>
+                            <th>AST</th>
+                        </tr>
+                    </thead>
+                    <tbody id="home-stats-body"></tbody>
+                </table>
+            </div>
+
+            <div class="team-card">
+                <h2>Away Team</h2>
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>PTS</th>
+                            <th>REB</th>
+                            <th>AST</th>
+                        </tr>
+                    </thead>
+                    <tbody id="away-stats-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <div id="empty-message" class="empty-message hide">
+            No players yet. Add players from Admin to populate this chart.
+        </div>
+    </main>
+
+    <script src="./main.js"></script>
+</body>
+</html>

@@ -1,407 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-    <div id="connection-status" class="">Offline</div>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Admin Dashboard</title>
-        <link rel="stylesheet" href="./style/main.css" />
-        <link rel="stylesheet" href="./style/control.css" />
-    </head>
-    <body>
-        
-        <div id="auth">
-            <div>
-                <h1>Admin Login</h1>
-                <input id="password" placeholder="Enter password" data-lpignore="true" data-bwignore="true" data-1p-ignore="true"/>
-                <button id="login">Login</button>
-
-            </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Basketball Stats</title>
+    <link rel="stylesheet" href="./style/player_stats.css" />
+</head>
+<body>
+    <div id="auth" class="auth-wrap">
+        <div class="auth-card">
+            <h1>Admin Login</h1>
+            <input id="password" type="password" placeholder="Enter password" data-lpignore="true" data-bwignore="true" data-1p-ignore="true" />
+            <button id="login" type="button">Login</button>
+            <p id="connection-status" class="conn-status">Offline</p>
         </div>
-        <div id="controls" class="hide">
-            <h1>Scoreboard Controls</h1>
-            <iframe src="../scoreboard/" width="100%" height="100%"></iframe>
-            <div class="setting-group">
-                <div class="tab-bar">
-                    <span class="name">Quick Controls</span>
-                    <!-- <button class="expand-button">Expand</button> -->
+    </div>
+
+    <main id="controls" class="controls hide">
+        <header class="controls-header">
+            <h1>Basketball Player Stats Admin</h1>
+            <p>Left: Home team | Right: Away team</p>
+        </header>
+
+        <section class="bb-team-grid">
+            <section class="bb-team-column" data-team="home">
+                <h2 id="bb-home-title">Home Team</h2>
+                <div class="bb-team-settings">
+                    <input id="bb-home-team-label" type="text" placeholder="Home Team Name" />
+                    <input id="bb-home-team-color" type="color" value="#0055ff" />
                 </div>
-                <div class="control-panel">
-                    <!-- scores -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Team Scores</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group home">
-                                <h3>Home Team</h3>
-                                <div class="score team-score">
-                                    <div class="decrement">-6</div>
-                                    <div class="decrement">-3</div>
-                                    <div class="decrement">-2</div>
-                                    <div class="decrement">-1</div>
-                                    <input id="home-team-score" class="input" value="0" placeholder="Type Score"/>
-                                    <div class="increment">+1</div>
-                                    <div class="increment animation animation-field-goal">+1</div>
-                                    <div class="increment">+2</div>
-                                    <div class="increment animation animation-touchdown">+2</div>
-                                    <!-- animation attribute measn when clicked it will run animation -->
-                                    <div class="increment animation animation-field-goal">+3</div>
-                                    <div class="increment animation animation-touchdown">+6</div>
-                                </div>
-                            </div>
+                <form id="bb-home-add-form" class="bb-add-form">
+                    <input id="bb-home-jersey" type="number" min="0" max="999" placeholder="Jersey #" required />
+                    <input id="bb-home-name" type="text" placeholder="Player Name" required />
+                    <button type="submit">Add Player</button>
+                </form>
+                <div id="bb-home-roster" class="bb-roster"></div>
+            </section>
 
-                            <div class="control-group away" style="margin-top: auto;">
-                                <h3>Away Team</h3>
-                                <div class="score team-score">
-                                    <div class="decrement">-6</div>
-                                    <div class="decrement">-3</div>
-                                    <div class="decrement">-2</div>
-                                    <div class="decrement">-1</div>
-                                    <input id="away-team-score" class="input" value="0" placeholder="Type Score"/>
-                                    <div class="increment">+1</div>
-                                    <div class="increment animation animation-field-goal">+1</div>
-                                    <div class="increment">+2</div>
-                                    <div class="increment animation animation-touchdown">+2</div>
-                                    <div class="increment animation animation-field-goal">+3</div>
-                                    <div class="increment animation animation-touchdown">+6</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- game timer -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Game Timer</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group" style="height: 100%;">
-                                <div class="score">
-                                    <div class="decrement" onclick="addClockTimeToGameTimerActionIssuer(-5 * 60 * 1000)">-5m</div>
-                                    <div class="decrement" onclick="addClockTimeToGameTimerActionIssuer(-1 * 60 * 1000)">-1m</div>
-                                    <div class="decrement" onclick="addClockTimeToGameTimerActionIssuer(-10 * 1000)">-10s</div>
-                                    <div class="decrement" onclick="addClockTimeToGameTimerActionIssuer(-1000)">-1s</div>
-                                    <!-- change text dynamically -->
-                                    <div class="start-stop">
-                                        <input id="game-timer-duration" class="input" value="900" placeholder="900"/>
-                                        <div id="game-timer-toggle" class="start-stop-button paused">
-                                            <span class="start">Start</span>
-                                            <span class="stop">Stop</span>
-                                        </div>
-                                    </div>
-                                    <div class="increment" onclick="addClockTimeToGameTimerActionIssuer(1000)">+1s</div>
-                                    <div class="increment" onclick="addClockTimeToGameTimerActionIssuer(10000)">+10s</div>
-                                    <div class="increment" onclick="addClockTimeToGameTimerActionIssuer(1 * 60 * 1000)">+1m</div>
-                                    <div class="increment" onclick="addClockTimeToGameTimerActionIssuer(5 * 60 * 1000)">+5m</div>
-                                </div>
-                                <!-- Start/stop</div> -->
-                                <h3 style="margin-top: auto;">Reset Timer</h3>
-                                <div class="score">
-                                    <div class="decrement" onclick="setGameClockToDefaultActionIssuer()">Reset</div>
-                                    <input id="game-timer-duration-default" class="input" value="900" placeholder="900"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- shot clock -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Shot Clock</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group" style="height: 100%;">
-                                <div class="score">
-                                    <div class="decrement" onclick="addClockTimeToPlayClockActionIssuer(-10000)">-10s</div>
-                                    <div class="decrement" onclick="addClockTimeToPlayClockActionIssuer(-1000)">-1s</div>
-                                    <div class="start-stop">
-                                        <input id="shot-clock-duration" class="input" value="40" placeholder="40"/>
-                                        <div id="shot-clock-toggle" class="start-stop-button paused" >
-                                            <span class="start">Start</span>
-                                            <span class="stop">Stop</span>
-                                        </div>
-                                    </div>
-                                    <div class="increment" onclick="addClockTimeToPlayClockActionIssuer(1000)">+1s</div>
-                                    <div class="increment" onclick="addClockTimeToPlayClockActionIssuer(10000)">+10s</div>
-                                </div>
-                                <h3 style="margin-top: 35px;">Reset Timer</h3>
-                                <div class="score">
-                                    <div class="decrement" onclick="setPlayClockToDefaultActionIssuer()">Reset</div>
-                                    <input id="shot-clock-duration-default" class="input" value="40" placeholder="40"/>
-                                    <div class="increment" onclick="setPlayClockToValueActionIssuer(40 * 1000)">40s</div>
-                                    <div class="increment" onclick="setPlayClockToValueActionIssuer(25 * 1000)">25s</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- down and distance -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Down & Distance</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group" style="height: 100%;">
-                                <h3>Down</h3>
-                                <div class="score">
-                                    <div class="decrement" onclick="addDownActionIssuer(-1)">-1</div>
-                                    <input id="down" class="input" value="1" placeholder="1"/>
-                                    <div class="increment" onclick="addDownActionIssuer(1)">+1</div>
-                                    <div class="increment" onclick="setDownActionIssuer(1)">1st</div>
-                                    <div class="increment" onclick="setDownActionIssuer(2)">2nd</div>
-                                    <div class="increment" onclick="setDownActionIssuer(3)">3rd</div>
-                                    <div class="increment" onclick="setDownActionIssuer(4)">4th</div>
-                                </div>
-                                <h3 style="margin-top: 15px;">Distance</h3>
-                                <div class="score">
-                                    <div class="decrement" onclick="addDistanceActionIssuer(-5)">-5</div>
-                                    <div class="decrement" onclick="addDistanceActionIssuer(-1)">-1</div>
-                                    <input id="distance" class="input" value="10" placeholder="10"/>
-                                    <div class="increment" onclick="addDistanceActionIssuer(1)">+1</div>
-                                    <div class="increment" onclick="addDistanceActionIssuer(5)">+5</div>
-                                    <div class="increment" onclick="setDistanceActionIssuer(-1)">Goal</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- quarter management -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Quarter & Period</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group" style="height: 100%;">
-                                <h3>Quarter</h3>
-                                <div class="score">
-                                    <div class="decrement" onclick="addQuarterActionIssuer(-1)">Prev</div>
-                                    <input id="quarter" class="input" value="1" placeholder="1"/>
-                                    <div class="increment" onclick="addQuarterActionIssuer(1)">Next</div>
-                                    <div class="increment" onclick="setQuarterActionIssuer(0)">Final</div>
-                                    <div class="increment" onclick="setQuarterActionIssuer(1)">1st</div>
-                                    <div class="increment" onclick="setQuarterActionIssuer(2)">2nd</div>
-                                    <div class="increment" onclick="setQuarterActionIssuer(3)">3rd</div>
-                                    <div class="increment" onclick="setQuarterActionIssuer(4)">4th</div>
-                                    <div class="increment" onclick="setQuarterActionIssuer(5)">OT</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- possession -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Possession</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group home">
-                                <h3>Home Team</h3>
-                                <div class="score">
-                                    <div id="home-possession" class="increment" onclick="setPossessionActionIssuer('home')">Give Possession</div>
-                                </div>
-                            </div>
-                            <div class="control-group away" style="margin-top: auto;">
-                                <h3>Away Team</h3>
-                                <div class="score">
-                                    <div id="away-possession" class="increment" onclick="setPossessionActionIssuer('away')">Give Possession</div>
-                                </div>
-                            </div>
-                            <div class="control-group" style="background-color: gray; margin-top: auto;">
-                                <h3>Clear Possession</h3>
-                                <div class="score">
-                                    <div id="clear-possession" class="decrement" onclick="setPossessionActionIssuer('none')">Clear</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <section class="bb-team-column" data-team="away">
+                <h2 id="bb-away-title">Away Team</h2>
+                <div class="bb-team-settings">
+                    <input id="bb-away-team-label" type="text" placeholder="Away Team Name" />
+                    <input id="bb-away-team-color" type="color" value="#ff5500" />
                 </div>
-            </div>
+                <form id="bb-away-add-form" class="bb-add-form">
+                    <input id="bb-away-jersey" type="number" min="0" max="999" placeholder="Jersey #" required />
+                    <input id="bb-away-name" type="text" placeholder="Player Name" required />
+                    <button type="submit">Add Player</button>
+                </form>
+                <div id="bb-away-roster" class="bb-roster"></div>
+            </section>
+        </section>
+    </main>
 
-            <!-- Team Management Section -->
-            <div class="setting-group">
-                <div class="tab-bar">
-                    <span class="name">Team Management</span>
-                </div>
-                <div class="control-panel">
-                    <!-- home team details -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Home Team</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group home">
-                                <h3>Team Name</h3>
-                                <div class="score">
-                                    <input id="home-team-name" class="input" value="Home" placeholder="Team Name" style="flex: 2;"/>
-                                </div>
-                                <h3 style="margin-top: 15px;">Team Logo</h3>
-                                <div class="score">
-                                    <input id="home-team-logo" class="input" value="" placeholder="Logo URL or File Path" style="flex: 2;"/>
-                                    <input type="file" id="home-team-logo-file" accept="image/*" style="display: none;"/>
-                                    <div class="increment" onclick="openBrowseFilesToSetIcon('home')">Browse</div>
-                                </div>
-                                <h3 style="margin-top: 15px;">Team Color</h3>
-                                <div class="score">
-                                    <input id="home-team-color" type="color" value="#ff0000" style="flex: 1; height: 30px;"/>
-                                    <input id="home-team-color-hex" class="input" value="#ff0000" placeholder="#ff0000"/>
-                                </div>
-                                <h3 style="margin-top: 15px;">Timeouts</h3>
-                                <div class="score">
-                                    <div class="decrement" onclick="addTeamTimeoutsActionIssuer('home', -1)">-1</div>
-                                    <input id="home-timeouts" class="input" value="3" placeholder="3"/>
-                                    <div class="increment" onclick="addTeamTimeoutsActionIssuer('home', 1)">+1</div>
-                                    <div class="increment" onclick="setTeamTimeoutsActionIssuer('home', 3)">Reset</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- away team details -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Away Team</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group away">
-                                <h3>Team Name</h3>
-                                <div class="score">
-                                    <input id="away-team-name" class="input" value="Away" placeholder="Team Name" style="flex: 2;"/>
-                                </div>
-                                <h3 style="margin-top: 15px;">Team Logo</h3>
-                                <div class="score">
-                                    <input id="away-team-logo" class="input" value="" placeholder="Logo URL or File Path" style="flex: 2;"/>
-                                    <input type="file" id="away-team-logo-file" accept="image/*" style="display: none;"/>
-                                    <div class="increment" onclick="openBrowseFilesToSetIcon('away')">Browse</div>
-                                </div>
-                                <h3 style="margin-top: 15px;">Team Color</h3>
-                                <div class="score">
-                                    <input id="away-team-color" type="color" value="#0000ff" style="flex: 1; height: 30px;"/>
-                                    <input id="away-team-color-hex" class="input" value="#0000ff" placeholder="#0000ff"/>
-                                </div>
-                                <h3 style="margin-top: 15px;">Timeouts</h3>
-                                <div class="score timeouts">
-                                    <div class="decrement" onclick="addTeamTimeoutsActionIssuer('away', -1)">-1</div>
-                                    <div class="increment" onclick="addTeamTimeoutsActionIssuer('away', 1)">+1</div>
-                                    <div class="increment" onclick="setTeamTimeoutsActionIssuer('away', 3)">Reset</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Flags and Penalties Section -->
-            <div class="setting-group">
-                <div class="tab-bar">
-                    <span class="name">Flags & Penalties</span>
-                </div>
-                <div class="control-panel">
-                    <!-- flag controls -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Flag Management</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group" style="background-color: #ffa500;">
-                                <h3>Flag Actions</h3>
-                                <div class="score">
-                                    <div id="emit-flag" class="increment" onclick="setFlagStateActionIssuer({isFlagEmitted: true, status: 'none', team: 'none', playerBlame: -2})">Emit Flag</div>
-                                    <div id="hide-flag" class="decrement" onclick="setFlagStateActionIssuer({isFlagEmitted: false, status: 'none', team: 'none', playerBlame: -2})">Hide Flag</div>
-                                </div>
-                            </div>
-                            <div class="control-group home" style="margin-top: 15px;">
-                                <h3>Blame Home Team</h3>
-                                <div class="score">
-                                    <div id="blame-home-team" class="decrement"  onclick="setFlagStateActionIssuer({team: 'home'})">Team Penalty</div>
-                                </div>
-                            </div>
-                            <div class="control-group away" style="margin-top: 15px;">
-                                <h3>Blame Away Team</h3>
-                                <div class="score">
-                                    <div id="blame-away-team" class="decrement"  onclick="setFlagStateActionIssuer({team: 'away'})">Team Penalty</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- player blame -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Player Penalties</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group home">
-                                <h3>Home Player #</h3>
-                                <div class="score">
-                                    <input id="home-player-number" class="input" value="" placeholder="Player #"/>
-                                    <div id="blame-home-player" class="decrement"  onclick="setFlagStateActionIssuer({ playerBlame: parseInt(sel('#home-player-number').value)})">Blame Player</div>
-                                </div>
-                            </div>
-                            <div class="control-group away" style="margin-top: auto;">
-                                <h3>Away Player #</h3>
-                                <div class="score">
-                                    <input id="away-player-number" class="input" value="" placeholder="Player #"/>
-                                    <div id="blame-away-player" class="decrement"   onclick="setFlagStateActionIssuer({ playerBlame: parseInt(sel('#away-player-number').value)})">Blame Player</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Display Controls Section -->
-            <div class="setting-group">
-                <div class="tab-bar">
-                    <span class="name">Display Controls</span>
-                </div>
-                <div class="control-panel">
-                    <!-- visibility controls -->
-                    <div class="control">
-                        <div class="label">
-                            <h2>Scoreboard Visibility</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group" style="background-color: #444;">
-                                <h3>Show/Hide Elements</h3>
-                                <div class="score">
-                                    <div id="toggle-scores" class="increment" onclick="toggleVisibilityActionIssuer('scores')">Toggle Scores</div>
-                                    <div id="toggle-game-clock" class="increment" onclick="toggleVisibilityActionIssuer('gameClock')">Toggle Game Clock</div>
-                                </div>
-                                <div class="score" style="margin-top: 10px;">
-                                    <div id="toggle-play-clock" class="increment" onclick="toggleVisibilityActionIssuer('playClock')">Toggle Play Clock</div>
-                                    <div id="toggle-down-distance" class="increment" onclick="toggleVisibilityActionIssuer('downDistance')">Toggle Down/Dist</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-                        <div class="setting-group">
-                <div class="tab-bar">
-                    <span class="name">Style Settings</span>
-                    <!-- <button class="expand-button">Expand</button> -->
-                </div>
-                <div class="control-panel">
-                    <div class="control">
-                        <div class="label">
-                            <h2>Advanced Settings</h2>
-                        </div>
-                        <div class="content">
-                            <div class="control-group" style="background-color: #333;">
-                                <h3>Scoreboard Theme</h3>
-                                <div class="score">
-                                    <input id="theme-selector" class="input" value="default" placeholder="Theme Name"/>
-                                    <div class="increment">Load Theme</div>
-                                    <div class="increment">Save Theme</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </body>
     <script src="/common/connection_manager.js"></script>
-    <script src="./scripts/connection.js"></script>
-    <script src="./scripts/controls.js"></script>
+    <script src="./scripts/player_stats.js"></script>
+</body>
 </html>

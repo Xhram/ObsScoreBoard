@@ -1,0 +1,112 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #0f1726;
+    color: #f2f6ff;
+}
+
+.obs-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 16px;
+}
+
+.obs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.obs-header h1 {
+    margin: 0;
+    font-size: 34px;
+    letter-spacing: 0.3px;
+}
+
+#updated-at {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.obs-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "home away";
+    gap: 14px;
+}
+
+#obs-home-card {
+    grid-area: home;
+}
+
+#obs-away-card {
+    grid-area: away;
+}
+
+.obs-team-card {
+    background: #162238;
+    border: 1px solid #2a3d63;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.obs-team-card h2 {
+    margin: 0 0 8px;
+    font-size: 24px;
+}
+
+.obs-team-card table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.obs-team-card th,
+.obs-team-card td {
+    border-bottom: 1px solid #2a3d63;
+    padding: 6px;
+    text-align: left;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.obs-team-card th {
+    background: #1c2d4b;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.obs-team-card tbody tr:nth-child(odd) {
+    background: #14213a;
+}
+
+.no-data {
+    text-align: center;
+    color: #9cb2d6;
+}
+
+.obs-empty {
+    margin-top: 12px;
+    color: #c8d6ef;
+    text-align: center;
+    font-size: 18px;
+}
+
+.hide {
+    display: none;
+}
+
+@media (max-width: 1200px) {
+    .obs-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        grid-template-areas: "home away";
+    }
+}

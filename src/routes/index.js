@@ -6,7 +6,7 @@ import postcssNested from "postcss-nested";
 import { PING_INTERVAL_MS } from "../config/index.js";
 
 
-export function setupRoutes(app) {
+export function setupRoutes(app, stateManager) {
     app.use((req, res, next) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader(
@@ -51,6 +51,39 @@ export function setupRoutes(app) {
             res.status(500).send('CSS processing error');
         }
     });
+
+    app.get("/api/player-stats/both", (req, res) => {
+        return res.json({
+            home: stateManager.getSortedTeamRoster("home"),
+            away: stateManager.getSortedTeamRoster("away"),
+        });
+    });
+
+    app.get("/api/player-stats/meta", (req, res) => {
+        return res.json({
+            home: {
+                name: stateManager.scoreboard.homeTeam.name,
+                color: stateManager.scoreboard.homeTeam.color,
+            },
+            away: {
+                name: stateManager.scoreboard.awayTeam.name,
+                color: stateManager.scoreboard.awayTeam.color,
+            },
+        });
+    });
+
+    app.get("/api/player-stats/:team", (req, res) => {
+        const team = req.params.team;
+        if (team !== "home" && team !== "away") {
+            return res.status(400).send("Invalid team");
+        }
+        return res.json(stateManager.getSortedTeamRoster(team));
+    });
+
+    app.get("/api/player-stats/display/settings", (req, res) => {
+        return res.json(stateManager.scoreboard.playerStats.display);
+    });
+
     app.get("/config", (req, res) => {
         res.send(JSON.stringify({
             PING_INTERVAL_MS: PING_INTERVAL_MS
@@ -60,5 +93,7 @@ export function setupRoutes(app) {
     app.use("/scoreboard", express.static("./frontend/scoreboard"));
     app.use("/admin", express.static("./frontend/admin"));
     app.use("/common", express.static("./frontend/common"));
+    app.use("/player-stats", express.static("./frontend/player-stats"));
+    app.use("/announcer", express.static("./frontend/announcer"));
 }
 

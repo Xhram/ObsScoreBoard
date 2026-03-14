@@ -8,6 +8,30 @@ export class StateManager {
     scoreboard = undefined;
     constructor(){
         this.scoreboard = this.loadScoreboardState() || this.defaultScoreboardState();
+        if (!this.scoreboard.playerStats) {
+            this.scoreboard.playerStats = {
+                home: {},
+                away: {},
+                display: {
+                    visible: true,
+                    team: "home",
+                    sortBy: "jersey",
+                },
+            };
+        }
+        if (!this.scoreboard.playerStats.home) {
+            this.scoreboard.playerStats.home = {};
+        }
+        if (!this.scoreboard.playerStats.away) {
+            this.scoreboard.playerStats.away = {};
+        }
+        if (!this.scoreboard.playerStats.display) {
+            this.scoreboard.playerStats.display = {
+                visible: true,
+                team: "home",
+                sortBy: "jersey",
+            };
+        }
         (()=>{
             let last_time = Date.now();
             setInterval(() => {
@@ -88,6 +112,10 @@ export class StateManager {
             }
             return this.scoreboard.visibility;
         },
+        "sync:player_stats": () => this.scoreboard.playerStats,
+        "sync:player_stats:home": () => this.scoreboard.playerStats.home,
+        "sync:player_stats:away": () => this.scoreboard.playerStats.away,
+        "sync:player_stats:display": () => this.scoreboard.playerStats.display,
     }
 
     loadScoreboardState = () => {
@@ -151,7 +179,70 @@ export class StateManager {
                 scores: true,
                 downDistance: true,
             },
+            playerStats: {
+                home: {},
+                away: {},
+                display: {
+                    visible: true,
+                    team: "home",
+                    sortBy: "jersey",
+                },
+            },
         };
+    }
+
+    createBlankPlayerStats() {
+        return {
+            name: "",
+            points: 0,
+            rebounds: 0,
+            assists: 0,
+            steals: 0,
+            blocks: 0,
+            turnovers: 0,
+            fouls: 0,
+            fieldGoals: { made: 0, attempted: 0 },
+            threePointers: { made: 0, attempted: 0 },
+            freeThrows: { made: 0, attempted: 0 },
+            quarterly: [
+                { points: 0, rebounds: 0, assists: 0, steals: 0, blocks: 0, turnovers: 0, fouls: 0 },
+                { points: 0, rebounds: 0, assists: 0, steals: 0, blocks: 0, turnovers: 0, fouls: 0 },
+                { points: 0, rebounds: 0, assists: 0, steals: 0, blocks: 0, turnovers: 0, fouls: 0 },
+                { points: 0, rebounds: 0, assists: 0, steals: 0, blocks: 0, turnovers: 0, fouls: 0 },
+            ],
+        };
+    }
+
+    getPlayerStatPercentages(stats) {
+        return {
+            fieldGoalPercentage: stats.fieldGoals.attempted > 0
+                ? ((stats.fieldGoals.made / stats.fieldGoals.attempted) * 100).toFixed(1)
+                : "0.0",
+            threePointPercentage: stats.threePointers.attempted > 0
+                ? ((stats.threePointers.made / stats.threePointers.attempted) * 100).toFixed(1)
+                : "0.0",
+            freeThrowPercentage: stats.freeThrows.attempted > 0
+                ? ((stats.freeThrows.made / stats.freeThrows.attempted) * 100).toFixed(1)
+                : "0.0",
+        };
+    }
+
+    getSortedTeamRoster(team) {
+        const players = team === "home" ? this.scoreboard.playerStats.home : this.scoreboard.playerStats.away;
+        return Object.entries(players)
+            .map(([jersey, playerData]) => ({
+                jersey,
+                ...playerData,
+                percentages: this.getPlayerStatPercentages(playerData),
+            }))
+            .sort((a, b) => {
+                const aNum = Number.parseInt(a.jersey, 10);
+                const bNum = Number.parseInt(b.jersey, 10);
+                if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
+                    return aNum - bNum;
+                }
+                return String(a.jersey).localeCompare(String(b.jersey));
+            });
     }
 }
 
