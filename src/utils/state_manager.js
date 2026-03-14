@@ -1,37 +1,20 @@
 
 import fs from "fs";
-import path from "path";
-import { SCOREBOARD_STATE_FILE } from "../config/index.js";
+import { SCOREBOARD_STATE_FILE, PLAYER_STATS_STATE_FILE } from "../config/index.js";
 import { image_to_data_url } from "./image.js";
 
 export class StateManager {
     scoreboard = undefined;
     constructor(){
         this.scoreboard = this.loadScoreboardState() || this.defaultScoreboardState();
-        if (!this.scoreboard.playerStats) {
-            this.scoreboard.playerStats = {
-                home: {},
-                away: {},
-                display: {
-                    visible: true,
-                    team: "home",
-                    sortBy: "jersey",
-                },
-            };
+        const separatedPlayerStats = this.loadPlayerStatsState();
+        if (separatedPlayerStats) {
+            this.scoreboard.playerStats = separatedPlayerStats;
+        } else if (!this.scoreboard.playerStats) {
+            // Backward compatibility for first run after split.
+            this.scoreboard.playerStats = this.defaultPlayerStatsState();
         }
-        if (!this.scoreboard.playerStats.home) {
-            this.scoreboard.playerStats.home = {};
-        }
-        if (!this.scoreboard.playerStats.away) {
-            this.scoreboard.playerStats.away = {};
-        }
-        if (!this.scoreboard.playerStats.display) {
-            this.scoreboard.playerStats.display = {
-                visible: true,
-                team: "home",
-                sortBy: "jersey",
-            };
-        }
+        this.normalizePlayerStatsState();
         (()=>{
             let last_time = Date.now();
             setInterval(() => {
@@ -127,12 +110,67 @@ export class StateManager {
             return undefined;
         }
     }
+
+    loadPlayerStatsState = () => {
+        try {
+            const data = fs.readFileSync(PLAYER_STATS_STATE_FILE, "utf-8");
+            return JSON.parse(data);
+        } catch (error) {
+            return undefined;
+        }
+    }
+
+    normalizePlayerStatsState = () => {
+        if (!this.scoreboard.playerStats) {
+            this.scoreboard.playerStats = this.defaultPlayerStatsState();
+        }
+        if (!this.scoreboard.playerStats.home) {
+            this.scoreboard.playerStats.home = {};
+        }
+        if (!this.scoreboard.playerStats.away) {
+            this.scoreboard.playerStats.away = {};
+        }
+        if (!this.scoreboard.playerStats.display) {
+            this.scoreboard.playerStats.display = {
+                visible: true,
+                team: "home",
+                sortBy: "jersey",
+            };
+        }
+    }
+
+    defaultPlayerStatsState = () => ({
+        home: {},
+        away: {},
+        display: {
+            visible: true,
+            team: "home",
+            sortBy: "jersey",
+        },
+    })
+
+    savePlayerStatsState = () => {
+        try {
+            fs.writeFileSync(
+                PLAYER_STATS_STATE_FILE,
+                JSON.stringify({ ...this.scoreboard.playerStats, saveTimestamp: Date.now() }, null, 4)
+            );
+        } catch (error) {
+            console.error("Error saving player stats state:", error);
+        }
+    }
+
     saveScoreboardState = () => {
         try {
-            fs.writeFileSync(SCOREBOARD_STATE_FILE, JSON.stringify({...this.scoreboard, saveTimestamp: Date.now()}, null, 4));
+            const { playerStats, ...scoreboardWithoutPlayerStats } = this.scoreboard;
+            fs.writeFileSync(
+                SCOREBOARD_STATE_FILE,
+                JSON.stringify({ ...scoreboardWithoutPlayerStats, saveTimestamp: Date.now() }, null, 4)
+            );
         } catch (error) {
             console.error("Error saving scoreboard state:", error);
         }
+        this.savePlayerStatsState();
     }
     defaultScoreboardState = () => {
         return {
@@ -179,15 +217,7 @@ export class StateManager {
                 scores: true,
                 downDistance: true,
             },
-            playerStats: {
-                home: {},
-                away: {},
-                display: {
-                    visible: true,
-                    team: "home",
-                    sortBy: "jersey",
-                },
-            },
+            playerStats: this.defaultPlayerStatsState(),
         };
     }
 

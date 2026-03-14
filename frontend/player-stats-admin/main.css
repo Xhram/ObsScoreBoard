@@ -5,8 +5,8 @@
 body {
     margin: 0;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: #0e1624;
-    color: #ecf2ff;
+    background: #f4f5f7;
+    color: #1f2328;
 }
 
 .hide {
@@ -18,88 +18,109 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 24px;
 }
 
 .auth-card {
     width: min(420px, 100%);
-    background: #17253b;
-    border: 1px solid #2d4468;
-    border-radius: 14px;
-    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 10px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .auth-card h1 {
     margin: 0;
-    font-size: 28px;
+    font-size: 24px;
+}
+
+.auth-subtitle {
+    margin: 0;
+    color: #59636e;
+    font-size: 14px;
 }
 
 .auth-card input,
 .auth-card button {
     width: 100%;
     border-radius: 8px;
-    border: none;
-    padding: 11px 12px;
-    font-size: 16px;
+    padding: 10px 12px;
+    font-size: 15px;
 }
 
 .auth-card input {
-    background: #fff;
-    color: #000;
+    border: 1px solid #d0d7de;
+    background: #ffffff;
+    color: #1f2328;
 }
 
 .auth-card button {
-    background: #2f7de1;
-    color: #fff;
-    font-weight: 700;
+    border: 1px solid #1f2328;
+    background: #1f2328;
+    color: #ffffff;
+    font-weight: 600;
     cursor: pointer;
 }
 
 .conn-status {
     margin: 0;
-    opacity: 0.9;
+    color: #59636e;
     font-size: 13px;
 }
 
 .controls {
-    width: min(1400px, calc(100% - 30px));
-    margin: 14px auto;
+    width: min(1280px, calc(100% - 28px));
+    margin: 14px auto 24px;
 }
 
 .controls-header {
-    margin-bottom: 10px;
+    display: grid;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
 .controls-header h1 {
     margin: 0;
-    font-size: 30px;
+    font-size: 24px;
 }
 
-.controls-header p {
+.controls-subtitle {
     margin: 4px 0 0;
-    color: #c5d2ea;
+    color: #59636e;
+    font-size: 14px;
 }
 
-.controls-header a {
-    color: #79b8ff;
+.controls-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.controls-links a {
+    color: #1f2328;
     text-decoration: none;
+    border: 1px solid #d0d7de;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 13px;
+    background: #ffffff;
 }
 
-.controls-header a:hover {
+.controls-links a:hover {
     text-decoration: underline;
 }
 
 #bb-clear-flag {
-    margin-top: 8px;
-    border: none;
-    border-radius: 7px;
-    padding: 8px 12px;
-    background: #ad1f1f;
-    color: #fff;
-    font-weight: 700;
+    width: fit-content;
+    border: 1px solid #d1242f;
+    border-radius: 8px;
+    padding: 7px 12px;
+    background: #ffffff;
+    color: #d1242f;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -110,18 +131,18 @@ body {
 }
 
 .bb-team-column {
-    --team-accent: #2a3a58;
-    background: #161f31;
-    border: 1px solid #2a3a58;
-    border-top: 5px solid var(--team-accent);
-    border-radius: 12px;
+    --team-accent: #6e7781;
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-top: 4px solid var(--team-accent);
+    border-radius: 10px;
     padding: 12px;
     min-width: 0;
 }
 
 .bb-team-column h2 {
     margin: 0 0 10px;
-    font-size: 24px;
+    font-size: 20px;
 }
 
 .bb-team-settings {
@@ -133,20 +154,20 @@ body {
 
 .bb-team-settings input[type="text"] {
     width: 100%;
-    border: 1px solid #4f648e;
+    border: 1px solid #d0d7de;
     border-radius: 7px;
     padding: 8px;
     font-size: 14px;
-    background: #fff;
-    color: #000;
+    background: #ffffff;
+    color: #1f2328;
 }
 
 .bb-team-settings input[type="color"] {
     width: 100%;
-    border: 1px solid #4f648e;
+    border: 1px solid #d0d7de;
     border-radius: 7px;
     padding: 2px;
-    background: #fff;
+    background: #ffffff;
     cursor: pointer;
 }
 
@@ -159,21 +180,21 @@ body {
 
 .bb-add-form input {
     width: 100%;
-    border: 1px solid #4f648e;
+    border: 1px solid #d0d7de;
     border-radius: 7px;
     padding: 8px;
     font-size: 14px;
-    background: #fff;
-    color: #000;
+    background: #ffffff;
+    color: #1f2328;
 }
 
 .bb-add-form button {
-    border: none;
+    border: 1px solid #1f2328;
     border-radius: 7px;
     padding: 8px 10px;
-    background: #2f7de1;
-    color: #fff;
-    font-weight: 700;
+    background: #1f2328;
+    color: #ffffff;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -187,10 +208,10 @@ body {
 }
 
 .bb-player-row {
-    border: 1px solid #314569;
+    border: 1px solid #d0d7de;
     border-radius: 8px;
     padding: 8px;
-    background: #1c2740;
+    background: #fbfcfd;
 }
 
 .bb-player-head {
@@ -208,7 +229,7 @@ body {
 
 .bb-player-line {
     font-size: 12px;
-    color: #d5e0f4;
+    color: #59636e;
     margin-bottom: 8px;
 }
 
@@ -219,44 +240,53 @@ body {
 }
 
 .bb-btn {
-    border: none;
+    border: 1px solid #d0d7de;
     border-radius: 5px;
     padding: 6px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
-    color: #fff;
-    background: #3a4f79;
+    color: #1f2328;
+    background: #ffffff;
 }
 
 .bb-btn.stat {
-    background: #2b6cb0;
+    border-color: #bfd8ff;
+    background: #ecf4ff;
 }
 
 .bb-btn.shot {
-    background: #2f855a;
+    border-color: #c3e6d3;
+    background: #edf8f1;
 }
 
 .bb-btn.miss {
-    background: #6b46c1;
+    border-color: #e1d6ff;
+    background: #f5f1ff;
 }
 
 .bb-btn.remove {
-    background: #c53030;
+    border-color: #f2c4c4;
+    background: #fff1f1;
+    color: #a11e1e;
 }
 
 .bb-btn.warn {
-    background: #c17d11;
+    border-color: #ffe0b5;
+    background: #fff7eb;
+    color: #9a6200;
 }
 
 .bb-btn.review {
-    background: #7b61ff;
+    border-color: #ddd9ff;
+    background: #f3f2ff;
+    color: #5346b8;
 }
 
 .bb-empty {
     padding: 14px;
     text-align: center;
-    color: #a9bad9;
+    color: #6e7781;
 }
 
 @media (max-width: 1160px) {

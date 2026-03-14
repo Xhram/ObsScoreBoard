@@ -80,6 +80,11 @@ cm.reducers["sync:roster"] = (rosterState) => {
     awayTeam_roster = rosterState.away_roster
 }
 
+cm.reducers["sync:player_stats"] = (playerStatsState) => {
+    set_player_stats_names("home", playerStatsState && playerStatsState.home);
+    set_player_stats_names("away", playerStatsState && playerStatsState.away);
+}
+
 
 cm.reducers["sync:icon"] = (iconState) => {
     set_team_icon("home", iconState.home_icon);

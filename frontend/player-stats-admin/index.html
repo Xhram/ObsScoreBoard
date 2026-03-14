@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player Stats Admin</title>
+    <link rel="stylesheet" href="./main.css" />
+</head>
+<body>
+    <div id="auth" class="auth-wrap">
+        <div class="auth-card">
+            <h1>Player Stats</h1>
+            <p class="auth-subtitle">Sign in to edit live player data.</p>
+            <input id="password" type="password" placeholder="Enter password" data-lpignore="true" data-bwignore="true" data-1p-ignore="true" />
+            <button id="login" type="button">Login</button>
+            <p id="connection-status" class="conn-status">Offline</p>
+        </div>
+    </div>
+
+    <main id="controls" class="controls hide">
+        <header class="controls-header">
+            <div>
+                <h1>Player Stats Editor</h1>
+                <p class="controls-subtitle">Minimal workspace for roster, scoring, and flag calls.</p>
+            </div>
+            <nav class="controls-links" aria-label="Related views">
+                <a href="/admin" target="_blank" rel="noopener noreferrer">Main Controls</a>
+                <a href="/scoreboard" target="_blank" rel="noopener noreferrer">Scoreboard</a>
+                <a href="/player-stats" target="_blank" rel="noopener noreferrer">Stats View</a>
+            </nav>
+            <button id="bb-clear-flag" type="button">Clear Flag</button>
+        </header>
+
+        <section class="bb-team-grid">
+            <section class="bb-team-column" data-team="home">
+                <h2 id="bb-home-title">Home Team</h2>
+                <div class="bb-team-settings">
+                    <input id="bb-home-team-label" type="text" placeholder="Home Team Name" />
+                    <input id="bb-home-team-color" type="color" value="#0055ff" title="Home team color" />
+                </div>
+                <form id="bb-home-add-form" class="bb-add-form">
+                    <input id="bb-home-jersey" type="number" min="0" max="999" placeholder="Jersey #" required />
+                    <input id="bb-home-name" type="text" placeholder="Player Name" required />
+                    <button type="submit">Add Player</button>
+                </form>
+                <div id="bb-home-roster" class="bb-roster"></div>
+            </section>
+
+            <section class="bb-team-column" data-team="away">
+                <h2 id="bb-away-title">Away Team</h2>
+                <div class="bb-team-settings">
+                    <input id="bb-away-team-label" type="text" placeholder="Away Team Name" />
+                    <input id="bb-away-team-color" type="color" value="#ff5500" title="Away team color" />
+                </div>
+                <form id="bb-away-add-form" class="bb-add-form">
+                    <input id="bb-away-jersey" type="number" min="0" max="999" placeholder="Jersey #" required />
+                    <input id="bb-away-name" type="text" placeholder="Player Name" required />
+                    <button type="submit">Add Player</button>
+                </form>
+                <div id="bb-away-roster" class="bb-roster"></div>
+            </section>
+        </section>
+    </main>
+
+    <script src="/common/connection_manager.js"></script>
+    <script src="./main.js"></script>
+</body>
+</html>

@@ -3,15 +3,20 @@
 }
 
 :root {
-    --panel: #ffffff;
-    --line: #d1d5db;
-    --text: #111111;
+    --bg: #0f1318;
+    --bg-soft: #141a22;
+    --panel: #161d27;
+    --line: #2f3a49;
+    --line-soft: #25303f;
+    --text: #e7edf5;
+    --muted: #9aa8b8;
+    --head: #0d1117;
 }
 
 body {
     margin: 0;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(180deg, #f9fafb 0%, #eef2f7 100%);
+    background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%);
     color: var(--text);
 }
 
@@ -21,13 +26,30 @@ body {
     padding: 20px;
 }
 
-.header h1 {
-    margin: 0 0 14px;
-    font-size: 2rem;
-    color: #000000;
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
 }
 
-.grid {
+.topbar h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: var(--text);
+}
+
+.status {
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    background: var(--head);
+}
+
+.tables-wrap {
     display: grid;
     gap: 16px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -43,43 +65,43 @@ body {
 
 .team-card h2 {
     margin: 0 0 10px;
-    color: #000000;
+    color: var(--text);
 }
 
-table {
+.stats-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 760px;
+    min-width: 520px;
 }
 
-thead th {
+.stats-table thead th {
     text-align: left;
-    background: #f3f4f6;
+    background: var(--head);
     border-bottom: 1px solid var(--line);
-    color: #000000;
+    color: var(--muted);
     font-size: 0.86rem;
     padding: 8px;
 }
 
-tbody td {
-    border-bottom: 1px solid #e5e7eb;
+.stats-table tbody td {
+    border-bottom: 1px solid var(--line-soft);
     padding: 8px;
-    color: #111111;
+    color: var(--text);
     font-size: 0.9rem;
 }
 
-tbody tr:last-child td {
+.stats-table tbody tr:last-child td {
     border-bottom: none;
 }
 
 .no-data,
-.empty {
+.empty-message {
     text-align: center;
-    color: #6b7280;
+    color: var(--muted);
     font-style: italic;
 }
 
-.empty {
+.empty-message {
     margin-top: 12px;
 }
 
@@ -88,7 +110,18 @@ tbody tr:last-child td {
 }
 
 @media (max-width: 1100px) {
-    .grid {
+    .tables-wrap {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .topbar h1 {
+        font-size: 1.5rem;
     }
 }

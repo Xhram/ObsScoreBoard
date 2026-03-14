@@ -78,6 +78,15 @@ class connection_manager {
             gameClock: true,
             scores: true,
             downDistance: true,
+        },
+        playerStats: {
+            home: {},
+            away: {},
+            display: {
+                visible: true,
+                team: "home",
+                sortBy: "jersey",
+            },
         }
     };
     //filled to help vscode and avoid undefined errors
@@ -124,6 +133,7 @@ class connection_manager {
         "sync:timeouts": (timeoutsState) => {},
         "sync:flag": (flagState) => {},
         "sync:roster": (rosterState) => {},
+        "sync:player_stats": (playerStatsState) => {},
         "event:team_score": (teamScoreEvent) => {},
 
     }
@@ -502,6 +512,9 @@ class connection_manager {
                 this._predictedState.homeTeam.roster = payload.home_roster;
                 this._predictedState.awayTeam.roster = payload.away_roster;
                 break;
+            case "sync:player_stats":
+                this._predictedState.playerStats = payload;
+                break;
             default:
                 break;
         }
@@ -599,6 +612,7 @@ class connection_manager {
             home_roster: state.homeTeam.roster,
             away_roster: state.awayTeam.roster
         });
+        this.reducers["sync:player_stats"](state.playerStats || { home: {}, away: {}, display: {} });
         this.reducers["sync:icon"]({
             home_icon: state.homeTeam.image,
             away_icon: state.awayTeam.image

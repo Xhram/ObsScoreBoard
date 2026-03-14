@@ -1,32 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scoreboard Player Stats</title>
-    <link rel="stylesheet" href="style/main.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/main.css">
 </head>
 <body>
-    <main class="scoreboard-page">
-        <header class="scoreboard-header">
-            <h1>Player Stats</h1>
-        </header>
-
-        <section class="bb-team-grid">
-            <section id="home-column" class="bb-team-column">
-                <h2 id="home-title">Home Team</h2>
-                <div id="home-roster" class="bb-roster"></div>
-            </section>
-
-            <section id="away-column" class="bb-team-column">
-                <h2 id="away-title">Away Team</h2>
-                <div id="away-roster" class="bb-roster"></div>
-            </section>
-        </section>
-
-        <div id="empty" class="bb-empty hide">No players added yet.</div>
-    </main>
-
-    <script src="scripts/main.js"></script>
+    <div id="connection-status" class=""></div>
+    <div id="scoreboard">
+        <div class="container meta-data-container">
+            <!-- <div class="data">PHS Homecoming game</div> -->
+            <div class="carousel"></div>
+            <div class="carousel"></div>
+        </div>
+        <div class="container teams-container">
+            <div id="flag-container" class="flag-container">
+                <div class="status">Flag</div>
+                <div class="blame">
+                    <!-- <div class="player-badge">
+                        <div class="number"><span class="hashtag">#</span>34</div>
+                        <div class="name">Noah Berkley</div>
+                    </div> -->
+                </div>
+            </div>
+            <div id="point-score-announcement" class="point-score-announcement">
+                <span>t</span>
+                <span>o</span>
+                <span>u</span>
+                <span>c</span>
+                <span>h</span>
+                <span>d</span>
+                <span>o</span>
+                <span>w</span>
+                <span>n</span>
+                <span>!</span>
+                <div class="logo">
+                    <img src="https://th.bing.com/th/id/OIP.tTs8PVe3FjsHIF4aGRlIcAAAAA?w=180&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" alt="">
+                </div>
+            </div>
+            <div id="home-team" class="team left">
+                <div class="timeouts">
+                    <div class="timeout"></div> 
+                    <div class="timeout"></div>
+                    <div class="timeout"></div>
+                </div>
+                <div class="border">
+                    <div class="logo">
+                        <img src="https://th.bing.com/th/id/OIP.tTs8PVe3FjsHIF4aGRlIcAAAAA?w=180&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" alt="">
+                    </div>
+                    <div class="name">Home</div>
+                    <div class="possession-indicator"></div>
+                    <div class="score">0</div>
+                </div>
+            </div>
+            <div id="away-team" class="team right">
+                <div class="timeouts">
+                    <div class="timeout"></div>
+                    <div class="timeout"></div>
+                    <div class="timeout"></div>
+                </div>
+                <div class="border">
+                    <div class="logo">
+                        <img src="https://th.bing.com/th/id/OIP.tTs8PVe3FjsHIF4aGRlIcAAAAA?w=180&h=180&c=7&r=0&o=7&dpr=2&pid=1.7&rm=3" alt="">
+                    </div>
+                    <div class="name">Away</div>
+                    <div class="possession-indicator in-possession"></div>
+                    <div class="score">0</div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="container game-data-container">
+            <img class="badge" src="assets/phs_ptv_64.png" alt="PHS PTV Logo">
+            <div class="game-duration">
+                <div class="quarter">1st</div>
+                <div class="clock">00:00</div>
+            </div>
+            <div class="play-clock"><span>:00</span></div>
+            <div class="down-distance">
+                <div class="down"><span>1st</span></div>
+                <span class="filler">&</span>
+                <div class="distance"><span>10</span><span class="filler suffix">YDS</span></div>
+            </div>
+        </div>
+    </div>
 </body>
+<script src="/common/connection_manager.js"></script>
+<script src="scripts/main.js"></script>
+<script src="scripts/connection.js"></script>
+<script src="scripts/zoom.js"></script>
 </html>

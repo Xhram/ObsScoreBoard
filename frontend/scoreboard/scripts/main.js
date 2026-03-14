@@ -1,113 +1,536 @@
-const homeRoster = document.getElementById('home-roster');
-const awayRoster = document.getElementById('away-roster');
-const homeTitle = document.getElementById('home-title');
-const awayTitle = document.getElementById('away-title');
-const homeColumn = document.getElementById('home-column');
-const awayColumn = document.getElementById('away-column');
-const emptyMessage = document.getElementById('empty');
+// // Connect to WebSocket on same origin
+// const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+// const wsUrl = `${protocol}//${window.location.host}`;
+// const socket = new WebSocket(wsUrl);
 
-function normalize(players) {
-    return (players || []).slice().sort((a, b) => {
-        const aNum = Number.parseInt(a.jersey, 10);
-        const bNum = Number.parseInt(b.jersey, 10);
-        if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) {
-            return aNum - bNum;
-        }
-        return String(a.jersey).localeCompare(String(b.jersey));
-    });
+// const debugDiv = document.getElementById('debug');
+
+// socket.onopen = function(event) {
+//     debugDiv.innerHTML += '<p>WebSocket connected</p>';
+// };
+
+// socket.onmessage = function(event) {
+//     debugDiv.innerHTML += `<p>Message received: ${event.data}</p>`;
+// };
+
+// socket.onclose = function(event) {
+//     debugDiv.innerHTML += '<p>WebSocket disconnected</p>';
+// };
+
+// socket.onerror = function(error) {
+//     debugDiv.innerHTML += `<p>WebSocket error: ${error}</p>`;
+// };
+
+//
+//
+//
+
+//fact check #22 in json
+// Last, First
+let homeTeam_roster = {
+    // '-1': 'Player Home Team'
+    '-1': []
 }
-
-function normalizeTeamName(value, fallback) {
-    const next = String(value || '').trim();
-    return next || fallback;
+let awayTeam_roster = {
+    // '-1': 'Player Other Team'
 }
+let homeTeam_player_names = {};
+let awayTeam_player_names = {};
 
-function normalizeHexColor(value, fallback) {
-    return /^#[0-9a-fA-F]{6}$/.test(String(value || '')) ? value : fallback;
-}
-
-function playerSummary(player) {
-    const fg = player.fieldGoals || { made: 0, attempted: 0 };
-    const tp = player.threePointers || { made: 0, attempted: 0 };
-    const ft = player.freeThrows || { made: 0, attempted: 0 };
-    return `PTS ${player.points || 0} | REB ${player.rebounds || 0} | AST ${player.assists || 0} | STL ${player.steals || 0} | BLK ${player.blocks || 0} | TO ${player.turnovers || 0} | F ${player.fouls || 0} | FG ${fg.made}/${fg.attempted} | 3PT ${tp.made}/${tp.attempted} | FT ${ft.made}/${ft.attempted}`;
-}
-
-function renderTeam(container, players) {
-    container.innerHTML = '';
-
-    if (!players.length) {
-        const empty = document.createElement('div');
-        empty.className = 'bb-empty-inline';
-        empty.textContent = 'No players added';
-        container.appendChild(empty);
-        return;
+function split_player_name(name = '') {
+    const raw = String(name || '').trim();
+    if (!raw) {
+        return ['Doe', 'John'];
     }
+    const parts = raw.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) {
+        return [parts[0], ''];
+    }
+    const first = parts[0];
+    const last = parts.slice(1).join(' ');
+    return [last, first];
+}
 
-    players.forEach((player) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'bb-player-row';
-
-        const head = document.createElement('div');
-        head.className = 'bb-player-head';
-
-        const name = document.createElement('div');
-        name.className = 'bb-player-name';
-        name.textContent = `#${player.jersey} ${player.name || 'Unknown'}`;
-
-        const line = document.createElement('div');
-        line.className = 'bb-player-line';
-        line.textContent = playerSummary(player);
-
-        head.appendChild(name);
-        wrapper.appendChild(head);
-        wrapper.appendChild(line);
-        container.appendChild(wrapper);
+function set_player_stats_names(team = 'home', players = {}) {
+    const target = team === 'home' ? homeTeam_player_names : awayTeam_player_names;
+    Object.keys(target).forEach((key) => delete target[key]);
+    Object.entries(players || {}).forEach(([jersey, player]) => {
+        if (!player || !player.name) {
+            return;
+        }
+        target[String(jersey)] = split_player_name(player.name);
     });
 }
 
-function applyMeta(meta) {
-    const homeName = normalizeTeamName(meta && meta.home && meta.home.name, 'Home Team');
-    const awayName = normalizeTeamName(meta && meta.away && meta.away.name, 'Away Team');
-    const homeColor = normalizeHexColor(meta && meta.home && meta.home.color, '#0055ff');
-    const awayColor = normalizeHexColor(meta && meta.away && meta.away.color, '#ff5500');
-
-    homeTitle.textContent = homeName;
-    awayTitle.textContent = awayName;
-
-    homeColumn.style.setProperty('--team-accent', homeColor);
-    awayColumn.style.setProperty('--team-accent', awayColor);
-}
-
-async function refresh() {
+async function load_rosters() {
     try {
-        const [statsResponse, metaResponse] = await Promise.all([
-            fetch('/api/player-stats/both', { cache: 'no-store' }),
-            fetch('/api/player-stats/meta', { cache: 'no-store' }),
-        ]);
-
-        if (!statsResponse.ok) {
-            throw new Error(`Stats HTTP ${statsResponse.status}`);
+        const response = await fetch('assets/roster.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-        if (!metaResponse.ok) {
-            throw new Error(`Meta HTTP ${metaResponse.status}`);
-        }
-
-        const stats = await statsResponse.json();
-        const meta = await metaResponse.json();
-        const homePlayers = normalize(stats.home);
-        const awayPlayers = normalize(stats.away);
-
-        applyMeta(meta);
-        renderTeam(homeRoster, homePlayers);
-        renderTeam(awayRoster, awayPlayers);
-
-        const hasPlayers = homePlayers.length > 0 || awayPlayers.length > 0;
-        emptyMessage.classList.toggle('hide', hasPlayers);
+        const data = await response.json();
+        homeTeam_roster = data;
     } catch (error) {
-        console.error('Failed to refresh scoreboard player stats:', error);
+        console.error('Error loading roster:', error);
+    }
+}
+load_rosters();
+
+const scoreboard_element = document.getElementById('scoreboard');
+const meta_data_container_element = scoreboard_element.querySelector('.meta-data-container');
+const carousel_elements = scoreboard_element.querySelectorAll('.carousel');
+const flag_container_element = scoreboard_element.querySelector('#flag-container');
+const flag_status_element = flag_container_element.querySelector('.status'); // set penalty status to 'flag' or 'review'
+const flag_blame_element = flag_container_element.querySelector('.blame'); // set player name
+const point_score_annoucement_element = scoreboard_element.querySelector('#point-score-announcement'); // used for displaying 'touchdown!' or 'goal!'
+
+const home_team_name_element = scoreboard_element.querySelector('#home-team');
+const away_team_name_element = scoreboard_element.querySelector('#away-team');
+
+const game_quarter_element = scoreboard_element.querySelector('.quarter');
+const game_clock_element = scoreboard_element.querySelector('.clock');
+const game_play_clock_element = scoreboard_element.querySelector('.play-clock');
+const game_down_element = scoreboard_element.querySelector('.down');
+const game_to_go_element = scoreboard_element.querySelector('.distance');
+const game_to_go_suffix_element = scoreboard_element.querySelector('.suffix');
+
+// set color of the team that has the ball. used for touchdown/goal announcement background
+function set_target_team (team = 'home') {
+    // set --team-target to team color
+    if (team === 'home') {
+        scoreboard_element.style.setProperty('--team-target', 'var(--team-left-color)');
+    } else if (team === 'away') {
+        scoreboard_element.style.setProperty('--team-target', 'var(--team-right-color)');
+    } else {
+
     }
 }
 
-refresh();
-setInterval(refresh, 1500);
+/**
+adds points to a team and updates the scoreboard display
+if reason is 'touchdown' or 'field goal', shows the point score announcement
+ */
+let home_team_score = 0;
+let away_team_score = 0;
+function add_points_to_team(team = 'home', points = 1, reason = 'unknown') {
+    if (team === 'home') {
+        home_team_score += points;
+        home_team_name_element.querySelector('.score').textContent = Math.max(home_team_score, 0);
+    } else if (team === 'away') {
+        away_team_score += points;
+        away_team_name_element.querySelector('.score').textContent = Math.max(away_team_score, 0);
+    }
+
+    if (reason === 'touchdown') {
+        show_point_score_announcement(team, 'touchdown!');
+    } else if (reason === 'field goal') {
+        show_point_score_announcement(team, 'goal!');   
+    }
+}
+
+function set_team_score(team = 'home', score = 0) {
+    if (team === 'home') {
+        home_team_score = score;
+        home_team_name_element.querySelector('.score').textContent = Math.max(home_team_score, 0);
+    } else if (team === 'away') {
+        away_team_score = score;
+        away_team_name_element.querySelector('.score').textContent = Math.max(away_team_score, 0);
+    }
+}
+
+let score_animation_timeout = null;
+function show_point_score_announcement(team = 'home', text = 'touchdown!') {
+    // delete all spans first
+    if (score_animation_timeout) {
+        clearTimeout(score_animation_timeout);
+        score_animation_timeout = null;
+    }
+    set_target_team(team);
+    // set background logo to team logo
+    const logo_img = point_score_annoucement_element.querySelector('.logo img');
+    if (team === 'home') {
+        logo_img.src = homeTeam_icon;
+    } else if (team === 'away') {
+        logo_img.src = awayTeam_icon;
+    }
+    point_score_annoucement_element.classList.remove('emitted');
+    point_score_annoucement_element.getAnimations().forEach(a => a.cancel && a.cancel())
+    const spans = point_score_annoucement_element.querySelectorAll('span');
+    spans.forEach((span) => span.remove());
+
+    // create new span for the announcement (insert before logo so .logo remains last)
+    const logo = point_score_annoucement_element.querySelector('.logo');
+    for(let i = 0; i < text.length; i++) {
+        const char = text.charAt(i);
+        const new_span = document.createElement('span');
+        new_span.textContent = char;
+        point_score_annoucement_element.appendChild(new_span);
+
+        if (logo) point_score_annoucement_element.insertBefore(new_span, logo);
+        else point_score_annoucement_element.appendChild(new_span);
+    }
+
+    point_score_annoucement_element.classList.add('emitted');
+    score_animation_timeout = setTimeout(() => {
+        point_score_annoucement_element.classList.remove('emitted');
+    }, 3100); 
+}
+
+let homeTeam_name = 'Home';
+let awayTeam_name = 'Away';
+function set_team_name(team = 'home', name = 'Team') {
+    if (team === 'home') {
+        home_team_name_element.querySelector('.name').textContent = name;
+    } else if (team === 'away') {
+        away_team_name_element.querySelector('.name').textContent = name;
+    }
+}
+
+let homeTeam_color = '#0055ff';
+let awayTeam_color = '#ff5500';
+function set_team_color(team = 'home', color = '#ffffff') {
+    if (team === 'home') {
+        homeTeam_color = color;
+        scoreboard_element.style.setProperty('--team-left-color', homeTeam_color);
+    } else if (team === 'away') {
+        awayTeam_color = color;
+        scoreboard_element.style.setProperty('--team-right-color', awayTeam_color);
+    }
+}
+
+let homeTeam_icon = 'assets/phs_ptv_64.png';
+let awayTeam_icon = 'assets/phs_ptv_64.png';
+function set_team_icon(team = 'home', icon = 'assets/phs_ptv_64.png') {
+    if (team === 'home') {
+        home_team_name_element.querySelector('.logo img').src = icon;
+        homeTeam_icon = icon;
+    } else if (team === 'away') {
+        away_team_name_element.querySelector('.logo img').src = icon;
+        awayTeam_icon = icon;
+    }
+}
+
+// set which team has possession of ball
+function set_team_possession(team = 'home') {
+    if (team === 'home') {
+        home_team_name_element.querySelector('.possession-indicator').classList.add('in-possession');
+        away_team_name_element.querySelector('.possession-indicator').classList.remove('in-possession');
+    } else if (team === 'away') {
+        away_team_name_element.querySelector('.possession-indicator').classList.add('in-possession');
+        home_team_name_element.querySelector('.possession-indicator').classList.remove('in-possession');
+    } else {
+        home_team_name_element.querySelector('.possession-indicator').classList.remove('in-possession');
+        away_team_name_element.querySelector('.possession-indicator').classList.remove('in-possession');
+    }
+}
+
+function get_athlete_name_from_roster(team = 'home', player_key = '') {
+    const key = String(player_key);
+    if(team === 'home') {
+        return homeTeam_player_names[key] || homeTeam_roster[key] || ['Doe', 'John'];
+    } else if(team === 'away') {
+        return awayTeam_player_names[key] || awayTeam_roster[key] || ['Doe', 'John'];
+    }
+    return ['Doe', 'John'];
+}
+
+function clear_flag(animation = true) {
+    flag_container_element.classList.remove('emitted');
+    if(animation) {
+        setTimeout(() => {
+            flag_container_element.className = 'flag-container';
+        }, 500);
+    } else {
+        flag_container_element.className = 'flag-container';
+    }
+}
+
+// status is either 'flag' or 'review'
+// team is either 'home' or 'away' or 'none'
+// player_key is the number of the athlete which points to key in the roster
+function emit_flag(status = 'flag', team = "none", player_key = '') {
+    clear_flag(false);
+    flag_container_element.classList.add('emitted');
+    if(status === 'none') status = 'flag';
+
+    flag_status_element.textContent = status;
+    
+    if(team !== "none") {
+        let athlete = get_athlete_name_from_roster(team, player_key);
+        let athlete_full_name = `${athlete[1]} ${athlete[0]}`;
+        if(athlete_full_name !== "John Doe") {
+            // sets blame to athlete name
+            flag_container_element.classList.add(`blame-${team === 'home' ? 'left' : 'right'}-with-name`);
+            flag_blame_element.innerHTML = `
+                <div class="player-badge">
+                    <div class="number"><span class="hashtag">#</span>${player_key}</div>
+                    <div class="name">${athlete_full_name}</div>
+                </div>
+            `;
+        } else {
+            // sets blame just to team side
+            flag_container_element.classList.add(`blame-${team === 'home' ? 'left' : 'right'}`);
+            flag_blame_element.innerHTML = '';
+        }
+    }
+}
+
+// amount is either 1 or -1
+let homeTeam_timeout = 3;
+let awayTeam_timeout = 3;
+function add_timeout(team = 'home', amount = -1) {
+    if (team === 'home') {
+        homeTeam_timeout += amount;
+        homeTeam_timeout = Math.min(Math.max(homeTeam_timeout, 0), 3);
+    } else if (team === 'away') {
+        awayTeam_timeout += amount;
+        awayTeam_timeout = Math.min(Math.max(awayTeam_timeout, 0), 3);
+    }
+    set_timeouts(team, team === 'home' ? homeTeam_timeout : awayTeam_timeout);
+}
+
+function set_timeouts(team = 'home', timeouts = 3) {
+    if (team === 'home') {
+        homeTeam_timeout = timeouts;
+        const timeouts_elements = home_team_name_element.querySelectorAll('.timeout');
+        timeouts_elements.forEach((el, index) => {
+            if (index < homeTeam_timeout) {
+                el.classList.remove('used');
+            } else {
+                el.classList.add('used');
+            }
+        });
+    } else if (team === 'away') {
+        awayTeam_timeout = timeouts;
+        const timeouts_elements = away_team_name_element.querySelectorAll('.timeout');
+        timeouts_elements.forEach((el, index) => {
+            if (index < awayTeam_timeout) {
+                el.classList.remove('used');
+            } else {
+                el.classList.add('used');
+            }
+        });
+    }
+}
+
+const quarter_index = {
+    1: '1st',
+    2: '2nd',
+    3: '3rd',
+    4: '4th',
+    5: 'OT',
+    0: 'Final'
+}
+function set_game_quarter(quarter = 1) {
+    game_quarter_element.textContent = quarter_index[quarter] || 'Unknown';
+}
+
+let game_clock_seconds =  15 * 60; // default to 15 minutes
+let game_clock_interval = null;
+function set_game_clock(minutes = 15, seconds = 0) {
+    game_clock_seconds = (minutes * 60) + seconds;
+}
+
+function start_game_clock() {
+    update_game_clock_display();
+    if (game_clock_interval) return; // already running
+    game_clock_interval = setInterval(() => {
+        if (game_clock_seconds > 0) {
+            game_clock_seconds--;
+            update_game_clock_display();
+        } else {
+            clearInterval(game_clock_interval);
+            game_clock_interval = null;
+        }
+    }, 1000);
+}
+
+function stop_game_clock() {
+    update_game_clock_display();
+    if (game_clock_interval) {
+        clearInterval(game_clock_interval);
+        game_clock_interval = null;
+    }
+}
+
+function reset_game_clock() {
+    stop_game_clock();
+    game_clock_seconds = 15 * 60; // reset to 15 minutes
+    update_game_clock_display();
+}
+
+// can be negative to subtract time
+function add_seconds_to_game_clock(seconds = 0) {
+    game_clock_seconds += seconds;
+    if (game_clock_seconds < 0) game_clock_seconds = 0;
+    update_game_clock_display();
+}
+
+function update_game_clock_display() {
+    let minutes = Math.floor(game_clock_seconds / 60);
+    let seconds = game_clock_seconds % 60;
+    game_clock_element.textContent = `${String(minutes).padStart(2, '0')}:${String(Math.floor(seconds)).padStart(2, '0')}`;
+}
+
+let play_clock_seconds = 40; // default to 40 seconds
+let play_clock_interval = null;
+
+function start_play_clock() {
+    update_play_clock_display();
+    if (play_clock_interval) return; // already running
+    play_clock_interval = setInterval(() => {
+        if (play_clock_seconds > 0) {
+            play_clock_seconds--;
+            update_play_clock_display();
+        } else {
+            clearInterval(play_clock_interval);
+            play_clock_interval = null;
+        }
+    }, 1000);
+}
+
+function stop_play_clock() {
+    update_play_clock_display();
+    if (play_clock_interval) {
+        clearInterval(play_clock_interval);
+        play_clock_interval = null;
+    }
+}
+
+function reset_play_clock() {
+    stop_play_clock();
+    play_clock_seconds = 40;
+    update_play_clock_display();
+}
+
+function add_seconds_to_play_clock(seconds = 0) {
+    play_clock_seconds += seconds;
+    if (play_clock_seconds < 0) play_clock_seconds = 0;
+    update_play_clock_display();
+}
+
+function update_play_clock_display() {
+    let seconds = play_clock_seconds % 60;
+    game_play_clock_element.textContent = `:${String(Math.floor(seconds)).padStart(2, '0')}`;
+}
+
+const down_index = {
+    1: '1st',
+    2: '2nd',
+    3: '3rd',
+    4: '4th',
+}
+let current_down = 1;
+function set_game_down(down = 1) {
+    current_down = down;
+    const span = game_down_element.querySelector('span');
+    if (span) return span.textContent = down_index[down] || 'Unknown';
+    span.textContent = down_index[down] || 'Unknown';
+}
+
+
+
+
+let current_to_go = 10;
+let current_to_go_suffix = 'YDS';
+// if set to "inches" or "GOAL", it will display as INCHES or GOAL
+function set_game_to_go(distance = 10, suffix = 'YDS') {
+    current_to_go = distance;
+    current_to_go_suffix = suffix;
+    const span = game_to_go_element.querySelector('span');
+    if (span) {
+        game_to_go_suffix_element.textContent = '';
+        if(suffix.toLowerCase() === 'inches') {
+            return span.textContent = 'INCHES';
+        } else if(suffix.toLowerCase() === 'goal') {
+            return span.textContent = 'GOAL';
+        }
+        span.textContent = distance;
+    }
+
+    game_to_go_suffix_element.textContent = suffix;
+}
+
+function start_carousel(duration_per_item = 3, start_up_delay = 1) {
+    const elements_in_carousel = carousel_elements[0].children.length;
+    scoreboard_element.style.setProperty('--time-carousel-duration', `${elements_in_carousel * duration_per_item}s`);
+    scoreboard_element.style.setProperty('--time-carousel-popup-delay', `${start_up_delay}s`);
+    meta_data_container_element.classList.add('visible');
+}
+
+function stop_carousel() {
+    meta_data_container_element.classList.remove('visible');
+}
+
+function set_carasuel_data_to_home_team_roster() {
+    for(let carousel of carousel_elements) {
+        carousel.innerHTML = '';
+        for (const key in homeTeam_roster) {
+            let athlete = get_athlete_name_from_roster('home', key);
+            let athlete_full_name = `${athlete[1]} ${athlete[0]}`;
+            const player_badge = document.createElement('div');
+            player_badge.className = 'player-badge';
+            player_badge.innerHTML = `
+                <div class="number"><span class="hashtag">#</span>${key}</div>
+                <div class="name">${athlete_full_name}</div>
+            `;
+            carousel.appendChild(player_badge);
+        }
+    }
+}
+
+function append_to_carasuel_data(text, duration_per_item = 3, start_up_delay = 1) {
+    for(let carousel of carousel_elements) {
+        const data_div = document.createElement('div');
+        data_div.className = 'data';
+        data_div.textContent = text;
+        carousel.appendChild(data_div);
+    }
+    const elements_in_carousel = carousel_elements[0].children.length;
+    scoreboard_element.style.setProperty('--time-carousel-duration', `${elements_in_carousel * duration_per_item}s`);
+    scoreboard_element.style.setProperty('--time-carousel-popup-delay', `${start_up_delay}s`);
+}
+
+function clear_carasuel_data() {
+    for(let carousel of carousel_elements) {
+        carousel.innerHTML = '';
+    }
+}
+
+function pop_to_carasuel_data(duration_per_item = 3, start_up_delay = 1) {
+    for(let carousel of carousel_elements) {
+        if(carousel.children.length > 0) {
+            carousel.removeChild(carousel.children[0]);
+        }
+    }
+    const elements_in_carousel = carousel_elements[0].children.length;
+    scoreboard_element.style.setProperty('--time-carousel-duration', `${elements_in_carousel * duration_per_item}s`);
+    scoreboard_element.style.setProperty('--time-carousel-popup-delay', `${start_up_delay}s`);
+}
+
+// Visibility functions
+function set_visibility(visibilityState) {
+    console.log('Setting visibility:', visibilityState);
+    if (visibilityState.playClock !== undefined) {
+        game_play_clock_element.style.display = visibilityState.playClock ? '' : 'none';
+    }
+    if (visibilityState.gameClock !== undefined) {
+        const gameClockContainer = scoreboard_element.querySelector('.game-duration');
+        if (gameClockContainer) {
+            gameClockContainer.style.display = visibilityState.gameClock ? '' : 'none';
+        }
+    }
+    if (visibilityState.scores !== undefined) {
+        const homeScore = home_team_name_element.querySelector('.score');
+        const awayScore = away_team_name_element.querySelector('.score');
+        if (homeScore) homeScore.style.display = visibilityState.scores ? '' : 'none';
+        if (awayScore) awayScore.style.display = visibilityState.scores ? '' : 'none';
+    }
+    if (visibilityState.downDistance !== undefined) {
+        const downDistanceContainer = scoreboard_element.querySelector('.down-distance');
+        console.log('Down distance container found:', downDistanceContainer, 'Setting display to:', visibilityState.downDistance ? '' : 'none');
+        if (downDistanceContainer) {
+            downDistanceContainer.style.display = visibilityState.downDistance ? '' : 'none';
+        }
+    }
+}
